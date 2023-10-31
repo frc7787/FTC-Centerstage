@@ -89,4 +89,10 @@ public abstract class MotorUtility {
             telemetry.addData(motor.getDeviceName() + " Power", motor.getPower());
         }
     }
+
+    public static void getDirection(@NonNull Telemetry telemetry, @NonNull DcMotor ... motors) {
+        for (DcMotor motor : motors) {
+            telemetry.addData(motor.getDeviceName() + " Direction", motor.getDirection());
+        }
+    }
 }
