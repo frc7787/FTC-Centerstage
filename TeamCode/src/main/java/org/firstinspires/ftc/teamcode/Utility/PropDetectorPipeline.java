@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.Utility;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,23 +12,16 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SkystoneDetector extends OpenCvPipeline {
-    enum SkystoneLocation {
+public class PropDetectorPipeline extends OpenCvPipeline {
+    public enum PropLocation {
         LEFT,
         RIGHT,
         NONE
     }
 
-    private int width; // width of the image
-    SkystoneLocation location;
+    private final int width = 340; // width of the image
+    PropLocation location = PropLocation.NONE;
 
-    /**
-     *
-     * @param width The width of the image (check your camera)
-     */
-    public SkystoneDetector(int width) {
-        this.width = width;
-    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -45,16 +38,13 @@ public class SkystoneDetector extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         // if something is wrong, we assume there's no skystone
-        if (mat.empty()) {
-            location = SkystoneLocation.NONE;
-            return input;
-        }
+        if (mat.empty()) { return input; }
 
         // We create a HSV range for blue to detect regular stones
         // NOTE: In OpenCV's implementation,
         // Hue values are half the real value
-        Scalar lowHSV = new Scalar(20, 100, 100); // lower bound HSV for yellow
-        Scalar highHSV = new Scalar(30, 255, 255); // higher bound HSV for yellow
+        Scalar lowHSV = new Scalar(97, 100, 100); // lower bound HSV for blue
+        Scalar highHSV = new Scalar(115, 255, 255); // higher bound HSV for blue
         Mat thresh = new Mat();
 
         // We'll get a black and white image. The white regions represent the regular stones.
@@ -64,7 +54,7 @@ public class SkystoneDetector extends OpenCvPipeline {
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
         Mat edges = new Mat();
-        Imgproc.Canny(thresh, edges, 100, 300);
+        Imgproc.Canny(thresh, edges, 0, 100);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
@@ -100,17 +90,16 @@ public class SkystoneDetector extends OpenCvPipeline {
 
         // if there is no yellow regions on a side
         // that side should be a Skystone
-        if (!left) location = SkystoneLocation.LEFT;
-        else if (!right) location = SkystoneLocation.RIGHT;
+        if (!left) location = PropLocation.LEFT;
+        if (!right) location = PropLocation.RIGHT;
             // if both are true, then there's no Skystone in front.
             // since our team's camera can only detect two at a time
             // we will need to scan the next 2 stones
-        else location = SkystoneLocation.NONE;
 
         return mat; // return the mat with rectangles drawn
     }
 
-    public SkystoneLocation getLocation() {
+    public PropLocation getLocation() {
         return this.location;
     }
 }
