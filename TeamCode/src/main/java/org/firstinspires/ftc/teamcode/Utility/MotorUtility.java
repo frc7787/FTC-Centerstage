@@ -54,4 +54,13 @@ public abstract class MotorUtility {
     public static void setVelocity(int velocity, @NonNull DcMotorEx ... motors) {
         for (DcMotorEx motor : motors) { motor.setVelocity(velocity); }
     }
+
+    /**
+     * Sets the power of the supplied motors
+     * @param power The power you would like to set the motors to
+     * @param motors The motors you are modifying, you can either pass in an array or individual arguments
+     */
+    public static void setPower(double power, @NonNull DcMotor ... motors) {
+        for (DcMotor motor : motors) { motor.setPower(power); }
+    }
 }

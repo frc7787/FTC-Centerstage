@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.*;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.*;
@@ -11,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.ftccommon.internal.manualcontrol.responses.MotorTargetPosition;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
 
@@ -27,6 +29,8 @@ public final class DriveBase {
 
     private final DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
 
+    private final DcMotorImplEx[] motors;
+
     public DriveBase(@NonNull OpMode opMode) {
         telemetry  = opMode.telemetry;
         controller = opMode.gamepad1;
@@ -35,6 +39,8 @@ public final class DriveBase {
         frontRight = opMode.hardwareMap.get(DcMotorImplEx.class, "Front Right Drive Motor");
         backLeft   = opMode.hardwareMap.get(DcMotorImplEx.class, "Back Left Drive Motor");
         backRight  = opMode.hardwareMap.get(DcMotorImplEx.class, "Back Right Drive Motor");
+
+        motors = new DcMotorImplEx[]{frontLeft, frontRight, backLeft, backRight};
 
         MotorUtility.setZeroPowerBehaviour(BRAKE, frontLeft, frontRight, backLeft, backRight);
         MotorUtility.setDirection(REVERSE, frontLeft, backLeft);
@@ -65,6 +71,50 @@ public final class DriveBase {
         backRight.setPower(backRightPower);
     }
 
+
+    /**
+     * Drives the robot forward at the desired speed
+     * @param speed The speed you would like to drive the robot
+     */
+    public void forward(int speed) { MotorUtility.setPower(speed, motors); }
+
+    /**
+     * Drives the robot forward at a specified speed for a specified distance
+     * @param distance The distance you would like to drive
+     * @param velocity The velocity you would like to go (Ticks/Second)
+     */
+    public void forward(int distance, int velocity) {
+        MotorUtility.setMode(RUN_TO_POSITION, motors);
+        MotorUtility.setTargetPosition(distance, motors);
+        MotorUtility.setVelocity(velocity, motors);
+    }
+
+    /**
+     * Drives the robot backwards at a specified speed for a specified distance
+     * @param speed The speed you would like to travel at
+     */
+    public void backwards(int speed) { MotorUtility.setPower(speed, motors); }
+
+    /**
+     * Drives the robot backwards at a specified speed for a specified distance
+     * @param distance The distance you would like to drive
+     * @param velocity The velocity you would like to travel at (Ticks/Second)
+     */
+    public void backwards(int distance, int velocity) {
+        MotorUtility.setMode(RUN_TO_POSITION, motors);
+        MotorUtility.setTargetPosition(-distance, motors);
+        MotorUtility.setVelocity(velocity, motors);
+    }
+
+    public void strafe_left(double speed) {
+        MotorUtility.setPower(speed, frontLeft, backRight);
+        MotorUtility.setPower(-speed, backLeft, frontRight);
+    }
+
+    public void strafe_right(double speed) {
+        MotorUtility.setPower(speed, backLeft, frontRight);
+        MotorUtility.setPower(speed, frontLeft, backRight);
+    }
 
 
     public void debug() {
