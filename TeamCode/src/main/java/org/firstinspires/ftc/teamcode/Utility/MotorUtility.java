@@ -74,25 +74,12 @@ public abstract class MotorUtility {
 
     /**
      * Sets the power of the supplied motors
-     *
      * @param power  The power you would like to set the motors to
      * @param motors The motors you are modifying, you can either pass in an array or individual arguments
      */
     public static void setPower(double power, @NonNull DcMotor... motors) {
         for (DcMotor motor : motors) {
             motor.setPower(power);
-        }
-    }
-
-    public static void getPower(@NonNull Telemetry telemetry, @NonNull DcMotor... motors) {
-        for (DcMotor motor : motors) {
-            telemetry.addData(motor.getDeviceName() + " Power", motor.getPower());
-        }
-    }
-
-    public static void getDirection(@NonNull Telemetry telemetry, @NonNull DcMotor ... motors) {
-        for (DcMotor motor : motors) {
-            telemetry.addData(motor.getDeviceName() + " Direction", motor.getDirection());
         }
     }
 }

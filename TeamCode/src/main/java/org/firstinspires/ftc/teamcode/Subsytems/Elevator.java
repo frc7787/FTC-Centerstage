@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
@@ -112,7 +111,8 @@ public final class Elevator {
         telemetry.addData("Left Motor Current Position", leftExtend.getCurrentPosition());
         telemetry.addData("Right Motor Current Position", rightExtend.getCurrentPosition());
 
-        telemetry.addData("Rotation Motor Target Position", leftRotate.getTargetPosition());
+        telemetry.addData("Left Rotation Motor Target Position", leftRotate.getTargetPosition());
+        telemetry.addData("Right Rotation Motor Target Position", rightRotate.getTargetPosition());
 
         telemetry.update();
     }
