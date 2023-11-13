@@ -4,9 +4,12 @@ public abstract class Constants {
 
     // ---------- ELEVATOR CONSTANTS ---------- //
 
-    public static final int LOW_POSITION    = 1075;
-    public static final int MEDIUM_POSITION = 2150;
-    public static final int HIGH_POSITION   = 2600;
+    public static final int LOW_EXTENSION_POSITION    = 1000;
+    public static final int LOW_ROTATION_POSITION     = 500;
+    public static final int MEDIUM_EXTENSION_POSITION = 2000;
+    public static final int MEDIUM_ROTATION_POSITION  = 1000;
+    public static final int HIGH_EXTENSION_POSITION   = 3000;
+    public static final int HIGH_ROTATION_POSITION    = 1500;
 
     public static final int ELEVATOR_ROTATION_VELOCITY  = 1000;
     public static final int ELEVATOR_EXTENSION_VELOCITY = 1500;
@@ -20,5 +23,7 @@ public abstract class Constants {
 
     // ----------- INTAKE CONSTANTS ---------- //
 
-    public static final double INTAKE_SPEED = 1.0d;
+    public static final double INTAKE_POSITION  = 0.25d;
+    public static final double HOLD_POSITION    = 0.47d;
+    public static final double OUTTAKE_POSITION = 0.22d;
 }

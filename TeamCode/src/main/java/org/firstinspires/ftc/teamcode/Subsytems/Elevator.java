@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
@@ -18,11 +19,6 @@ import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
  */
 public final class Elevator {
 
-    private enum RotationState {
-        DOWN,
-        UP
-    }
-
     private final DcMotorImplEx leftExtend, rightExtend, leftRotate, rightRotate;
 
     private final DcMotorImplEx[] extensionMotors, rotationsMotors;
@@ -31,8 +27,6 @@ public final class Elevator {
 
     private final Telemetry telemetry;
 
-
-    private RotationState rotationState = RotationState.DOWN;
 
     /**
      * Elevator constructor
@@ -56,51 +50,28 @@ public final class Elevator {
         MotorUtility.setMode(STOP_AND_RESET_ENCODER, leftExtend, rightExtend, leftRotate, rightRotate);
     }
 
-    /**
-     * Controls elevator rotation
-     */
-    private void rotate() {
-        switch (rotationState) {
-            case DOWN:
-                if (controller.dpad_up) {
-                    MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
-                    MotorUtility.setTargetPosition(1092, rotationsMotors);
-                    MotorUtility.setVelocity(ELEVATOR_ROTATION_VELOCITY, rotationsMotors);
-                    rotationState = RotationState.UP;
-                }
-            case UP:
-                if (controller.dpad_down) {
-                    MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
-                    MotorUtility.setTargetPosition(0, rotationsMotors);
-                    MotorUtility.setVelocity(ELEVATOR_ROTATION_VELOCITY, rotationsMotors);
-                    rotationState = RotationState.DOWN;
-                }
-        }
-    }
 
-    private void extend() {
-        // Get target position
-
-        if (controller.x) {
-            MotorUtility.setTargetPosition(0, extensionMotors);
-        } else if (controller.square) {
-            MotorUtility.setTargetPosition(LOW_POSITION, extensionMotors);
-        } else if (controller.circle) {
-            MotorUtility.setTargetPosition(MEDIUM_POSITION, extensionMotors);
-        } else if (controller.triangle) {
-            MotorUtility.setTargetPosition(HIGH_POSITION, extensionMotors);
-        }
-
-        MotorUtility.setMode(RUN_TO_POSITION, extensionMotors);
-        MotorUtility.setVelocity(ELEVATOR_EXTENSION_VELOCITY, extensionMotors);
-    }
-
-    /**
-     * Runs the elevator
-     */
     public void run() {
-        rotate();
-        extend();
+        if (controller.dpad_up)    { move_elevator(HIGH_EXTENSION_POSITION, HIGH_ROTATION_POSITION);     }
+        if (controller.dpad_right) { move_elevator(MEDIUM_EXTENSION_POSITION, MEDIUM_ROTATION_POSITION); }
+        if (controller.dpad_left)  { move_elevator(LOW_EXTENSION_POSITION, LOW_ROTATION_POSITION);       }
+        if (controller.dpad_down)  { move_elevator(0, 0);         }
+    }
+
+    /**
+     * Moves the elevator to the desired position
+     * @param extensionPosition The position to extend the elevator to
+     * @param rotationPosition The position to rotate the elevator to
+     */
+    private void move_elevator(int extensionPosition, int rotationPosition) {
+        MotorUtility.setTargetPosition(rotationPosition, rotationsMotors);
+        MotorUtility.setTargetPosition(extensionPosition, extensionMotors);
+
+        MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
+        MotorUtility.setMode(RUN_TO_POSITION, extensionMotors);
+
+        MotorUtility.setVelocity(ELEVATOR_ROTATION_VELOCITY, rotationsMotors);
+        MotorUtility.setVelocity(ELEVATOR_EXTENSION_VELOCITY, extensionMotors);
     }
 
 

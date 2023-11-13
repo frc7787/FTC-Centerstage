@@ -18,7 +18,7 @@ public abstract class MotorUtility {
      * @param runMode The mode that you would like to run the motors in. All motors will be set the same.
      * @param motors  The motors that you would like to pass in, you can either pass in an array or individual arguments
      */
-    public static void setMode(@NonNull RunMode runMode, @NonNull DcMotor... motors) {
+    public static void setMode(@NonNull RunMode runMode, @NonNull DcMotor ... motors) {
         for (DcMotor motor : motors) {
             motor.setMode(runMode);
         }
@@ -30,7 +30,7 @@ public abstract class MotorUtility {
      * @param zeroPowerBehavior The zero power behavior that the motors should run in. All motors will be set the same.
      * @param motors            The motors you are modifying, you can either pass in an array or individual arguments
      */
-    public static void setZeroPowerBehaviour(@NonNull ZeroPowerBehavior zeroPowerBehavior, @NonNull DcMotor... motors) {
+    public static void setZeroPowerBehaviour(@NonNull ZeroPowerBehavior zeroPowerBehavior, @NonNull DcMotor ... motors) {
         for (DcMotor motor : motors) {
             motor.setZeroPowerBehavior(zeroPowerBehavior);
         }
@@ -42,7 +42,7 @@ public abstract class MotorUtility {
      * @param direction The direction to set the motors. All motors will be set the same.
      * @param motors    The motors you are modifying, you can either pass in an array or individual arguments
      */
-    public static void setDirection(@NonNull Direction direction, @NonNull DcMotor... motors) {
+    public static void setDirection(@NonNull Direction direction, @NonNull DcMotor ... motors) {
         for (DcMotor motor : motors) {
             motor.setDirection(direction);
         }
@@ -54,7 +54,7 @@ public abstract class MotorUtility {
      * @param targetPosition The target position to set the motors to. All motors will be set the same
      * @param motors         The motors you are modifying, you can either pass in an array or individual arguments
      */
-    public static void setTargetPosition(int targetPosition, @NonNull DcMotorEx... motors) {
+    public static void setTargetPosition(int targetPosition, @NonNull DcMotorEx ... motors) {
         for (DcMotorEx motor : motors) {
             motor.setTargetPosition(targetPosition);
         }
@@ -66,7 +66,7 @@ public abstract class MotorUtility {
      * @param velocity The velocity you would like to set the motors to; Ticks/Second
      * @param motors   The motors you are modifying, you can either pass in an array or individual arguments
      */
-    public static void setVelocity(int velocity, @NonNull DcMotorEx... motors) {
+    public static void setVelocity(int velocity, @NonNull DcMotorEx ... motors) {
         for (DcMotorEx motor : motors) {
             motor.setVelocity(velocity);
         }
@@ -77,9 +77,10 @@ public abstract class MotorUtility {
      * @param power  The power you would like to set the motors to
      * @param motors The motors you are modifying, you can either pass in an array or individual arguments
      */
-    public static void setPower(double power, @NonNull DcMotor... motors) {
+    public static void setPower(double power, @NonNull DcMotor ... motors) {
         for (DcMotor motor : motors) {
             motor.setPower(power);
         }
     }
+
 }

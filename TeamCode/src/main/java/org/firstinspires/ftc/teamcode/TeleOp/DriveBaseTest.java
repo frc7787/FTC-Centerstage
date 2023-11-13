@@ -5,17 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 
-@TeleOp(name = "Drive Base Test", group = "Test")
+@TeleOp(name = "Test - Drive Base", group = "Test")
 public final class DriveBaseTest extends OpMode {
 
     public DriveBase driveBase;
 
-    @Override
-    public void init() { driveBase = new DriveBase(this); }
+    @Override public void init() { driveBase = new DriveBase(this); }
 
-    @Override
-    public void loop() {
-        driveBase.drive();
+    @Override public void loop() {
+        driveBase.run();
         driveBase.debug();
     }
 }

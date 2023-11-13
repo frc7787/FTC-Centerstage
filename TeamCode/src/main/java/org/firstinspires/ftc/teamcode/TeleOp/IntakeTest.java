@@ -11,10 +11,7 @@ public class IntakeTest extends OpMode {
     // Creates a new intake object
     public static Intake intake;
 
-    @Override
-    public void init() { intake = new Intake(this); }
+    @Override public void init() { intake = new Intake(this); }
 
-
-    @Override
-    public void loop() { intake.run(); }
+    @Override public void loop() { intake.run(); }
 }
