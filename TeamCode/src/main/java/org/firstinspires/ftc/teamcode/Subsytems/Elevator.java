@@ -20,18 +20,16 @@ import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
 public final class Elevator {
 
     private final DcMotorImplEx leftExtend, rightExtend, leftRotate, rightRotate;
-
     private final DcMotorImplEx[] extensionMotors, rotationsMotors;
 
     private final Gamepad controller;
-
     private final Telemetry telemetry;
 
 
     /**
-     * Elevator constructor
+     * Elevator Subsystem constructor
      *
-     * @param opMode The OpMode that you are using the elevator in, likely just "this"
+     * @param opMode The OpMode that you are using the elevator in, likely "this"
      */
     public Elevator(@NonNull OpMode opMode) {
         leftExtend  = opMode.hardwareMap.get(DcMotorImplEx.class, "Left Extension Motor");

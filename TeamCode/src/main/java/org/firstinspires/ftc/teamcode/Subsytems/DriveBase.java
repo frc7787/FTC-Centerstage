@@ -16,9 +16,7 @@ import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
 public final class DriveBase {
 
     private double motorPowerRatio;
-
     private double drive, strafe, turn;
-
     private double frontLeftPower, frontRightPower, backLeftPower, backRightPower;
 
     private final Gamepad controller;
@@ -26,6 +24,10 @@ public final class DriveBase {
 
     private final DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
 
+    /**
+     * Drive Base Subsystem Constructor
+     * @param opMode The opMode you are using the drive base in, likely "this"
+     */
     public DriveBase(@NonNull OpMode opMode) {
         telemetry  = opMode.telemetry;
         controller = opMode.gamepad1;
@@ -40,12 +42,20 @@ public final class DriveBase {
     }
 
 
+    /**
+     * Checks to see if a value is in a dead zone
+     * @param value The value to check
+     * @return If The value is in the dead zone returns 0.0d, else returns the input value
+     */
     private double deadZone(double value) {
         if (DEAD_ZONE_LOW < value && DEAD_ZONE_HIGH > value ) { return 0.0d; }
         return value;
     }
 
 
+    /**
+     * Main function to control the drive base
+     */
     public void run() {
         drive  = deadZone(controller.left_stick_y) * -1;
         strafe = deadZone(controller.left_stick_x);
@@ -65,6 +75,9 @@ public final class DriveBase {
     }
 
 
+    /**
+     * Provides various debug information about the drive base
+     */
     public void debug() {
         telemetry.addLine("Drive Base Debug\n");
         telemetry.addData("Drive Power", drive);

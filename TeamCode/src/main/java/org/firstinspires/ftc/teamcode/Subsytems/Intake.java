@@ -17,6 +17,10 @@ public class Intake {
 
     private final Servo intakeServo;
 
+    /**
+     * Intake Subsystem Constructor
+     * @param opMode The opMode you are using the Intake in, likely "this"
+     */
     public Intake(@NonNull OpMode opMode) {
         controller  = opMode.gamepad1;
         telemetry   = opMode.telemetry;
@@ -32,7 +36,20 @@ public class Intake {
         if (controller.triangle)     { intakeServo.setPosition(HOLD_POSITION);    }
     }
 
+    /**
+     * Puts the intake in the release position
+     */
     public void release() { intakeServo.setPosition(INTAKE_POSITION); }
+
+    /**
+     * Puts the intake in the hold position
+     */
+    public void hold() { intakeServo.setPosition(HOLD_POSITION); }
+
+    /**
+     * Puts the intake in the outtake position
+     */
+    public void outtake() { intakeServo.setPosition(OUTTAKE_POSITION); }
 
 
     /**

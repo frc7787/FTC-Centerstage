@@ -10,9 +10,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Hanger {
 
     private final Servo left, right;
-
     private final Gamepad controller;
 
+    /**
+     * Hanger Subsystem Constructor
+     * @param opMode The opMode you are using the hanger in, likely "this"
+     */
     public Hanger(@NonNull OpMode opMode) {
         controller = opMode.gamepad1;
 
