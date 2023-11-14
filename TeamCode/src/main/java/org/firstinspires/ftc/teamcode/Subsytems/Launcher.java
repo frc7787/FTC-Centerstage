@@ -29,7 +29,7 @@ public final class Launcher {
         if (controller.share) {
             launcherServo.setPosition(LAUNCH_POSITION);
         } else if (controller.options && controller.share) {
-            launcherServo.setPosition(0);
+            launcherServo.setPosition(ZERO_POSITION);
         }
     }
 }

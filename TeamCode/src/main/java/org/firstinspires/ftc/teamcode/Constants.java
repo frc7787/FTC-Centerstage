@@ -29,6 +29,7 @@ public abstract class Constants {
 
     // ---------- LAUNCHER CONSTANTS ---------- //
     public static final double LAUNCH_POSITION = 90.00d;
+    public static final double ZERO_POSITION   = 0.00d;
 
 
     // ---------- CAMERA CONSTANTS ---------- //
