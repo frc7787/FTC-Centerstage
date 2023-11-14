@@ -12,19 +12,19 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 // Team Code Imports
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
-import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline.PropLocation;
+import org.firstinspires.ftc.teamcode.Auto.Utility.RedPropDetector;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 
 @Autonomous(name = "Red Left", group = "Red")
 public class RedLeft extends OpMode {
 
-    public static PropDetectorPipeline propDetector;
+    public static RedPropDetector propDetector;
     public static SampleMecanumDrive drive;
     public static Intake intake;
     public static TrajectorySequence toSpikeStrip;
 
     @Override public void init() {
-        propDetector = new PropDetectorPipeline();
+        propDetector = new RedPropDetector();
         drive        = new SampleMecanumDrive(hardwareMap);
         intake       = new Intake(this);
 

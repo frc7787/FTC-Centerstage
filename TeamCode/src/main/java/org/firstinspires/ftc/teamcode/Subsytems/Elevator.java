@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
@@ -12,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
+import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 /**
  * Object to encapsulate elevator subsystem

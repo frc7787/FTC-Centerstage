@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Utility;
+package org.firstinspires.ftc.teamcode.Auto.Utility;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -14,12 +14,7 @@ import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
-public class PropDetectorPipeline extends OpenCvPipeline {
-    public enum PropLocation {
-        LEFT,
-        RIGHT,
-        CENTER
-    }
+public class RedPropDetector extends OpenCvPipeline {
 
     PropLocation location = PropLocation.CENTER;
 
@@ -32,8 +27,8 @@ public class PropDetectorPipeline extends OpenCvPipeline {
         // If something goes wrong, we assume there's no prop
         if (mat.empty()) { return input; }
 
-        Scalar lowHSV = new Scalar(97, 100, 100);   // lower bound HSV for blue
-        Scalar highHSV = new Scalar(115, 255, 255); // higher bound HSV for blue
+        Scalar lowHSV = new Scalar(0, 100, 100); // lower bound HSV for red
+        Scalar highHSV = new Scalar(0, 100, 32); // higher bound HSV for red
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowHSV, highHSV, thresh);

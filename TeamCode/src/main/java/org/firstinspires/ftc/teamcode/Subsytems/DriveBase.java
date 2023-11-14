@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
+import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 public final class DriveBase {
 
