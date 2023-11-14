@@ -26,4 +26,11 @@ public abstract class Constants {
     public static final double INTAKE_POSITION  = 0.25d;
     public static final double HOLD_POSITION    = 0.47d;
     public static final double OUTTAKE_POSITION = 0.22d;
+
+    // ---------- LAUNCHER CONSTANTS ---------- //
+    public static final double LAUNCH_POSITION = 90.00d;
+
+
+    // ---------- CAMERA CONSTANTS ---------- //
+    public static final int IMAGE_WIDTH = 340;
 }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Utility;
 
-
 import static com.qualcomm.robotcore.hardware.DcMotorImplEx.*;
 
 import androidx.annotation.NonNull;
@@ -8,15 +7,12 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public abstract class MotorUtility {
 
     /**
      * Sets the run mode of the supplied motors
-     *
-     * @param runMode The mode that you would like to run the motors in. All motors will be set the same.
-     * @param motors  The motors that you would like to pass in, you can either pass in an array or individual arguments
+     * @param runMode The mode to run the motors in
+     * @param motors  The motors to set the mode of
      */
     public static void setMode(@NonNull RunMode runMode, @NonNull DcMotor ... motors) {
         for (DcMotor motor : motors) {
@@ -26,9 +22,8 @@ public abstract class MotorUtility {
 
     /**
      * Sets the zero power behavior of the supplied motors
-     *
-     * @param zeroPowerBehavior The zero power behavior that the motors should run in. All motors will be set the same.
-     * @param motors            The motors you are modifying, you can either pass in an array or individual arguments
+     * @param zeroPowerBehavior The zero power behaviour to set the motors to
+     * @param motors            The motors you are setting the zero power behaviour of
      */
     public static void setZeroPowerBehaviour(@NonNull ZeroPowerBehavior zeroPowerBehavior, @NonNull DcMotor ... motors) {
         for (DcMotor motor : motors) {
@@ -38,9 +33,8 @@ public abstract class MotorUtility {
 
     /**
      * Sets the direction of the supplied motors
-     *
-     * @param direction The direction to set the motors. All motors will be set the same.
-     * @param motors    The motors you are modifying, you can either pass in an array or individual arguments
+     * @param direction The direction to set the motors
+     * @param motors    The motors you are setting the direction of
      */
     public static void setDirection(@NonNull Direction direction, @NonNull DcMotor ... motors) {
         for (DcMotor motor : motors) {
@@ -50,9 +44,8 @@ public abstract class MotorUtility {
 
     /**
      * Sets the target position of the supplied motors
-     *
-     * @param targetPosition The target position to set the motors to. All motors will be set the same
-     * @param motors         The motors you are modifying, you can either pass in an array or individual arguments
+     * @param targetPosition The target position to set the motors to.
+     * @param motors         The motors you are modifying.
      */
     public static void setTargetPosition(int targetPosition, @NonNull DcMotorEx ... motors) {
         for (DcMotorEx motor : motors) {
@@ -64,23 +57,11 @@ public abstract class MotorUtility {
      * Sets the velocity of the supplied motors
      *
      * @param velocity The velocity you would like to set the motors to; Ticks/Second
-     * @param motors   The motors you are modifying, you can either pass in an array or individual arguments
+     * @param motors   The motors you to set the velocity of
      */
     public static void setVelocity(int velocity, @NonNull DcMotorEx ... motors) {
         for (DcMotorEx motor : motors) {
             motor.setVelocity(velocity);
         }
     }
-
-    /**
-     * Sets the power of the supplied motors
-     * @param power  The power you would like to set the motors to
-     * @param motors The motors you are modifying, you can either pass in an array or individual arguments
-     */
-    public static void setPower(double power, @NonNull DcMotor ... motors) {
-        for (DcMotor motor : motors) {
-            motor.setPower(power);
-        }
-    }
-
 }

@@ -1,33 +1,37 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.Auto.Production;
 
+// Roadrunner Imports
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.teamcode.Subsytems.Intake;
-import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "Red Right", group = "Red")
-public class RedRight extends OpMode {
+// SDK Imports
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-    public static PropDetectorPipeline propDetector;
-    public static SampleMecanumDrive drive;
-    public static Intake intake;
-    public static TrajectorySequence toSpikeStrip;
+// Team Code Imports
+import org.firstinspires.ftc.teamcode.Subsytems.Intake;
+import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline;
+import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline.PropLocation;
+
+@Autonomous(name = "Blue Left", group = "Blue")
+public class BlueLeft extends OpMode {
+
+    public PropDetectorPipeline propDetector;
+    public SampleMecanumDrive drive;
+    public Intake intake;
+    public TrajectorySequence toSpikeStrip;
 
     @Override public void init() {
         propDetector = new PropDetectorPipeline();
         drive        = new SampleMecanumDrive(hardwareMap);
         intake       = new Intake(this);
 
-        Pose2d startPosition = new Pose2d(12, -63, Math.toRadians(90.00d));
+        Pose2d startPosition = new Pose2d(12, 63, Math.toRadians(270.00d));
 
         toSpikeStrip = drive.trajectorySequenceBuilder(startPosition)
-                .lineTo(new Vector2d(11, -34))
+                .lineTo(new Vector2d(12, 34))
                 .build();
     }
 
@@ -37,7 +41,7 @@ public class RedRight extends OpMode {
         drive.followTrajectorySequence(toSpikeStrip);
 
         switch (propLocation) {
-            case NONE: // None means that the prop is in the center
+            case CENTER: // None means that the prop is in the center
                 intake.release();
             case LEFT:
                 drive.turn(90.00d);

@@ -10,11 +10,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
-public class Intake {
+public final class Intake {
     private final Gamepad controller;
-
     private final Telemetry telemetry;
-
     private final Servo intakeServo;
 
     /**

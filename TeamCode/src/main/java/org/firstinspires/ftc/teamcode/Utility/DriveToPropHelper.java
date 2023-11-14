@@ -10,6 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public class DriveToPropHelper {
+
     public static void DriveToProp(DcMotor f_l_motor, DcMotor f_r_motor, DcMotor b_l_motor, DcMotor b_r_motor, PropDetectorPipeline detector, OpenCvCamera phoneCam, OpMode opMode) {
         // Create camera instance
         int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
@@ -34,7 +35,7 @@ public class DriveToPropHelper {
         PropDetectorPipeline.PropLocation location = detector.getLocation();
         double detectionMotorPower = 0.2;
 
-        if (location == PropDetectorPipeline.PropLocation.NONE) {
+        if (location == PropDetectorPipeline.PropLocation.CENTER) {
             f_l_motor.setPower(0);
             f_r_motor.setPower(0);
             b_l_motor.setPower(0);

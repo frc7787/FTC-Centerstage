@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Hanger {
+public final class Hanger {
 
     private final Servo left, right;
     private final Gamepad controller;
