@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
+import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 public final class DriveBase {
 
@@ -32,10 +32,10 @@ public final class DriveBase {
         telemetry  = opMode.telemetry;
         controller = opMode.gamepad1;
 
-        frontLeft  = opMode.hardwareMap.get(DcMotorImplEx.class, "Front Left Drive Motor");
-        frontRight = opMode.hardwareMap.get(DcMotorImplEx.class, "Front Right Drive Motor");
-        backLeft   = opMode.hardwareMap.get(DcMotorImplEx.class, "Back Left Drive Motor");
-        backRight  = opMode.hardwareMap.get(DcMotorImplEx.class, "Back Right Drive Motor");
+        frontLeft  = opMode.hardwareMap.get(DcMotorImplEx.class, "fldm");
+        frontRight = opMode.hardwareMap.get(DcMotorImplEx.class, "frdm");
+        backLeft   = opMode.hardwareMap.get(DcMotorImplEx.class, "bldm");
+        backRight  = opMode.hardwareMap.get(DcMotorImplEx.class, "brdm");
 
         MotorUtility.setZeroPowerBehaviour(BRAKE, frontLeft, frontRight, backLeft, backRight);
         MotorUtility.setDirection(REVERSE, frontLeft, backLeft);

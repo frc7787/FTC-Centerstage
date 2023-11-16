@@ -12,20 +12,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 // Team Code Imports
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
-import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline;
-import org.firstinspires.ftc.teamcode.Utility.PropDetectorPipeline.PropLocation;
+import org.firstinspires.ftc.teamcode.Auto.Utility.BluePropDetector;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 
 
 @Autonomous(name = "Blue Right", group = "Blue")
 public class BlueRight extends OpMode {
 
-    public PropDetectorPipeline propDetector;
+    public BluePropDetector propDetector;
     public TrajectorySequence toSpikeStrip;
     public Intake intake;
     public SampleMecanumDrive drive;
 
     @Override public void init() {
-        propDetector = new PropDetectorPipeline();
+        propDetector = new BluePropDetector();
         intake       = new Intake(this);
         drive        = new SampleMecanumDrive(hardwareMap);
 

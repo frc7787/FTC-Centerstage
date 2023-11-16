@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Utility;
+package org.firstinspires.ftc.teamcode.TeleOp.Utility;
 
 import static com.qualcomm.robotcore.hardware.DcMotorImplEx.*;
 
@@ -15,9 +15,7 @@ public abstract class MotorUtility {
      * @param motors  The motors to set the mode of
      */
     public static void setMode(@NonNull RunMode runMode, @NonNull DcMotor ... motors) {
-        for (DcMotor motor : motors) {
-            motor.setMode(runMode);
-        }
+        for (DcMotor motor : motors) { motor.setMode(runMode); }
     }
 
     /**
@@ -26,9 +24,7 @@ public abstract class MotorUtility {
      * @param motors            The motors you are setting the zero power behaviour of
      */
     public static void setZeroPowerBehaviour(@NonNull ZeroPowerBehavior zeroPowerBehavior, @NonNull DcMotor ... motors) {
-        for (DcMotor motor : motors) {
-            motor.setZeroPowerBehavior(zeroPowerBehavior);
-        }
+        for (DcMotor motor : motors) { motor.setZeroPowerBehavior(zeroPowerBehavior); }
     }
 
     /**
@@ -37,9 +33,7 @@ public abstract class MotorUtility {
      * @param motors    The motors you are setting the direction of
      */
     public static void setDirection(@NonNull Direction direction, @NonNull DcMotor ... motors) {
-        for (DcMotor motor : motors) {
-            motor.setDirection(direction);
-        }
+        for (DcMotor motor : motors) { motor.setDirection(direction); }
     }
 
     /**
@@ -48,20 +42,36 @@ public abstract class MotorUtility {
      * @param motors         The motors you are modifying.
      */
     public static void setTargetPosition(int targetPosition, @NonNull DcMotorEx ... motors) {
-        for (DcMotorEx motor : motors) {
-            motor.setTargetPosition(targetPosition);
-        }
+        for (DcMotorEx motor : motors) { motor.setTargetPosition(targetPosition); }
     }
 
     /**
      * Sets the velocity of the supplied motors
      *
      * @param velocity The velocity you would like to set the motors to; Ticks/Second
-     * @param motors   The motors you to set the velocity of
+     * @param motors   The motors to set the velocity of
      */
     public static void setVelocity(int velocity, @NonNull DcMotorEx ... motors) {
-        for (DcMotorEx motor : motors) {
-            motor.setVelocity(velocity);
-        }
+        for (DcMotorEx motor : motors) { motor.setVelocity(velocity); }
+    }
+
+    /**
+     * Sets the target position tolerance of the supplied motors
+     *
+     * @param Tolerance The tolerance in ticks
+     * @param motors    The motors to set the velocity of
+     */
+    public static void setPositionTolerance(int tolerance, @NonNull DcMotorEx ... motors) {
+        for (DcMotorEx motor : motors) { motor.setTargetPositionTolerance(tolerance); }
+    }
+
+    /**
+     * Sets the target power of the supplied motors
+     *
+     * @param Power The power of the motors
+     * @param motors The motors to set the power of
+     */
+    public static void setPower(double power, @NonNull DcMotorEx ... motors) {
+        for (DcMotorEx motor : motors) { motor.setPower(power); }
     }
 }

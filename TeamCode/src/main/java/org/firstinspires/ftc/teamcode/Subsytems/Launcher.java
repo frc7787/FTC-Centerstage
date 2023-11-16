@@ -18,7 +18,7 @@ public final class Launcher {
      * @param opMode The OpMode you are using the launcher in, likely "this"
      */
     public Launcher(@NonNull OpMode opMode) {
-        launcherServo = opMode.hardwareMap.get(Servo.class, "Launcher Servo");
+        launcherServo = opMode.hardwareMap.get(Servo.class, "lS");
         controller    = opMode.gamepad1;
     }
 
@@ -26,10 +26,8 @@ public final class Launcher {
      * Runs the Launcher
      */
     public void run() {
-        if (controller.share) {
-            launcherServo.setPosition(LAUNCH_POSITION);
-        } else if (controller.options && controller.share) {
-            launcherServo.setPosition(ZERO_POSITION);
+        if (controller.right_bumper && controller.right_trigger == 1.0) {
+            launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
         }
     }
 }

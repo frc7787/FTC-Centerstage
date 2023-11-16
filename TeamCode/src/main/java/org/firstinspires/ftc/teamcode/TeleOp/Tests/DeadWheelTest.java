@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 
-import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
+import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 @TeleOp(name = "Test - Dead Wheels", group = "Test")
 public final class DeadWheelTest extends OpMode {
