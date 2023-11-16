@@ -26,10 +26,8 @@ public final class Launcher {
      * Runs the Launcher
      */
     public void run() {
-        if (controller.share) {
-            launcherServo.setPosition(LAUNCH_POSITION);
-        } else if (controller.options && controller.share) {
-            launcherServo.setPosition(0);
+        if (controller.right_bumper && controller.right_trigger == 1.0) {
+            // TO BE DONE
         }
     }
 }
