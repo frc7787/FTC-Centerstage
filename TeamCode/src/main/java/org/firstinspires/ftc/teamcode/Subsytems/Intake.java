@@ -25,7 +25,7 @@ public final class Intake {
         intakeServo = opMode.hardwareMap.get(Servo.class, "iS");
         wrist       = opMode.hardwareMap.get(Servo.class, "wS");
 
-        wrist.scaleRange(0.1, 0.9); // Linear servos don't do well at 1 and 0 so we cap them before then
+        wrist.scaleRange(0.25, 0.8); // Linear servos don't do well at 1 and 0 so we cap them before then
 
         wrist.setPosition(0.0d);
     }
@@ -38,8 +38,8 @@ public final class Intake {
         if (controller.right_bumper)          { intakeServo.setPosition(HOLD_POSITION);    }
         if (controller.right_trigger == 1.0)  { intakeServo.setPosition(OUTTAKE_POSITION); }
 
-        if (controller.dpad_down) { wrist.setPosition(0); }
-        if (controller.dpad_up)   { wrist.setPosition(0); }
+        if (controller.dpad_down) { wrist.setPosition(0.0); }
+        if (controller.dpad_up)   { wrist.setPosition(0.0); }
         if (controller.cross) { // 1st row
             wrist.setPosition(BOTTOM_WRIST_POSITION);
         }
@@ -55,6 +55,8 @@ public final class Intake {
         if (controller.options) { // Top Line
             wrist.setPosition(TOP_WRIST_POSITION);
         }
+
+        //wrist.setPosition(controller.left_trigger);
     }
 
     /**

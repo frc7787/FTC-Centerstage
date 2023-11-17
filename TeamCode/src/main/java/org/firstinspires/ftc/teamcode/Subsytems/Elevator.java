@@ -24,6 +24,9 @@ public final class Elevator {
     private final Telemetry telemetry;
     private final Gamepad controller;
     private final TouchSensor limitSwitch;
+    private long  rotateStartTime;
+
+    private int extendTargetPosition = 0;
 
     /**
      * Elevator Subsystem constructor
@@ -50,44 +53,134 @@ public final class Elevator {
     }
 
 
+//    public void run() {
+//        // This resets the encoders if the limit switch is touched
+//        if (limitSwitch.isPressed()) { MotorUtility.setMode(STOP_AND_RESET_ENCODER, rotationsMotors); }
+//
+//        if (controller.dpad_down) { // Retracted, this is the position that the robot starts in
+//            rotateStartTime = System.currentTimeMillis();
+//            extendTargetPosition = 0;
+//
+//            rotateStartTime += 1500;
+//
+//            rotate(0);
+//        }
+//        if (controller.dpad_up) { // Fully extended on the ground
+//            rotateStartTime = System.currentTimeMillis();
+//            extendTargetPosition = 1500;
+//
+//            rotateStartTime += 1500;
+//
+//            rotate(0);
+//        }
+//        if (controller.cross) { // Rotated to the first row
+//            rotateStartTime = System.currentTimeMillis();
+//            extendTargetPosition = BOTTOM_EXTEND_POSITION;
+//
+//            rotateStartTime += 1500;
+//
+//            rotate(BOTTOM_ROT_POSITION);
+//        }
+//        if (controller.square) { // Low Line
+//            rotateStartTime = System.currentTimeMillis();
+//            extendTargetPosition = LOW_EXTEND_POSITION;
+//
+//            rotateStartTime += 1500;
+//
+//            rotate(LOW_ROT_POSITION);
+//        }
+//        if (controller.circle) { // Mid Line
+//            rotateStartTime = System.currentTimeMillis();
+//            extendTargetPosition = MED_EXTEND_POSITION;
+//
+//            rotateStartTime += 1500;
+//
+//            rotate(MED_ROT_POSITION);
+//        }
+//        if (controller.triangle) { // High Line
+//            rotateStartTime = System.currentTimeMillis();
+//            extendTargetPosition = HIGH_EXTEND_POSITION;
+//
+//            rotateStartTime += 1500;
+//
+//            rotate(HIGH_ROT_POSITION);
+//        }
+//        if (controller.options) { // Basically as High as we can go
+//            rotateStartTime = System.currentTimeMillis();
+//            extendTargetPosition = TOP_EXTEND_POSITION;
+//
+//            rotateStartTime += 1500;
+//
+//            rotate(TOP_ROT_POSITION);
+//        }
+//
+//        if (rotateStartTime > 0) {
+//            if (System.currentTimeMillis() > rotateStartTime) {
+//                extend(extendTargetPosition);
+//                rotateStartTime = 0;
+//            }
+//        }
+//    }
+
     public void run() {
         // This resets the encoders if the limit switch is touched
-        if (limitSwitch.isPressed()) { MotorUtility.setMode(STOP_AND_RESET_ENCODER, rotationsMotors); }
+        if (limitSwitch.isPressed()) {
+            MotorUtility.setMode(STOP_AND_RESET_ENCODER, rotationsMotors);
+        }
 
         if (controller.dpad_down) { // Retracted, this is the position that the robot starts in
-            rotate(0);
             extend(0);
+            rotate(0);
         }
         if (controller.dpad_up) { // Fully extended on the ground
+            extend(MED_EXTEND_POSITION);
             rotate(0);
-            extend(MAX_ELEVATOR_EXTENSION);
         }
         if (controller.cross) { // Rotated to the first row
-            rotate(BOTTOM_ROT_POSITION);
             extend(BOTTOM_EXTEND_POSITION);
+            rotate(BOTTOM_ROT_POSITION);
         }
         if (controller.square) { // Low Line
+            exte
             rotate(LOW_ROT_POSITION);
-            extend(LOW_EXTEND_POSITION);
         }
         if (controller.circle) { // Mid Line
+            rotateStartTime = System.currentTimeMillis();
+            extendTargetPosition = MED_EXTEND_POSITION;
+
+            rotateStartTime += 1500;
+
             rotate(MED_ROT_POSITION);
-            extend(MED_EXTEND_POSITION);
         }
         if (controller.triangle) { // High Line
+            rotateStartTime = System.currentTimeMillis();
+            extendTargetPosition = HIGH_EXTEND_POSITION;
+
+            rotateStartTime += 1500;
+
             rotate(HIGH_ROT_POSITION);
-            extend(HIGH_EXTEND_POSITION);
         }
         if (controller.options) { // Basically as High as we can go
+            rotateStartTime = System.currentTimeMillis();
+            extendTargetPosition = TOP_EXTEND_POSITION;
+
+            rotateStartTime += 1500;
+
             rotate(TOP_ROT_POSITION);
-            extend(TOP_EXTEND_POSITION);
+        }
+
+        if (rotateStartTime > 0) {
+            if (System.currentTimeMillis() > rotateStartTime) {
+                extend(extendTargetPosition);
+                rotateStartTime = 0;
+            }
         }
     }
 
     public void runEndGame(@NonNull Gamepad controller) {
-        if (controller.left_bumper)  { rotate(HANG_POSITION);   } // To Hang Position
+        if (controller.left_bumper)  { rotate(HANG_POSITION, 0.7);   } // To Hang Position
         if (controller.right_bumper) { rotate(LAUNCH_POSITION); }
-        if (controller.dpad_right)   { rotate(420);     }
+        if (controller.dpad_right)   { rotate(420, 0.7);     }
     }
 
     /**
@@ -108,6 +201,12 @@ public final class Elevator {
         MotorUtility.setTargetPosition(position, rotationsMotors);
         MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
         MotorUtility.setPower(0.3, rotationsMotors);
+    }
+
+    private void rotate(int position, double power) {
+        MotorUtility.setTargetPosition(position, rotationsMotors);
+        MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
+        MotorUtility.setPower(power, rotationsMotors);
     }
 
 

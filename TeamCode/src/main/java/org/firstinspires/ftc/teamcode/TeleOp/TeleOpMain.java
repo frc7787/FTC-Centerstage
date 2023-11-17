@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsytems.*;
+import org.firstinspires.ftc.teamcode.TeleOp.Utility.ElevatorPositions;
 
 @TeleOp(name = "TeleOp 2023/2024 - Use This One", group = "Production")
 public class TeleOpMain extends OpMode {
@@ -21,11 +22,15 @@ public class TeleOpMain extends OpMode {
         intake    = new Intake(this);
         hanger    = new Hanger(this);
         launcher  = new Launcher(this);
+        //ElevatorPositions.readCSV();
+        ElevatorPositions.updateElevatorConstants();
+
     }
 
     private void normal() {
         elevator.run();
         intake.run();
+        intake.debug();
         driveBase.run();
     }
 
@@ -49,7 +54,7 @@ public class TeleOpMain extends OpMode {
             normal();
         }
 
-        elevator.debug();
-        telemetry.update();
+        //elevator.debug();
+        //telemetry.update();
     }
 }
