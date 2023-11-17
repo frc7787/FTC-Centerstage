@@ -5,6 +5,7 @@ public abstract class Constants {
     // ---------- ELEVATOR CONSTANTS ---------- //
 
     public static int MAX_ELEVATOR_EXTENSION = 3045;
+    public static int HALF_ELEVATOR_EXTENSION = 1520;
 
     public static  int BOTTOM_EXTEND_POSITION = 1890;
     public static  int BOTTOM_ROT_POSITION    = 528;

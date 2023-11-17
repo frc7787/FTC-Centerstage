@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.*;
 
-public final class Hanger {
+public class Hanger {
 
     private final Servo left, right;
     private final Gamepad controller;

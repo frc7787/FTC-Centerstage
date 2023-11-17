@@ -17,7 +17,7 @@ public class TeleOpMain extends OpMode {
     private boolean endGame = false;
     
     @Override public void init() {
-        driveBase = new DriveBase(this);
+        driveBase = new DriveBase(hardwareMap);
         elevator  = new Elevator(this);
         intake    = new Intake(this);
         hanger    = new Hanger(this);
@@ -31,14 +31,14 @@ public class TeleOpMain extends OpMode {
         elevator.run();
         intake.run();
         intake.debug();
-        driveBase.run();
+        driveBase.run(gamepad1);
     }
 
     private void endGame() {
         elevator.runEndGame(gamepad2);
         hanger.run();
         launcher.run();
-        driveBase.run();
+        driveBase.run(gamepad1);
     }
 
     @Override public void loop() {

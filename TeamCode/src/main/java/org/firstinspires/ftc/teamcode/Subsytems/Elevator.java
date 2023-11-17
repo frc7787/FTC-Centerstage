@@ -24,7 +24,7 @@ public final class Elevator {
     private final Telemetry telemetry;
     private final Gamepad controller;
     private final TouchSensor limitSwitch;
-    private long  rotateStartTime;
+    private long  rotateStartTime = 0;
 
     private int extendTargetPosition = 0;
 
@@ -141,39 +141,20 @@ public final class Elevator {
             rotate(BOTTOM_ROT_POSITION);
         }
         if (controller.square) { // Low Line
-            exte
+            extend(LOW_EXTEND_POSITION);
             rotate(LOW_ROT_POSITION);
         }
         if (controller.circle) { // Mid Line
-            rotateStartTime = System.currentTimeMillis();
-            extendTargetPosition = MED_EXTEND_POSITION;
-
-            rotateStartTime += 1500;
-
+            extend(LOW_ROT_POSITION);
             rotate(MED_ROT_POSITION);
         }
         if (controller.triangle) { // High Line
-            rotateStartTime = System.currentTimeMillis();
-            extendTargetPosition = HIGH_EXTEND_POSITION;
-
-            rotateStartTime += 1500;
-
+            extend(HIGH_EXTEND_POSITION);
             rotate(HIGH_ROT_POSITION);
         }
         if (controller.options) { // Basically as High as we can go
-            rotateStartTime = System.currentTimeMillis();
-            extendTargetPosition = TOP_EXTEND_POSITION;
-
-            rotateStartTime += 1500;
-
+            extend(HIGH_ROT_POSITION);
             rotate(TOP_ROT_POSITION);
-        }
-
-        if (rotateStartTime > 0) {
-            if (System.currentTimeMillis() > rotateStartTime) {
-                extend(extendTargetPosition);
-                rotateStartTime = 0;
-            }
         }
     }
 

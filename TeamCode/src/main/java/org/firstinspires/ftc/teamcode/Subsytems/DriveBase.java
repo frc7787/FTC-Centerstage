@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.*;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.*;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
@@ -17,28 +17,22 @@ public final class DriveBase {
 
     private double motorPowerRatio;
     private double drive, strafe, turn;
-    private double frontLeftPower, frontRightPower, backLeftPower, backRightPower;
+    private double fLPower, fRPower, bLPower, bRPower;
 
-    private final Gamepad controller;
-    private final Telemetry telemetry;
-
-    private final DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
+    private final DcMotorImplEx fL, fR, bL, bR;
 
     /**
      * Drive Base Subsystem Constructor
      * @param opMode The opMode you are using the drive base in, likely "this"
      */
-    public DriveBase(@NonNull OpMode opMode) {
-        telemetry  = opMode.telemetry;
-        controller = opMode.gamepad1;
+    public DriveBase(@NonNull HardwareMap hardwareMap) {
+        fL  = hardwareMap.get(DcMotorImplEx.class, "fldm");
+        fR  = hardwareMap.get(DcMotorImplEx.class, "frdm");
+        bL  = hardwareMap.get(DcMotorImplEx.class, "bldm");
+        bR  = hardwareMap.get(DcMotorImplEx.class, "brdm");
 
-        frontLeft  = opMode.hardwareMap.get(DcMotorImplEx.class, "fldm");
-        frontRight = opMode.hardwareMap.get(DcMotorImplEx.class, "frdm");
-        backLeft   = opMode.hardwareMap.get(DcMotorImplEx.class, "bldm");
-        backRight  = opMode.hardwareMap.get(DcMotorImplEx.class, "brdm");
-
-        MotorUtility.setZeroPowerBehaviour(BRAKE, frontLeft, frontRight, backLeft, backRight);
-        MotorUtility.setDirection(REVERSE, frontLeft, backLeft);
+        MotorUtility.setZeroPowerBehaviour(BRAKE, fL, fR, bL, bR);
+        MotorUtility.setDirection(REVERSE, fL, bL);
     }
 
 
@@ -56,42 +50,38 @@ public final class DriveBase {
     /**
      * Main function to control the drive base
      */
-    public void run() {
+    public void run(@NonNull Gamepad controller) {
         drive  = deadZone(controller.left_stick_y) * -1;
         strafe = deadZone(controller.left_stick_x);
         turn   = deadZone(controller.right_stick_x);
 
         motorPowerRatio = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);
 
-        frontLeftPower  = (drive + strafe + turn) / motorPowerRatio;
-        frontRightPower = (drive - strafe - turn) / motorPowerRatio;
-        backLeftPower   = (drive - strafe + turn) / motorPowerRatio;
-        backRightPower  = (drive + strafe - turn) / motorPowerRatio;
+        fLPower = (drive + strafe + turn) / motorPowerRatio;
+        fRPower = (drive - strafe - turn) / motorPowerRatio;
+        bLPower = (drive - strafe + turn) / motorPowerRatio;
+        bRPower = (drive + strafe - turn) / motorPowerRatio;
 
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
+        fL.setPower(fLPower);
+        fR.setPower(fRPower);
+        bL.setPower(bLPower);
+        bR.setPower(bRPower);
     }
 
 
     /**
      * Provides various debug information about the drive base
      */
-    public void debug() {
+    public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Drive Base Debug\n");
+
         telemetry.addData("Drive Power", drive);
         telemetry.addData("Strafe Power", strafe);
         telemetry.addData("Turn Power", turn);
         telemetry.addData("Motor Power Ratio", motorPowerRatio);
-
-        telemetry.addLine("\nDrive Base Motor Powers\n");
-
-        telemetry.addData("Front Left Drive Motor Power", frontLeftPower);
-        telemetry.addData("Front Right Drive Motor Power", frontRightPower);
-        telemetry.addData("Back Left Drive Motor Power", backLeftPower);
-        telemetry.addData("Back Right Drive Motor Power", backRightPower);
-
-        telemetry.update();
+        telemetry.addData("Front Left Drive Motor Power", fLPower);
+        telemetry.addData("Front Right Drive Motor Power", fRPower);
+        telemetry.addData("Back Left Drive Motor Power", bLPower);
+        telemetry.addData("Back Right Drive Motor Power", bRPower);
     }
 }

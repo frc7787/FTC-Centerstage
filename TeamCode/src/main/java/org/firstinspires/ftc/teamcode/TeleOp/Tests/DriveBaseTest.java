@@ -10,10 +10,10 @@ public final class DriveBaseTest extends OpMode {
 
     public DriveBase driveBase;
 
-    @Override public void init() { driveBase = new DriveBase(this); }
+    @Override public void init() { driveBase = new DriveBase(hardwareMap); }
 
     @Override public void loop() {
-        driveBase.run();
-        driveBase.debug();
+        driveBase.run(gamepad1);
+        driveBase.debug(telemetry);
     }
 }
