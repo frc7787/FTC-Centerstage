@@ -41,7 +41,7 @@ public final class Elevator {
         extensionMotors = new DcMotorImplEx[]{leftExtend, rightExtend};
         rotationsMotors = new DcMotorImplEx[]{leftRotate, rightRotate};
 
-        telemetry = opMode.telemetry;
+        telemetry  = opMode.telemetry;
         controller = opMode.gamepad2;
 
         rightExtend.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -62,7 +62,7 @@ public final class Elevator {
             rotate(0);
             extend(MAX_ELEVATOR_EXTENSION);
         }
-        if (controller.x) { // Rotated to the first row
+        if (controller.cross) { // Rotated to the first row
             rotate(BOTTOM_ROT_POSITION);
             extend(BOTTOM_EXTEND_POSITION);
         }
@@ -86,7 +86,8 @@ public final class Elevator {
 
     public void runEndGame(@NonNull Gamepad controller) {
         if (controller.left_bumper)  { rotate(HANG_POSITION);   } // To Hang Position
-        if (controller.right_bumper) { rotate(LAUNCH_POSITION); } // To Launch Position
+        if (controller.right_bumper) { rotate(LAUNCH_POSITION); }
+        if (controller.dpad_right)   { rotate(420);     }
     }
 
     /**
@@ -96,7 +97,7 @@ public final class Elevator {
     private void extend(int position) {
         MotorUtility.setTargetPosition(position, extensionMotors);
         MotorUtility.setMode(RUN_TO_POSITION, extensionMotors);
-        MotorUtility.setPower(0.5, extensionMotors);
+        MotorUtility.setPower(0.9, extensionMotors);
     }
 
     /**
@@ -106,7 +107,7 @@ public final class Elevator {
     private void rotate(int position) {
         MotorUtility.setTargetPosition(position, rotationsMotors);
         MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
-        MotorUtility.setPower(0.5, rotationsMotors);
+        MotorUtility.setPower(0.3, rotationsMotors);
     }
 
 

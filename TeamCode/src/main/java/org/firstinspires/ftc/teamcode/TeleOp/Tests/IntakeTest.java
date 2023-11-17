@@ -13,5 +13,8 @@ public class IntakeTest extends OpMode {
 
     @Override public void init() { intake = new Intake(this); }
 
-    @Override public void loop() { intake.run(); }
+    @Override public void loop() {
+        intake.run();
+        intake.debug();
+    }
 }

@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public final class Launcher {
 
     private final Gamepad controller;
@@ -26,7 +28,7 @@ public final class Launcher {
      * Runs the Launcher
      */
     public void run() {
-        if (controller.right_bumper && controller.right_trigger == 1.0) {
+        if (controller.right_bumper && controller.right_trigger > 0.9) {
             launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
         }
     }

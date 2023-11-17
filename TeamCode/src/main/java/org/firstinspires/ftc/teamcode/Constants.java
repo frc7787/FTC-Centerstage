@@ -21,8 +21,8 @@ public abstract class Constants {
     public static final int TOP_EXTEND_POSITION = 3045;
     public static final int TOP_ROT_POSITION    = 1107;
 
-    public static final int LAUNCH_POSITION = 420;
-    public static final int HANG_POSITION   = 1630;
+    public static final int LAUNCH_POSITION = 1630;
+    public static final int HANG_POSITION   = 2326;
 
 
     // ----------- DRIVE CONSTANTS ---------- //
@@ -37,7 +37,7 @@ public abstract class Constants {
     public static final double HOLD_POSITION    = 0.47d;
     public static final double OUTTAKE_POSITION = 0.22d;
 
-    public static final double BOTTOM_WRIST_POSITION = 1.0;
+    public static final double BOTTOM_WRIST_POSITION = 0.9;
     public static final double LOW_WRIST_POSITION    = 0.9;
     public static final double MED_WRIST_POSITION    = 0.75;
     public static final double HIGH_WRIST_POSITION   = 0.6;
@@ -45,7 +45,7 @@ public abstract class Constants {
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 
-    public static final double LAUNCHER_SERVO_POSITION = 1.0d;
+    public static final double LAUNCHER_SERVO_POSITION = 1;
 
     // ---------- CAMERA CONSTANTS ---------- //
     public static final int IMAGE_WIDTH = 340;

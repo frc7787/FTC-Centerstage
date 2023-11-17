@@ -10,14 +10,15 @@ public class ServoTest extends OpMode {
 
     public Servo left, right;
 
-    public void init() {
-        left  = hardwareMap.get(Servo.class, "Left Hook Servo");
-        right = hardwareMap.get(Servo.class, "Right Hook Servo");
+
+    @Override public void init() {
+        left  = hardwareMap.get(Servo.class, "lhS");
+        right = hardwareMap.get(Servo.class, "rhS");
         left.setDirection(Servo.Direction.REVERSE);
     }
 
-    public void loop() {
-        left.setPosition(1d);
-        right.setPosition(1d);
+    @Override public void loop() {
+        left.setPosition(1.0d);
+        right.setPosition(1.0d);
     }
 }

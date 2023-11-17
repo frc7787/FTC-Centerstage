@@ -13,7 +13,7 @@ public class ElevatorTest extends OpMode {
     @Override public void init() { elevator = new Elevator(this); }
 
     @Override public void loop() {
-        elevator.run(gamepad1);
+        elevator.run();
         elevator.debug();
     }
 }

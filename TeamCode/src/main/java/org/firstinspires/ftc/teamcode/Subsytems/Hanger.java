@@ -12,15 +12,16 @@ public final class Hanger {
     private final Servo left, right;
     private final Gamepad controller;
 
+
     /**
      * Hanger Subsystem Constructor
      * @param opMode The opMode you are using the hanger in, likely "this"
      */
     public Hanger(@NonNull OpMode opMode) {
-        controller = opMode.gamepad1;
+        controller = opMode.gamepad2;
 
-        left  = opMode.hardwareMap.get(Servo.class, "Left Hook Servo");
-        right = opMode.hardwareMap.get(Servo.class, "Right Hook Servo");
+        left  = opMode.hardwareMap.get(Servo.class, "lhS");
+        right = opMode.hardwareMap.get(Servo.class, "rhS");
 
         left.setDirection(REVERSE);
     }
@@ -29,9 +30,9 @@ public final class Hanger {
      * Releases the Hanging Mechanism
      */
     public void run() {
-        if (controller.left_bumper && controller.left_trigger == 1.0) {
-            left.setPosition(0.0d);
-            right.setPosition(0.0d);
+        if (controller.cross) {
+            left.setPosition(1.0d);
+            right.setPosition(1.0d);
         }
     }
 }

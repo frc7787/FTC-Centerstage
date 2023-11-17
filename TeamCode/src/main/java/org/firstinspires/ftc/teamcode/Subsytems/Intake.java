@@ -20,10 +20,14 @@ public final class Intake {
      * @param opMode The opMode you are using the Intake in, likely "this"
      */
     public Intake(@NonNull OpMode opMode) {
-        controller  = opMode.gamepad1;
+        controller  = opMode.gamepad2;
         telemetry   = opMode.telemetry;
         intakeServo = opMode.hardwareMap.get(Servo.class, "iS");
         wrist       = opMode.hardwareMap.get(Servo.class, "wS");
+
+        wrist.scaleRange(0.1, 0.9); // Linear servos don't do well at 1 and 0 so we cap them before then
+
+        wrist.setPosition(0.0d);
     }
 
     /**
@@ -34,8 +38,9 @@ public final class Intake {
         if (controller.right_bumper)          { intakeServo.setPosition(HOLD_POSITION);    }
         if (controller.right_trigger == 1.0)  { intakeServo.setPosition(OUTTAKE_POSITION); }
 
-
-        if (controller.x) { // 1st row
+        if (controller.dpad_down) { wrist.setPosition(0); }
+        if (controller.dpad_up)   { wrist.setPosition(0); }
+        if (controller.cross) { // 1st row
             wrist.setPosition(BOTTOM_WRIST_POSITION);
         }
         if (controller.square) { // Low Line
@@ -53,19 +58,9 @@ public final class Intake {
     }
 
     /**
-     * Puts the intake in the release position
+     * Puts the intake in the intake position
      */
     public void release() { intakeServo.setPosition(INTAKE_POSITION); }
-
-    /**
-     * Puts the intake in the hold position
-     */
-    public void hold() { intakeServo.setPosition(HOLD_POSITION); }
-
-    /**
-     * Puts the intake in the outtake position
-     */
-    public void outtake() { intakeServo.setPosition(OUTTAKE_POSITION); }
 
 
     /**
@@ -76,6 +71,9 @@ public final class Intake {
 
         telemetry.addData("Intake Position", intakeServo.getPosition());
         telemetry.addData("Intake Direction", intakeServo.getDirection());
+
+        telemetry.addData("Wrist Position", wrist.getPosition());
+        telemetry.addData("Wrist Direction", wrist.getDirection());
 
         telemetry.update();
      }

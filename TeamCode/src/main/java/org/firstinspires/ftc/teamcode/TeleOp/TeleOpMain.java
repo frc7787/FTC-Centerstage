@@ -23,25 +23,33 @@ public class TeleOpMain extends OpMode {
         launcher  = new Launcher(this);
     }
 
+    private void normal() {
+        elevator.run();
+        intake.run();
+        driveBase.run();
+    }
+
+    private void endGame() {
+        elevator.runEndGame(gamepad2);
+        hanger.run();
+        launcher.run();
+        driveBase.run();
+    }
+
     @Override public void loop() {
 
-        // Transition to endgame
-        if (endGame && gamepad1.touchpad && gamepad1.left_trigger == 1 || gamepad2.touchpad && gamepad2.left_trigger == 1) { endGame = false; }
-
-        // Leave endgame if we want
-        if (gamepad1.touchpad && gamepad1.left_trigger == 1 || gamepad2.touchpad && gamepad2.left_trigger == 1) { endGame = true; }
+        // Enter Endgame
+        if (gamepad2.left_trigger > 0.1 && gamepad2.right_trigger > 0.1) { endGame = true; }
 
         if (endGame) {
-            elevator.runEndGame(gamepad2);
-            hanger.run();
-            //launcher.run();
+            telemetry.addLine("End Game");
+            endGame();
         } else {
-            elevator.run();
-            intake.run();
+            telemetry.addLine("Normal Period");
+            normal();
         }
 
-        driveBase.run();
-
-        //launcher.run();
+        elevator.debug();
+        telemetry.update();
     }
 }
