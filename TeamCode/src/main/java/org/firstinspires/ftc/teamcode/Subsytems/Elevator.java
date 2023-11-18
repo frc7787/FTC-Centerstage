@@ -23,10 +23,10 @@ public final class Elevator {
     private final DcMotorImplEx[] extensionMotors, rotationsMotors;
     private final Telemetry telemetry;
     private final Gamepad controller;
-    private final TouchSensor limitSwitch;
-    private long  rotateStartTime = 0;
+    private final TouchSensor extLimitSwitch, rotLimitSwitch;
+    private boolean checkRotLimitSwitch, checkExtLimitSwitch = true;
+    private double defaultPower=0.3;
 
-    private int extendTargetPosition = 0;
 
     /**
      * Elevator Subsystem constructor
@@ -39,7 +39,8 @@ public final class Elevator {
         leftRotate  = opMode.hardwareMap.get(DcMotorImplEx.class, "lWorm");
         rightRotate = opMode.hardwareMap.get(DcMotorImplEx.class, "rWorm");
 
-        limitSwitch = opMode.hardwareMap.get(TouchSensor.class, "lmS");
+        extLimitSwitch = opMode.hardwareMap.get(TouchSensor.class, "lmS");
+        rotLimitSwitch = opMode.hardwareMap.get(TouchSensor.class, "rmS");
 
         extensionMotors = new DcMotorImplEx[]{leftExtend, rightExtend};
         rotationsMotors = new DcMotorImplEx[]{leftRotate, rightRotate};
@@ -50,125 +51,99 @@ public final class Elevator {
         rightExtend.setDirection(DcMotorSimple.Direction.REVERSE);
 
         MotorUtility.setMode(STOP_AND_RESET_ENCODER, leftExtend, rightExtend, leftRotate, rightRotate);
+        init();
     }
 
 
-//    public void run() {
-//        // This resets the encoders if the limit switch is touched
-//        if (limitSwitch.isPressed()) { MotorUtility.setMode(STOP_AND_RESET_ENCODER, rotationsMotors); }
-//
-//        if (controller.dpad_down) { // Retracted, this is the position that the robot starts in
-//            rotateStartTime = System.currentTimeMillis();
-//            extendTargetPosition = 0;
-//
-//            rotateStartTime += 1500;
-//
-//            rotate(0);
-//        }
-//        if (controller.dpad_up) { // Fully extended on the ground
-//            rotateStartTime = System.currentTimeMillis();
-//            extendTargetPosition = 1500;
-//
-//            rotateStartTime += 1500;
-//
-//            rotate(0);
-//        }
-//        if (controller.cross) { // Rotated to the first row
-//            rotateStartTime = System.currentTimeMillis();
-//            extendTargetPosition = BOTTOM_EXTEND_POSITION;
-//
-//            rotateStartTime += 1500;
-//
-//            rotate(BOTTOM_ROT_POSITION);
-//        }
-//        if (controller.square) { // Low Line
-//            rotateStartTime = System.currentTimeMillis();
-//            extendTargetPosition = LOW_EXTEND_POSITION;
-//
-//            rotateStartTime += 1500;
-//
-//            rotate(LOW_ROT_POSITION);
-//        }
-//        if (controller.circle) { // Mid Line
-//            rotateStartTime = System.currentTimeMillis();
-//            extendTargetPosition = MED_EXTEND_POSITION;
-//
-//            rotateStartTime += 1500;
-//
-//            rotate(MED_ROT_POSITION);
-//        }
-//        if (controller.triangle) { // High Line
-//            rotateStartTime = System.currentTimeMillis();
-//            extendTargetPosition = HIGH_EXTEND_POSITION;
-//
-//            rotateStartTime += 1500;
-//
-//            rotate(HIGH_ROT_POSITION);
-//        }
-//        if (controller.options) { // Basically as High as we can go
-//            rotateStartTime = System.currentTimeMillis();
-//            extendTargetPosition = TOP_EXTEND_POSITION;
-//
-//            rotateStartTime += 1500;
-//
-//            rotate(TOP_ROT_POSITION);
-//        }
-//
-//        if (rotateStartTime > 0) {
-//            if (System.currentTimeMillis() > rotateStartTime) {
-//                extend(extendTargetPosition);
-//                rotateStartTime = 0;
-//            }
-//        }
-//    }
+    public void init(){
+        MotorUtility.setPower(0, rotationsMotors);
+        MotorUtility.setPower(0, extensionMotors);
 
-    public void run() {
+    }
+    public void run(boolean l_EndGame) {
         // This resets the encoders if the limit switch is touched
-        if (limitSwitch.isPressed()) {
-            MotorUtility.setMode(STOP_AND_RESET_ENCODER, rotationsMotors);
+        if (checkExtLimitSwitch && extLimitSwitch.isPressed()) {
+            leftExtend.setPower(0);
+            rightExtend.setPower(0);
+
+            leftExtend.setMode(STOP_AND_RESET_ENCODER);
+            rightExtend.setMode(STOP_AND_RESET_ENCODER);
+
+            checkExtLimitSwitch = false;
         }
 
-        if (controller.dpad_down) { // Retracted, this is the position that the robot starts in
-            extend(0);
-            rotate(0);
+        if (checkRotLimitSwitch && rotLimitSwitch.isPressed()) {
+            leftRotate.setPower(0);
+            rightRotate.setPower(0);
+
+            leftRotate.setMode(STOP_AND_RESET_ENCODER);
+            rightRotate.setMode(STOP_AND_RESET_ENCODER);
+
+            checkRotLimitSwitch = false;
         }
-        if (controller.dpad_up) { // Fully extended on the ground
-            extend(MED_EXTEND_POSITION);
-            rotate(0);
+
+        if(!l_EndGame) {//run this codeonly before endgame
+            if (controller.dpad_down) { // Retracted, this is the position that the robot starts in
+                extend(0);
+                rotate(0);
+
+            }
+            if (controller.dpad_up) { // Fully extended on the ground
+                extend(MED_EXTEND_POSITION);
+                rotate(0);
+            }
+            if (controller.cross) { // Rotated to the first row
+                extend(BOTTOM_EXTEND_POSITION);
+                rotate(BOTTOM_ROT_POSITION);
+            }
+            if (controller.square) { // Low Line
+                extend(LOW_EXTEND_POSITION);
+                rotate(LOW_ROT_POSITION);
+            }
+            if (controller.circle) { // Mid Line
+                extend(LOW_ROT_POSITION);
+                rotate(MED_ROT_POSITION);
+            }
+            if (controller.triangle) { // High Line
+                extend(HIGH_EXTEND_POSITION);
+                rotate(HIGH_ROT_POSITION);
+            }
+            if (controller.options) { // Basically as High as we can go
+                extend(HIGH_ROT_POSITION);
+                rotate(TOP_ROT_POSITION);
+            }
         }
-        if (controller.cross) { // Rotated to the first row
-            extend(BOTTOM_EXTEND_POSITION);
-            rotate(BOTTOM_ROT_POSITION);
-        }
-        if (controller.square) { // Low Line
-            extend(LOW_EXTEND_POSITION);
-            rotate(LOW_ROT_POSITION);
-        }
-        if (controller.circle) { // Mid Line
-            extend(LOW_ROT_POSITION);
-            rotate(MED_ROT_POSITION);
-        }
-        if (controller.triangle) { // High Line
-            extend(HIGH_EXTEND_POSITION);
-            rotate(HIGH_ROT_POSITION);
-        }
-        if (controller.options) { // Basically as High as we can go
-            extend(HIGH_ROT_POSITION);
-            rotate(TOP_ROT_POSITION);
+        else {//run this code only in endgme
+            if (controller.left_bumper) {
+                rotate(HANG_POSITION, 0.7);
+            } // To Hang Position
+            else if (controller.right_bumper) {
+                rotate(LAUNCH_POSITION);
+            }
+            else if (controller.dpad_down) {
+                rotate(420, 0.7);
+            }
         }
     }
 
-    public void runEndGame(@NonNull Gamepad controller) {
-        if (controller.left_bumper)  { rotate(HANG_POSITION, 0.7);   } // To Hang Position
-        if (controller.right_bumper) { rotate(LAUNCH_POSITION); }
-        if (controller.dpad_right)   { rotate(420, 0.7);     }
-    }
+
+
+
+
+//    public void runEndGame(@NonNull Gamepad controller) {
+//        if (controller.left_bumper)  { rotate(HANG_POSITION, 0.7);   } // To Hang Position
+//        if (controller.right_bumper) { rotate(LAUNCH_POSITION); }
+//        if (controller.dpad_down)    { rotate(420, 0.7);     }
+//    }
 
     /**
      * Moves the elevator to the desired position
      * @param position The position to extend the elevator to
      */
     public void extend(int position) {
+        if (position==0){
+            checkExtLimitSwitch=true;
+        }
         MotorUtility.setTargetPosition(position, extensionMotors);
         MotorUtility.setMode(RUN_TO_POSITION, extensionMotors);
         MotorUtility.setPower(0.9, extensionMotors);
@@ -179,12 +154,13 @@ public final class Elevator {
      * @param position The position to rotate to
      */
     private void rotate(int position) {
-        MotorUtility.setTargetPosition(position, rotationsMotors);
-        MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
-        MotorUtility.setPower(0.3, rotationsMotors);
+        rotate(position,defaultPower);
     }
 
     private void rotate(int position, double power) {
+        if (position == 0 ) {
+            checkExtLimitSwitch=true;
+        }
         MotorUtility.setTargetPosition(position, rotationsMotors);
         MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
         MotorUtility.setPower(power, rotationsMotors);
@@ -203,6 +179,8 @@ public final class Elevator {
 
         telemetry.addData("Left Rotation Motor Target Position", leftRotate.getTargetPosition());
         telemetry.addData("Right Rotation Motor Target Position", rightRotate.getTargetPosition());
+        telemetry.addData("zeroing elevator", checkExtLimitSwitch);
+        telemetry.addData("zeroing rotation", checkRotLimitSwitch);
 
         telemetry.update();
     }

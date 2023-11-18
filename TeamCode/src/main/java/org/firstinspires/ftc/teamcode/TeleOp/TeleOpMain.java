@@ -35,7 +35,7 @@ public class TeleOpMain extends OpMode {
     }
 
     private void endGame() {
-        elevator.runEndGame(gamepad2);
+        elevator.runEndGame(true);
         hanger.run();
         launcher.run();
         driveBase.run(gamepad1);
