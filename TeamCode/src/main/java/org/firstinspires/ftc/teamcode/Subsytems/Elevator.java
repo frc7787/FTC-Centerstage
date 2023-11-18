@@ -168,7 +168,7 @@ public final class Elevator {
      * Moves the elevator to the desired position
      * @param position The position to extend the elevator to
      */
-    private void extend(int position) {
+    public void extend(int position) {
         MotorUtility.setTargetPosition(position, extensionMotors);
         MotorUtility.setMode(RUN_TO_POSITION, extensionMotors);
         MotorUtility.setPower(0.9, extensionMotors);

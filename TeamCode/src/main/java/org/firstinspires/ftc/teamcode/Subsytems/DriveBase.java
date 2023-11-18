@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.*;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.*;
@@ -14,6 +15,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 public final class DriveBase {
+
+    public enum StrafeDirections {
+        RIGHT,
+        LEFT
+    }
 
     private double motorPowerRatio;
     private double drive, strafe, turn;
@@ -66,6 +72,30 @@ public final class DriveBase {
         fR.setPower(fRPower);
         bL.setPower(bLPower);
         bR.setPower(bRPower);
+    }
+
+    public void strafe(StrafeDirections direction, int duration, LinearOpMode opMode) {
+        double power = 0.5;
+        double negativePower = -0.5;
+
+        if (direction == StrafeDirections.RIGHT) {
+            fL.setPower(power);
+            fR.setPower(negativePower);
+            bL.setPower(negativePower);
+            bR.setPower(power);
+            opMode.sleep(duration);
+        } else if (direction == StrafeDirections.LEFT) {
+            fL.setPower(negativePower);
+            fR.setPower(power);
+            bL.setPower(power);
+            bR.setPower(negativePower);
+            opMode.sleep(duration);
+        }
+
+        fL.setPower(0);
+        fR.setPower(0);
+        bL.setPower(0);
+        bR.setPower(0);
     }
 
 
