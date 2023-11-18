@@ -28,14 +28,14 @@ public class TeleOpMain extends OpMode {
     }
 
     private void normal() {
-        elevator.run();
+        elevator.run(false);
         intake.run();
         intake.debug();
         driveBase.run(gamepad1);
     }
 
     private void endGame() {
-        elevator.runEndGame(true);
+        elevator.run(true);
         hanger.run();
         launcher.run();
         driveBase.run(gamepad1);
