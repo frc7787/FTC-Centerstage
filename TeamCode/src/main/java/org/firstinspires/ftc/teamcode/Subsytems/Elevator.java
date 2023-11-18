@@ -101,7 +101,7 @@ public final class Elevator {
                 rotate(LOW_ROT_POSITION);
             }
             if (controller.circle) { // Mid Line
-                extend(LOW_ROT_POSITION);
+                extend(MED_ROT_POSITION);
                 rotate(MED_ROT_POSITION);
             }
             if (controller.triangle) { // High Line
@@ -109,7 +109,7 @@ public final class Elevator {
                 rotate(HIGH_ROT_POSITION);
             }
             if (controller.options) { // Basically as High as we can go
-                extend(HIGH_ROT_POSITION);
+                extend(TOP_ROT_POSITION);
                 rotate(TOP_ROT_POSITION);
             }
         }
@@ -142,7 +142,7 @@ public final class Elevator {
      */
     public void extend(int position) {
         if (position==0){
-            checkExtLimitSwitch=true;
+           checkExtLimitSwitch=true;
         }
         MotorUtility.setTargetPosition(position, extensionMotors);
         MotorUtility.setMode(RUN_TO_POSITION, extensionMotors);
@@ -159,7 +159,7 @@ public final class Elevator {
 
     private void rotate(int position, double power) {
         if (position == 0 ) {
-            checkExtLimitSwitch=true;
+            checkRotLimitSwitch=true;
         }
         MotorUtility.setTargetPosition(position, rotationsMotors);
         MotorUtility.setMode(RUN_TO_POSITION, rotationsMotors);
@@ -181,6 +181,8 @@ public final class Elevator {
         telemetry.addData("Right Rotation Motor Target Position", rightRotate.getTargetPosition());
         telemetry.addData("zeroing elevator", checkExtLimitSwitch);
         telemetry.addData("zeroing rotation", checkRotLimitSwitch);
+        telemetry.addData("LS extension", extLimitSwitch.isPressed());
+        telemetry.addData("LS rotation", rotLimitSwitch.isPressed());
 
         telemetry.update();
     }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto.Production;
 
 import static org.firstinspires.ftc.teamcode.Constants.HIGH_EXTEND_POSITION;
+import static org.firstinspires.ftc.teamcode.Constants.LOW_EXTEND_POSITION;
 import static org.firstinspires.ftc.teamcode.Constants.MED_EXTEND_POSITION;
 
 import android.annotation.SuppressLint;
@@ -80,15 +81,24 @@ public class AutoModeRed extends LinearOpMode {
 
             if (location == PropDetectorRed.SkystoneLocation.LEFT) {
                 drive.strafe(DriveBase.StrafeDirections.LEFT, 600, this);
-                elevator.extend(MED_EXTEND_POSITION);
+                elevator.extend(1500);
+                sleep(3000);
                 intake.release();
+                elevator.extend(0);
+                drive.driveBackwards(500, this);
             } else if (location == PropDetectorRed.SkystoneLocation.RIGHT) {
-                elevator.extend(HIGH_EXTEND_POSITION);
+                elevator.extend(MED_EXTEND_POSITION);
+                sleep(3000);
                 intake.release();
+                elevator.extend(0);
+                drive.driveBackwards(500, this);
             } else {
                 drive.strafe(DriveBase.StrafeDirections.RIGHT, 600, this);
-                elevator.extend(MED_EXTEND_POSITION);
+                elevator.extend(1500);
+                sleep(3000);
                 intake.release();
+                elevator.extend(0);
+                drive.driveBackwards(500, this);
             }
 
             // more robot logic...

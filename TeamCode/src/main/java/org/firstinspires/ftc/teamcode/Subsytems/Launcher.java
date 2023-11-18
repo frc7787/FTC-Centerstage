@@ -22,6 +22,7 @@ public final class Launcher {
     public Launcher(@NonNull OpMode opMode) {
         launcherServo = opMode.hardwareMap.get(Servo.class, "lS");
         controller    = opMode.gamepad1;
+        launcherServo.setPosition(0.2);
     }
 
     /**

@@ -98,6 +98,16 @@ public final class DriveBase {
         bR.setPower(0);
     }
 
+    public void driveBackwards(int duration, LinearOpMode opMode) {
+        double power = -0.5;
+
+        fL.setPower(power);
+        fR.setPower(power);
+        bL.setPower(power);
+        bR.setPower(power);
+        opMode.sleep(duration);
+    }
+
 
     /**
      * Provides various debug information about the drive base

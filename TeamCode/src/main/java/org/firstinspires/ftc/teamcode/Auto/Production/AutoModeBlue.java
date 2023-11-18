@@ -77,17 +77,26 @@ public class AutoModeBlue extends LinearOpMode {
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
 
-            if (location == PropDetectorBlue.SkystoneLocation.LEFT) {
-                drive.strafe(DriveBase.StrafeDirections.LEFT, 600, this);
-                elevator.extend(MED_EXTEND_POSITION);
-                intake.release();
-            } else if (location == PropDetectorBlue.SkystoneLocation.RIGHT) {
-                elevator.extend(HIGH_EXTEND_POSITION);
-                intake.release();
-            } else {
+            if (location == PropDetectorBlue.SkystoneLocation.RIGHT) {
                 drive.strafe(DriveBase.StrafeDirections.RIGHT, 600, this);
-                elevator.extend(MED_EXTEND_POSITION);
+                elevator.extend(1500);
+                sleep(3000);
                 intake.release();
+                elevator.extend(0);
+                drive.driveBackwards(500, this);
+            } else if (location == PropDetectorBlue.SkystoneLocation.LEFT) {
+                elevator.extend(MED_EXTEND_POSITION);
+                sleep(3000);
+                intake.release();
+                elevator.extend(0);
+                drive.driveBackwards(500, this);
+            } else {
+                drive.strafe(DriveBase.StrafeDirections.LEFT, 600, this);
+                elevator.extend(1500);
+                sleep(3000);
+                intake.release();
+                elevator.extend(0);
+                drive.driveBackwards(500, this);
             }
 
             // more robot logic...
