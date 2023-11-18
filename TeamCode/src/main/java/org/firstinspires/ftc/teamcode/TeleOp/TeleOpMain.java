@@ -30,7 +30,7 @@ public class TeleOpMain extends OpMode {
     private void normal() {
         elevator.run(false);
         intake.run();
-        intake.debug();
+        //elevator.debug();
         driveBase.run(gamepad1);
     }
 

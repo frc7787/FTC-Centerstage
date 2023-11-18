@@ -25,7 +25,7 @@ public final class Elevator {
     private final Gamepad controller;
     private final TouchSensor extLimitSwitch, rotLimitSwitch;
     private boolean checkRotLimitSwitch, checkExtLimitSwitch = true;
-    private double defaultPower=0.3;
+    private double defaultPower=0.4;
 
 
     /**
@@ -40,7 +40,7 @@ public final class Elevator {
         rightRotate = opMode.hardwareMap.get(DcMotorImplEx.class, "rWorm");
 
         extLimitSwitch = opMode.hardwareMap.get(TouchSensor.class, "lmS");
-        rotLimitSwitch = opMode.hardwareMap.get(TouchSensor.class, "rmS");
+        rotLimitSwitch = opMode.hardwareMap.get(TouchSensor.class, "lmS2");
 
         extensionMotors = new DcMotorImplEx[]{leftExtend, rightExtend};
         rotationsMotors = new DcMotorImplEx[]{leftRotate, rightRotate};
@@ -113,7 +113,7 @@ public final class Elevator {
                 rotate(TOP_ROT_POSITION);
             }
         }
-        else {//run this code only in endgme
+        else {//run this code only in endgame
             if (controller.left_bumper) {
                 rotate(HANG_POSITION, 0.7);
             } // To Hang Position

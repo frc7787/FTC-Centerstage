@@ -14,6 +14,7 @@ public final class Intake {
     private final Gamepad controller;
     private final Telemetry telemetry;
     private final Servo intakeServo, wrist;
+    private final double wristLevelPosn =0.6;
 
     /**
      * Intake Subsystem Constructor
@@ -27,7 +28,7 @@ public final class Intake {
 
         wrist.scaleRange(0.25, 0.8); // Linear servos don't do well at 1 and 0 so we cap them before then
 
-        wrist.setPosition(0.0d);
+        wrist.setPosition(wristLevelPosn);
     }
 
     /**
@@ -38,8 +39,8 @@ public final class Intake {
         if (controller.right_bumper)          { intakeServo.setPosition(HOLD_POSITION);    }
         if (controller.right_trigger == 1.0)  { intakeServo.setPosition(OUTTAKE_POSITION); }
 
-        if (controller.dpad_down) { wrist.setPosition(0.0); }
-        if (controller.dpad_up)   { wrist.setPosition(0.0); }
+        if (controller.dpad_down) { wrist.setPosition(wristLevelPosn ); }
+        if (controller.dpad_up)   { wrist.setPosition(wristLevelPosn ); }
         if (controller.cross) { // 1st row
             wrist.setPosition(BOTTOM_WRIST_POSITION);
         }

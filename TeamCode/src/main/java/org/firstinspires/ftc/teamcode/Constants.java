@@ -38,11 +38,16 @@ public abstract class Constants {
     public static final double HOLD_POSITION    = 0.47d;
     public static final double OUTTAKE_POSITION = 0.17d;
 
-    public static final double BOTTOM_WRIST_POSITION = 0.9;
-    public static final double LOW_WRIST_POSITION    = 0.9;
-    public static final double MED_WRIST_POSITION    = 0.75;
-    public static final double HIGH_WRIST_POSITION   = 0.6;
-    public static final double TOP_WRIST_POSITION    = 0.6;
+//    public static final double BOTTOM_WRIST_POSITION = 0.9;
+//    public static final double LOW_WRIST_POSITION    = 0.9;
+//    public static final double MED_WRIST_POSITION    = 0.75;
+//    public static final double HIGH_WRIST_POSITION   = 0.6;
+//    public static final double TOP_WRIST_POSITION    = 0.6;
+    public static final double BOTTOM_WRIST_POSITION = 0.1;
+    public static final double LOW_WRIST_POSITION    = 0.1;
+    public static final double MED_WRIST_POSITION    = 0.15;
+    public static final double HIGH_WRIST_POSITION   = 0.21;
+    public static final double TOP_WRIST_POSITION    = 0.23;
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 
