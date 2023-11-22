@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 
 @TeleOp(name = "Test - Drive Base", group = "Test")
+@Disabled
 public final class DriveBaseTest extends OpMode {
 
     public DriveBase driveBase;

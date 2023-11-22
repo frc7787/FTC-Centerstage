@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,6 +9,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 @TeleOp(name = "Test - Dead Wheels", group = "Test")
+@Disabled
 public final class DeadWheelTest extends OpMode {
 
     // Dead wheel names
@@ -22,6 +24,7 @@ public final class DeadWheelTest extends OpMode {
     }
 
     @Override public void loop() {
+        telemetry.addLine("Manually Spin the dead wheels to see if they are working properly.");
         telemetry.addData("Left Dead Wheel Position", left.getCurrentPosition());
         telemetry.addData("Right Dead Wheel Position", right.getCurrentPosition());
         telemetry.addData("Strafe Dead Wheel Position", strafe.getCurrentPosition());

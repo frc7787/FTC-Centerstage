@@ -3,34 +3,34 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public final class Launcher {
 
-    private final Gamepad controller;
-    private final Servo launcherServo;
+    private final ServoImplEx launcherServo;
 
     /**
      * Launcher Subsystem Constructor
      * @param opMode The OpMode you are using the launcher in, likely "this"
      */
-    public Launcher(@NonNull OpMode opMode) {
-        launcherServo = opMode.hardwareMap.get(Servo.class, "lS");
-        controller    = opMode.gamepad2;
-        launcherServo.setPosition(0.44);
+    public Launcher(@NonNull HardwareMap hardwareMap) {
+        launcherServo = hardwareMap.get(ServoImplEx.class, "lS");
     }
 
     /**
-     * Runs the Launcher
+     * Initializes the launcher, note that this disables the Pwm.
      */
-    public void run() {
-        if (controller.right_bumper && controller.right_trigger > 0.9) {
-            launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
-        }
+    public void init() { launcherServo.setPwmDisable(); }
+
+
+    /**
+     * Releases The Launcher
+     */
+    public void release() {
+        launcherServo.setPwmEnable();
+        launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
     }
 }

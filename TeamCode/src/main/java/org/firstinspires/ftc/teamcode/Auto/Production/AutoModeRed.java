@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorRed;
+import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 import org.firstinspires.ftc.teamcode.Subsytems.Elevator;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
@@ -30,44 +31,32 @@ public class AutoModeRed extends LinearOpMode {
 
     @SuppressLint("DefaultLocale")
     @Override
-    public void runOpMode()
-    {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera2Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
+    public void runOpMode() {
 
         // Create camera instance
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        DriveBase drive = new DriveBase(hardwareMap);
-        Elevator elevator = new Elevator(this);
-        Intake intake = new Intake(this);
+        DriveBase drive   = new DriveBase(hardwareMap);
+        Arm arm           = new Arm(hardwareMap);
+        Intake intake     = new Intake(hardwareMap);
 
         // Open async and start streaming inside opened callback
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
                 phoneCam.setPipeline(detector);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+            public void onError(int errorCode) {
+               telemetry.addData("Failed to open camera due to error code", errorCode);
             }
         });
 
-
+        // Do not delete this line of code, if you do the auto will not work
         PropDetectorRed.SkystoneLocation location = detector.getLocation();
 
         waitForStart();
@@ -80,25 +69,30 @@ public class AutoModeRed extends LinearOpMode {
             telemetry.update();
 
             if (location == PropDetectorRed.SkystoneLocation.LEFT) {
-                drive.strafe(DriveBase.StrafeDirections.LEFT, 600, this);
-                elevator.extend(1500);
+                drive.strafe(DriveBase.StrafeDirections.LEFT);
+                sleep(600);
+                arm.extend(1500);
                 sleep(3000);
-                intake.release();
-                elevator.extend(0);
-                drive.driveBackwards(500, this);
+                intake.intake();
+                arm.extend(0);
+                drive.driveBackwards();
+                sleep(500);
             } else if (location == PropDetectorRed.SkystoneLocation.RIGHT) {
-                elevator.extend(MED_EXTEND_POSITION);
+                arm.extend(MED_EXTEND_POSITION);
                 sleep(3000);
-                intake.release();
-                elevator.extend(0);
-                drive.driveBackwards(500, this);
+                intake.intake();
+                arm.extend(0);
+                drive.driveBackwards();
+                sleep(500);
             } else {
-                drive.strafe(DriveBase.StrafeDirections.RIGHT, 600, this);
-                elevator.extend(1500);
+                drive.strafe(DriveBase.StrafeDirections.RIGHT);
+                sleep(600);
+                arm.extend(1500);
                 sleep(3000);
-                intake.release();
-                elevator.extend(0);
-                drive.driveBackwards(500, this);
+                intake.intake();
+                arm.extend(0);
+                drive.driveBackwards();
+                sleep(500);
             }
 
             // more robot logic...
