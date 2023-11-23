@@ -60,8 +60,6 @@ public class TeleOpMain extends OpMode {
     private void endGame() {
         driveBase.run(gamepad1);
 
-        arm.checkLimitSwitch();
-
         switch (endGameState) {
             case IDLE:
                 if (gamepad2.left_bumper) {

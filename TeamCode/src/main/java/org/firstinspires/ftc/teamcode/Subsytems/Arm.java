@@ -34,8 +34,8 @@ public final class Arm {
     }
 
     public void moveToPosition(int elevatorPosition, int wormPosition, double wristPosition) {
-        elevator.extend(elevatorPosition);
         worm.rotate(wormPosition);
+        elevator.extend(elevatorPosition);
         wrist.setPosition(wristPosition);
     }
 

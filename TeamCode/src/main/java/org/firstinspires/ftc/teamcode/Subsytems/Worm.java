@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 final class Worm {
 
-    private final double DEFAULT_POWER = 0.4;
+    private final double DEFAULT_POWER = 0.8;
     public final DcMotorImplEx leftWorm, rightWorm;
     public final TouchSensor rotLimitSwitch;
     public final DcMotorImplEx[] wormMotors;

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -12,10 +11,7 @@ public final class Launcher {
 
     private final ServoImplEx launcherServo;
 
-    /**
-     * Launcher Subsystem Constructor
-     * @param opMode The OpMode you are using the launcher in, likely "this"
-     */
+
     public Launcher(@NonNull HardwareMap hardwareMap) {
         launcherServo = hardwareMap.get(ServoImplEx.class, "lS");
     }

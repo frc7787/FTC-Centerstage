@@ -15,8 +15,7 @@ public class ZeroElevator extends OpMode {
     }
 
     @Override public void loop() {
-        if (!arm.extensionLimitSwitchIsPressed()) { arm.powerElevator(-0.5); }
-        if (!arm.rotationLimitSwitchIsPressed())  { arm.powerWorm(-0.5);     }
+       arm.powerWorm(-0.8);
     }
 
 }
