@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.*;
+import static org.firstinspires.ftc.teamcode.Constants.HANGER_SERVO_POSITION;
 
 public class Hanger {
 
@@ -29,7 +30,7 @@ public class Hanger {
      * Releases the Hanging Mechanism
      */
     public void release() {
-        left.setPosition(1.0d);
-        right.setPosition(1.0d);
+        left.setPosition(HANGER_SERVO_POSITION);
+        right.setPosition(HANGER_SERVO_POSITION);
     }
 }

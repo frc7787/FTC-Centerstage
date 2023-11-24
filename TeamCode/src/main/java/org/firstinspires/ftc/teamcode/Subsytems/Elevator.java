@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
+import static org.firstinspires.ftc.teamcode.Constants.DEFAULT_ELEVATOR_POWER;
+
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
@@ -16,7 +18,7 @@ import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 /**
  * Object to encapsulate elevator subsystem
  */
-final class Elevator {
+class Elevator {
 
     private final DcMotorImplEx leftExtend, rightExtend;
     private final DcMotorImplEx[] elevatorMotors;
@@ -31,36 +33,70 @@ final class Elevator {
     }
 
 
+    /**
+     * Initializes the elevator subsystem.
+     * This Resets the elevator motor encoders and reverses the polarity of the right motor.
+     */
     public void init() {
         MotorUtility.setMode(STOP_AND_RESET_ENCODER, elevatorMotors);
         rightExtend.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
+    /**
+     * Checks the limit switch when the position is zero.
+     * If the position is zero, and the limit switch is pressed then we set the motor powers to
+     * zero and reset the encoders
+     */
     public void checkLimitSwitch() {
         if (leftExtend.getCurrentPosition() == 0 && extLimitSwitch.isPressed()) {
-            leftExtend.setPower(0);
-            rightExtend.setPower(0);
+            MotorUtility.setPower(0, elevatorMotors);
 
-            leftExtend.setMode(STOP_AND_RESET_ENCODER);
-            rightExtend.setMode(STOP_AND_RESET_ENCODER);
+            MotorUtility.setMode(STOP_AND_RESET_ENCODER, elevatorMotors);
         }
     }
 
-    public void extend(int position) {
+    /**
+     * Extends the elevator at the defined position and speed
+     * @param position The position to extend the elevator to
+     * @param power The speed to extend it
+     */
+    public void extend(int position, double power) {
         MotorUtility.setTargetPosition(position, elevatorMotors);
         MotorUtility.setMode(RUN_TO_POSITION, elevatorMotors);
-        MotorUtility.setPower(0.9, elevatorMotors);
+        MotorUtility.setPower(power, elevatorMotors);
     }
 
+    /**
+     * Extends to motors to a position at the speed defined by the DEFAULT_ELEVATOR_SPEED constant.
+     * @param position The position to extend to.
+     */
+    public void extend(int position) { extend(position, DEFAULT_ELEVATOR_POWER); }
 
+
+    /**
+     * Powers the elevator motors
+     * @param power The power to supply the elevator motors
+     */
     public void power(double power) { MotorUtility.setPower(power, elevatorMotors); }
 
+    /**
+     * Checks to see if the limit switch is pressed
+     * @return Whether or not the limit switch is pressed
+     */
     public boolean limitSwitchIsPressed() { return extLimitSwitch.isPressed(); }
 
+    /**
+     * Checks to see if the elevator is busy
+     * @return Whether or not the elevator is busy
+     */
     public boolean is_busy() { return leftExtend.isBusy() && rightExtend.isBusy(); }
 
 
+    /**
+     * Displays debug information about the elevator
+     * @param telemetry The telemetry object you are using to display the data
+     */
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Elevator Debug");
 
@@ -73,6 +109,10 @@ final class Elevator {
         telemetry.update();
     }
 
+
+    /**
+     * Stops the elevator by setting the power to zero
+     */
     public void stop() { MotorUtility.setPower(0, elevatorMotors); }
 }
 

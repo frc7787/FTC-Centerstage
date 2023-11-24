@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class ElevatorPositions {
-    public static int x1, r1, x2, r2, x3, r3, x4, r4, x5, r5, x6, r6, x7, r7;
+    public static int ext1, rot1, ext2, rot2, ext3, rot3, ext4, rot4, ext5, rot5, hang, launch;
 
     @SuppressLint("SdCardPath")
     private static final String filePath = "/sdcard/FIRST/java/src/org/firstinspires/ftc/teamcode/ElevatorPositionsNov14.txt";
@@ -41,53 +41,49 @@ public class ElevatorPositions {
     private static void assignValues(int index, int col1, int col2) {
         switch (index) {
             case 1:
-                x1 = col1;
-                r1 = col2;
+                ext1 = col1;
+                rot1 = col2;
                 break;
             case 2:
-                x2 = col1;
-                r2 = col2;
+                ext2 = col1;
+                rot2 = col2;
                 break;
             case 3:
-                x3 = col1;
-                r3 = col2;
+                ext3 = col1;
+                rot3 = col2;
                 break;
             case 4:
-                x4 = col1;
-                r4 = col2;
+                ext4 = col1;
+                rot4 = col2;
                 break;
             case 5:
-                x5 = col1;
-                r5 = col2;
+                ext5 = col1;
+                rot5 = col2;
                 break;
             case 6:
-                x6 = col1;
-                r6 = col2;
-                break;
-            case 7:
-                x7 = col1;
-                r7 = col2;
+                launch = col1;
+                hang   = col2;
                 break;
         }
     }
     public static void updateElevatorConstants(){
         readCSV();
-        Constants.BOTTOM_EXTEND_POSITION = x1;
-        Constants.BOTTOM_ROT_POSITION    = r1;
+        Constants.BOTTOM_EXTEND_POSITION = ext1;
+        Constants.BOTTOM_ROT_POSITION    = rot1;
 
-        Constants.LOW_EXTEND_POSITION = x2;
-        Constants.LOW_ROT_POSITION    = r2;
+        Constants.LOW_EXTEND_POSITION = ext2;
+        Constants.LOW_ROT_POSITION    = rot2;
 
-        Constants.MED_EXTEND_POSITION = x3;
-        Constants.MED_ROT_POSITION    = r3;
+        Constants.MED_EXTEND_POSITION = ext3;
+        Constants.MED_ROT_POSITION    = rot3;
 
-        Constants.HIGH_EXTEND_POSITION = x4;
-        Constants.HIGH_ROT_POSITION    = r4;
+        Constants.HIGH_EXTEND_POSITION = ext4;
+        Constants.HIGH_ROT_POSITION    = rot4;
 
-        Constants.TOP_EXTEND_POSITION = x5;
-        Constants.TOP_ROT_POSITION    = r5;
+        Constants.TOP_EXTEND_POSITION = ext5;
+        Constants.TOP_ROT_POSITION    = rot5;
 
-        Constants.LAUNCH_POSITION = r6;
-        Constants.HANG_POSITION   = r7;
+        Constants.LAUNCH_POSITION = launch;
+        Constants.HANG_POSITION   = hang;
     }
 }
