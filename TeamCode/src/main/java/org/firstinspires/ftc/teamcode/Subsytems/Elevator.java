@@ -58,6 +58,8 @@ final class Elevator {
 
     public boolean limitSwitchIsPressed() { return extLimitSwitch.isPressed(); }
 
+    public boolean is_busy() { return leftExtend.isBusy() && rightExtend.isBusy(); }
+
 
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Elevator Debug");

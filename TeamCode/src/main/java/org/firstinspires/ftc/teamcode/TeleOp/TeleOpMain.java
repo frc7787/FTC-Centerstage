@@ -21,8 +21,8 @@ public class TeleOpMain extends OpMode {
 
     private enum EndGameState {
         IDLE,
-        LAUNCH_POSITION,
-        HANGING_POSITION,
+        HANGING,
+        LAUNCHING,
         HUNG
     }
 
@@ -60,37 +60,36 @@ public class TeleOpMain extends OpMode {
     private void endGame() {
         driveBase.run(gamepad1);
 
+        arm.checkLimitSwitch();
+
         switch (endGameState) {
             case IDLE:
-                if (gamepad2.left_bumper) {
-                    endGameState = EndGameState.HANGING_POSITION;
-                    break;
-                } else if (gamepad2.right_bumper) {
-                    endGameState = EndGameState.LAUNCH_POSITION;
-                    break;
-                }
-            case HANGING_POSITION:
+                telemetry.addLine("IDLE");
+
+                if (gamepad2.left_bumper)  { endGameState = EndGameState.HANGING;   }
+                if (gamepad2.right_bumper) { endGameState = EndGameState.LAUNCHING; }
+                break;
+            case HANGING:
                 arm.rotate(HANG_POSITION);
 
-                if (gamepad2.right_bumper) {
-                    endGameState = EndGameState.LAUNCH_POSITION;
-                    break;
-                } else if (gamepad2.dpad_down) {
-                   arm.rotate(420);
-                   endGameState = EndGameState.HUNG;
-                   break;
+                if (gamepad2.right_bumper) { endGameState = EndGameState.LAUNCHING; }
+                if (gamepad2.dpad_down) {
+                    arm.rotate(420);
+                    endGameState = EndGameState.HUNG;
                 }
-            case LAUNCH_POSITION:
+                if (gamepad2.cross) { hanger.release(); }
+
+                telemetry.addLine("Hanging");
+                break;
+            case LAUNCHING:
                 arm.rotate(LAUNCH_POSITION);
 
-                if (gamepad2.left_bumper) {
-                    endGameState = EndGameState.HANGING_POSITION;
-                    break;
-                } else if (gamepad2.left_trigger > 0.9 && gamepad2.left_bumper) {
-                    launcher.release();
-                    break;
-                }
+                if (gamepad2.left_bumper) { endGameState = EndGameState.HANGING; }
+                if (gamepad2.cross)       { launcher.release(); }
+                telemetry.addLine("Launching");
+                break;
             case HUNG:
+                telemetry.addLine("Hung");
                 driveBase.stop();
         }
     }
@@ -120,7 +119,6 @@ public class TeleOpMain extends OpMode {
         if (endGame && gamepad2.left_trigger > 0.9 && gamepad2.right_trigger > 0.9) { endGame = false; }
 
         if (endGame) {
-            telemetry.addLine("End Game");
             endGame();
         } else { normal(); }
 

@@ -79,10 +79,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront  = hardwareMap.get(DcMotorEx.class, "Front Left Drive Motor");
-        leftRear   = hardwareMap.get(DcMotorEx.class, "Back Left Drive Motor");
-        rightRear  = hardwareMap.get(DcMotorEx.class, "Back Right Drive Motor");
-        rightFront = hardwareMap.get(DcMotorEx.class, "Front Right Drive Motor");
+        leftFront  = hardwareMap.get(DcMotorEx.class, "fldm");
+        leftRear   = hardwareMap.get(DcMotorEx.class, "bldm");
+        rightRear  = hardwareMap.get(DcMotorEx.class, "brdm");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frdm");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

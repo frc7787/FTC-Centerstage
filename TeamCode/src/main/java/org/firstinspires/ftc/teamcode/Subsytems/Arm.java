@@ -27,6 +27,10 @@ public final class Arm {
         worm.checkLimitSwitch();
     }
 
+    public boolean worm_is_busy() { return worm.is_busy(); }
+
+    public boolean elevator_is_busy() { return elevator.is_busy(); }
+
     public void zero() {
         elevator.extend(0);
         worm.rotate(0);

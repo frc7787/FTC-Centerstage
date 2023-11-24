@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorRed;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
@@ -36,7 +37,7 @@ public class AutoModeRed extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        DriveBase drive   = new DriveBase(hardwareMap);
+        SampleMecanumDrive drive   = new SampleMecanumDrive(hardwareMap);
         Arm arm           = new Arm(hardwareMap);
         Intake intake     = new Intake(hardwareMap);
 
@@ -68,30 +69,16 @@ public class AutoModeRed extends LinearOpMode {
             telemetry.update();
 
             if (location == PropDetectorRed.SkystoneLocation.LEFT) {
-                drive.strafe(DriveBase.StrafeDirections.LEFT);
-                sleep(600);
-                arm.extend(1500);
-                sleep(3000);
-                intake.intake();
-                arm.extend(0);
-                drive.driveBackwards();
-                sleep(500);
-            } else if (location == PropDetectorRed.SkystoneLocation.RIGHT) {
                 arm.extend(MED_EXTEND_POSITION);
                 sleep(3000);
-                intake.intake();
-                arm.extend(0);
-                drive.driveBackwards();
-                sleep(500);
-            } else {
-                drive.strafe(DriveBase.StrafeDirections.RIGHT);
-                sleep(600);
+            } else if (location == PropDetectorRed.SkystoneLocation.RIGHT) {
+                drive.turn(Math.toRadians(45));
                 arm.extend(1500);
                 sleep(3000);
-                intake.intake();
-                arm.extend(0);
-                drive.driveBackwards();
-                sleep(500);
+            } else {
+                drive.turn(Math.toRadians(-45));
+                arm.extend(1500);
+                sleep(3000);
             }
 
             // more robot logic...

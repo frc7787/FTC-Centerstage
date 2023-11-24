@@ -46,6 +46,8 @@ final class Worm {
         MotorUtility.setPower(power, wormMotors);
     }
 
+    public boolean is_busy() { return leftWorm.isBusy() && rightWorm.isBusy(); }
+
     public void power(double power) { MotorUtility.setPower(power, wormMotors); }
 
     public void stop() { MotorUtility.setPower(0, wormMotors); }

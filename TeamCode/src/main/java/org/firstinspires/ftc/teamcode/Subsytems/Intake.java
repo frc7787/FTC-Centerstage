@@ -14,10 +14,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 public final class Intake {
     private final Servo intakeServo;
 
-    /**
-     * Intake Subsystem Constructor
-     * @param opMode The opMode you are using the Intake in, likely "this"
-     */
+
     public Intake(@NonNull HardwareMap hardwareMap) {
         intakeServo = hardwareMap.get(Servo.class, "iS");
     }
