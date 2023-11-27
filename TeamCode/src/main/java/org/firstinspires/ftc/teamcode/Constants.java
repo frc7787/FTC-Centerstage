@@ -2,11 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 public abstract class Constants {
 
-
-
     // ---------- ELEVATOR CONSTANTS ---------- //
-
-    public static final double WRIST_LEVEL_POSITION = 0.6;
 
     public static int BOTTOM_EXTEND_POSITION = 1890;
     public static int BOTTOM_ROT_POSITION    = 528;
@@ -26,21 +22,29 @@ public abstract class Constants {
     public static int LAUNCH_POSITION = 1630;
     public static int HANG_POSITION   = 2326;
 
+    public static final int HUNG_POSITION = 420;
+
     public static final double DEFAULT_WORM_POWER = 0.8;
     public static final double DEFAULT_ELEVATOR_POWER = 0.9;
 
+    public static final double DOWNWARDS_WORM_POWER = DEFAULT_WORM_POWER * 0.6;
+    public static final double DOWNWARDS_ELEVATOR_POWER = DEFAULT_ELEVATOR_POWER * 0.6;
+
+    // ----------- WRIST CONSTANTS ---------- //
+
+    public static final double WRIST_LEVEL_POSITION = 0.6;
 
     // ----------- DRIVE CONSTANTS ---------- //
 
-    public static final double DEAD_ZONE_LOW  = -0.05d;
-    public static final double DEAD_ZONE_HIGH = 0.05d;
+    public static final double DEAD_ZONE_LOW  = -0.05;
+    public static final double DEAD_ZONE_HIGH = 0.05;
 
 
     // ----------- INTAKE CONSTANTS ---------- //
 
-    public static final double INTAKE_POSITION  = 0.25d;
-    public static final double HOLD_POSITION    = 0.47d;
-    public static final double OUTTAKE_POSITION = 0.17d;
+    public static final double INTAKE_POSITION  = 0.25;
+    public static final double HOLD_POSITION    = 0.47;
+    public static final double OUTTAKE_POSITION = 0.17;
 
     public static final double BOTTOM_WRIST_POSITION = 0.1;
     public static final double LOW_WRIST_POSITION    = 0.1;
@@ -50,9 +54,13 @@ public abstract class Constants {
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 
-    public static final double LAUNCHER_SERVO_POSITION = 1;
+    public static final double LAUNCHER_SERVO_POSITION = 1.0;
 
     // ---------- HANGER CONSTANTS ---------- //
 
-    public static final double HANGER_SERVO_POSITION = 1.0d;
+    public static final double HANGER_SERVO_POSITION = 1.0;
+
+    // ---------- OTHER CONSTANTS ------------ //
+
+    public static final double ENGAME_TRIGGER_SENSITIVITY = 0.8;
 }

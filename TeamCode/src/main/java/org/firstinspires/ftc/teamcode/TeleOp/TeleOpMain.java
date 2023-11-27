@@ -16,8 +16,10 @@ public class TeleOpMain extends OpMode {
     private Hanger hanger;
     private Launcher launcher;
 
+    // The following values should represent the robots starting configuration
     private EndGameState endGameState = EndGameState.IDLE;
-    private GamePeriod gamePeriod     = GamePeriod.NORMAL;
+    private GamePeriod gamePeriod     = GamePeriod.NORMAL; // This will likely never need to change
+    private ArmState armState         = ArmState.RETRACTED; // If we end auto in a certain way, we should change this
 
     enum EndGameState {
         IDLE,
@@ -26,43 +28,210 @@ public class TeleOpMain extends OpMode {
         HUNG
     }
 
+    enum ArmState {
+        RETRACTED,
+        EXTENDED,
+        BOTTOM,
+        LOW,
+        MED,
+        HIGH,
+        TOP
+    }
+
     enum GamePeriod {
         NORMAL,
         ENDGAME
     }
 
-
-    private void normal() {
-        driveBase.run(gamepad1);
-
-        arm.checkLimitSwitch();
-
+    /**
+     * Runs all of the intake code
+     */
+    void run_intake() {
         if (gamepad2.left_bumper) {
             intake.intake();
         } else if (gamepad2.right_bumper) {
             intake.hold();
         } else if (gamepad2.right_trigger > 0.9) {
             intake.outtake();
-        } else if (gamepad2.dpad_down) {
-            arm.zero();
-        } else if (gamepad2.dpad_up) {
-            arm.moveToPosition(MED_EXTEND_POSITION, 0, WRIST_LEVEL_POSITION);
-        } else if (gamepad2.cross) {
-            arm.moveToPosition(BOTTOM_EXTEND_POSITION, BOTTOM_ROT_POSITION, BOTTOM_WRIST_POSITION);
-        } else if (gamepad2.square) {
-            arm.moveToPosition(LOW_EXTEND_POSITION, LOW_ROT_POSITION, LOW_WRIST_POSITION);
-        } else if (gamepad2.circle) {
-            arm.moveToPosition(MED_EXTEND_POSITION, MED_ROT_POSITION, MED_WRIST_POSITION);
-        } else if (gamepad2.triangle) {
-            arm.moveToPosition(HIGH_EXTEND_POSITION, HIGH_ROT_POSITION, HIGH_WRIST_POSITION);
-        } else if (gamepad2.options) {
-            arm.moveToPosition(TOP_EXTEND_POSITION, TOP_ROT_POSITION, TOP_WRIST_POSITION);
+        }
+    }
+
+
+    void normal() {
+        driveBase.run(gamepad1);
+
+        arm.checkLimitSwitch();
+
+        switch (armState) {
+            case RETRACTED:
+                run_intake();
+
+                if (gamepad2.dpad_up) {
+                    arm.extend(MED_EXTEND_POSITION);
+                    armState = ArmState.EXTENDED;
+                } else if (gamepad2.cross) {
+                    arm.moveToBottomPosition(false);
+                    armState = ArmState.BOTTOM;
+                } else if (gamepad2.square) {
+                    arm.moveToLowPosition(false);
+                    armState = ArmState.LOW;
+                } else if (gamepad2.circle) {
+                    arm.moveToMedPosition(false);
+                    armState = ArmState.MED;
+                } else if (gamepad2.triangle) {
+                    arm.moveToHighPosition(false);
+                    armState = ArmState.HIGH;
+                } else if (gamepad2.options) {
+                    arm.moveToTopPosition(false);
+                    armState = ArmState.TOP;
+                }
+                break;
+            case EXTENDED:
+                run_intake();
+
+                if (gamepad2.dpad_down) {
+                    intake.hold();
+                    arm.zero();
+                    armState = ArmState.RETRACTED;
+                }
+                if (gamepad2.cross) {
+                    arm.moveToBottomPosition(false);
+                    armState = ArmState.BOTTOM;
+                } else if (gamepad2.square) {
+                    arm.moveToLowPosition(false);
+                    armState = ArmState.LOW;
+                } else if (gamepad2.circle) {
+                    arm.moveToMedPosition(false);
+                    armState = ArmState.MED;
+                } else if (gamepad2.triangle) {
+                    arm.moveToHighPosition(false);
+                    armState = ArmState.HIGH;
+                } else if (gamepad2.options) {
+                    arm.moveToTopPosition(false);
+                    armState = ArmState.TOP;
+                }
+                break;
+            case BOTTOM:
+                run_intake();
+
+                if (gamepad2.dpad_down) {
+                    intake.hold();
+                    arm.zero();
+                    armState = ArmState.RETRACTED;
+                } else if (gamepad2.dpad_up) {
+                    arm.zero();
+                    armState = ArmState.EXTENDED;
+                } else if (gamepad2.square) {
+                    arm.moveToLowPosition(false);
+                    armState = ArmState.LOW;
+                } else if (gamepad2.circle) {
+                    arm.moveToMedPosition(false);
+                    armState = ArmState.MED;
+                } else if (gamepad2.triangle) {
+                    arm.moveToHighPosition(false);
+                    armState = ArmState.HIGH;
+                } else if (gamepad2.options) {
+                    arm.moveToTopPosition(false);
+                    armState = ArmState.TOP;
+                }
+                break;
+            case LOW:
+                run_intake();
+
+                if (gamepad2.dpad_down) {
+                    arm.zero();
+                    armState = ArmState.RETRACTED;
+                } else if (gamepad2.dpad_up) {
+                    arm.moveToExtendedPosition(true);
+                    armState = ArmState.EXTENDED;
+                } else if (gamepad2.cross) {
+                    arm.moveToBottomPosition(true);
+                    armState = ArmState.BOTTOM;
+                } else if (gamepad2.circle) {
+                    arm.moveToMedPosition(false);
+                    armState = ArmState.MED;
+                } else if (gamepad2.triangle) {
+                    arm.moveToHighPosition(false);
+                    armState = ArmState.HIGH;
+                } else if (gamepad2.options) {
+                    arm.moveToTopPosition(false);
+                    armState = ArmState.TOP;
+                }
+                break;
+            case MED:
+                run_intake();
+
+                if (gamepad2.dpad_down) {
+                    arm.zero();
+                    armState = ArmState.RETRACTED;
+                } else if (gamepad2.dpad_up) {
+                    arm.moveToExtendedPosition(true);
+                    armState = ArmState.EXTENDED;
+                } else if (gamepad2.cross) {
+                    arm.moveToBottomPosition(true);
+                    armState = ArmState.BOTTOM;
+                } else if (gamepad2.triangle) {
+                    arm.moveToHighPosition(false);
+                    armState = ArmState.HIGH;
+                } else if (gamepad2.options) {
+                    arm.moveToTopPosition(false);
+                    armState = ArmState.HIGH;
+                }
+                break;
+            case HIGH:
+                run_intake();
+
+                if (gamepad2.dpad_down) {
+                    intake.hold();
+                    arm.zero();
+                    armState = ArmState.RETRACTED;
+                } else if (gamepad2.dpad_up) {
+                    arm.moveToExtendedPosition(true);
+                    armState = ArmState.EXTENDED;
+                } else if (gamepad2.cross) {
+                    arm.moveToBottomPosition(true);
+                    armState = ArmState.BOTTOM;
+                } else if (gamepad2.square) {
+                    arm.moveToLowPosition(true);
+                    armState = ArmState.LOW;
+                } else if (gamepad2.circle) {
+                    arm.moveToMedPosition(true);
+                    armState = ArmState.MED;
+                } else if (gamepad2.options) {
+                    arm.moveToTopPosition(false);
+                    armState = ArmState.TOP;
+                }
+                break;
+            case TOP:
+                run_intake();
+
+                if (gamepad2.dpad_down) {
+                    intake.hold();
+                    arm.zero();
+                    armState = ArmState.RETRACTED;
+                } else if (gamepad2.dpad_up) {
+                    arm.moveToExtendedPosition(true);
+                    armState = ArmState.EXTENDED;
+                } else if (gamepad2.cross) {
+                    arm.moveToBottomPosition(true);
+                    armState = ArmState.BOTTOM;
+                } else if (gamepad2.square) {
+                    arm.moveToLowPosition(true);
+                    armState = ArmState.LOW;
+                } else if (gamepad2.circle) {
+                    arm.moveToMedPosition(true);
+                    armState = ArmState.MED;
+                } else if (gamepad2.triangle) {
+                    arm.moveToHighPosition(true);
+                    armState = ArmState.HIGH;
+                }
+                break;
         }
     }
 
 
 
-    private void endGame() {
+    void endGame() {
         driveBase.run(gamepad1);
 
         arm.checkLimitSwitch(); // We want to stop the motors if the limit switch is pressed
@@ -81,7 +250,7 @@ public class TeleOpMain extends OpMode {
                 if (gamepad2.right_bumper) {
                     endGameState = EndGameState.LAUNCHING;
                 } else if (gamepad2.dpad_down) {
-                    arm.rotate(420);
+                    arm.rotate(HUNG_POSITION);
                     endGameState = EndGameState.HUNG;
                 } else if (gamepad2.cross) {
                     hanger.release();
@@ -98,6 +267,7 @@ public class TeleOpMain extends OpMode {
                 break;
             case HUNG:
                 driveBase.stop();
+                break;
         }
     }
     
@@ -120,18 +290,21 @@ public class TeleOpMain extends OpMode {
     @Override public void loop() {
         switch (gamePeriod) {
             case NORMAL:
+                telemetry.addLine("Normal Period");
                 normal();
-                if (gamepad2.left_trigger > 0.8 && gamepad2.right_trigger > 0.8) {
+                if (gamepad2.left_trigger > ENGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.ENDGAME;
                 }
                 break;
             case ENDGAME:
                 telemetry.addLine("End Game");
                 endGame();
-                if (gamepad2.left_trigger > 0.8 && gamepad2.right_trigger > 0.8) {
+                if (gamepad2.left_trigger > ENGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.NORMAL;
                 }
+                break;
         }
         telemetry.update();
     }
+
 }
