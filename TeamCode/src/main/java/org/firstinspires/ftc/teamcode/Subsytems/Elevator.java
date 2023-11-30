@@ -20,16 +20,13 @@ import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
  */
 class Elevator {
 
-    private final DcMotorImplEx leftExtend, rightExtend;
-    private final DcMotorImplEx[] elevatorMotors;
+    private final DcMotorImplEx extend;
     private final TouchSensor extLimitSwitch;
 
 
     public Elevator(@NonNull HardwareMap hardwareMap) {
-        leftExtend     = hardwareMap.get(DcMotorImplEx.class, "lExt");
-        rightExtend    = hardwareMap.get(DcMotorImplEx.class, "rExt");
+        extend     = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
         extLimitSwitch = hardwareMap.get(TouchSensor.class, "lmS");
-        elevatorMotors = new DcMotorImplEx[]{leftExtend, rightExtend};
     }
 
 
@@ -37,10 +34,7 @@ class Elevator {
      * Initializes the elevator subsystem.
      * This Resets the elevator motor encoders and reverses the polarity of the right motor.
      */
-    public void init() {
-        MotorUtility.setMode(STOP_AND_RESET_ENCODER, elevatorMotors);
-        rightExtend.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
+    public void init() { extend.setMode(STOP_AND_RESET_ENCODER); }
 
 
     /**
@@ -49,10 +43,8 @@ class Elevator {
      * zero and reset the encoders
      */
     public void checkLimitSwitch() {
-        if (leftExtend.getCurrentPosition() == 0 && extLimitSwitch.isPressed()) {
-            MotorUtility.setPower(0, elevatorMotors);
-
-            MotorUtility.setMode(STOP_AND_RESET_ENCODER, elevatorMotors);
+        if (extend.getCurrentPosition() == 0 && extLimitSwitch.isPressed()) {
+           MotorUtility.setMode(STOP_AND_RESET_ENCODER);
         }
     }
 
@@ -62,9 +54,9 @@ class Elevator {
      * @param power The speed to extend it
      */
     public void extend(int position, double power) {
-        MotorUtility.setTargetPosition(position, elevatorMotors);
-        MotorUtility.setMode(RUN_TO_POSITION, elevatorMotors);
-        MotorUtility.setPower(power, elevatorMotors);
+        extend.setTargetPosition(position);
+        extend.setMode(RUN_TO_POSITION);
+        extend.setPower(power);
     }
 
     /**
@@ -78,7 +70,7 @@ class Elevator {
      * Powers the elevator motors
      * @param power The power to supply the elevator motors
      */
-    public void power(double power) { MotorUtility.setPower(power, elevatorMotors); }
+    public void power(double power) { extend.setPower(power); }
 
     /**
      * Checks to see if the limit switch is pressed
@@ -90,7 +82,7 @@ class Elevator {
      * Checks to see if the elevator is busy
      * @return Whether or not the elevator is busy
      */
-    public boolean is_busy() { return leftExtend.isBusy() && rightExtend.isBusy(); }
+    public boolean is_busy() { return extend.isBusy(); }
 
 
     /**
@@ -100,19 +92,20 @@ class Elevator {
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Elevator Debug");
 
-        telemetry.addData("Target Position", leftExtend.getCurrentPosition());
-        telemetry.addData("Left Motor Current Position", leftExtend.getCurrentPosition());
-        telemetry.addData("Right Motor Current Position", rightExtend.getCurrentPosition());
+        telemetry.addData("Elevator Current Position", extend.getCurrentPosition());
+        telemetry.addData("Elevator Target Position", extend.getTargetPosition());
 
-        telemetry.addData("LS extension", extLimitSwitch.isPressed());
-
-        telemetry.update();
+        telemetry.addData("Elevator Limit Switch Is Pressed", extLimitSwitch.isPressed());
     }
 
 
     /**
      * Stops the elevator by setting the power to zero
      */
-    public void stop() { MotorUtility.setPower(0, elevatorMotors); }
+    public void stop() { extend.setPower(0); }
+
+    public int getCurrentPosition() { return extend.getCurrentPosition(); }
+
+    public int getTargetPosition() { return extend.getTargetPosition(); }
 }
 

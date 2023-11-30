@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.Constants.DEAD_ZONE_HIGH;
 import static org.firstinspires.ftc.teamcode.Constants.DEAD_ZONE_LOW;
+import static org.firstinspires.ftc.teamcode.Constants.STRAFE_OFFSET;
 
 import androidx.annotation.NonNull;
 
@@ -16,14 +17,7 @@ import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 public final class DriveBase {
 
-    public enum StrafeDirections {
-        RIGHT,
-        LEFT
-    }
-
-    private double motorPowerRatio;
-    private double drive, strafe, turn;
-    private double fLPower, fRPower, bLPower, bRPower;
+    private double motorPowerRatio, fLPower, fRPower, bLPower, bRPower;
 
     private final DcMotorImplEx fL, fR, bL, bR;
     private final DcMotorImplEx[] motors;
@@ -52,10 +46,10 @@ public final class DriveBase {
     /**
      * Main function to control the drive base
      */
-    public void run(@NonNull Gamepad controller) {
-        drive  = deadZone(controller.left_stick_y) * -1;
-        strafe = deadZone(controller.left_stick_x) * 1.1;
-        turn   = deadZone(controller.right_stick_x);
+    public void drive(double strafe, double drive, double turn) {
+        drive  = deadZone(drive)  * -1;
+        strafe = deadZone(strafe) * STRAFE_OFFSET;
+        turn   = deadZone(turn);
 
         motorPowerRatio = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);
 
@@ -70,38 +64,13 @@ public final class DriveBase {
         bR.setPower(bRPower);
     }
 
-    public void strafe(@NonNull StrafeDirections direction) {
-        double power = 0.5;
-
-        if (direction == StrafeDirections.RIGHT) {
-            MotorUtility.setPower(power, fL, bR);
-            MotorUtility.setPower(-power, fR, bL);
-
-        } else if (direction == StrafeDirections.LEFT) {
-            MotorUtility.setPower(power, fR, bL);
-            MotorUtility.setPower(-power, fL, bR);
-        }
-
-        MotorUtility.setPower(0, motors);
-    }
-
-    public void driveBackwards() {
-        double power = -0.5;
-        MotorUtility.setPower(power, motors);
-    }
-
     public void stop() { MotorUtility.setPower(0, motors); }
-
-
     /**
      * Provides various debug information about the drive base
      */
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Drive Base Debug\n");
 
-        telemetry.addData("Drive Power", drive);
-        telemetry.addData("Strafe Power", strafe);
-        telemetry.addData("Turn Power", turn);
         telemetry.addData("Motor Power Ratio", motorPowerRatio);
         telemetry.addData("Front Left Drive Motor Power", fLPower);
         telemetry.addData("Front Right Drive Motor Power", fRPower);

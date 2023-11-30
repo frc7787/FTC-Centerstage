@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
-public final class Intake {
+class Intake {
     private final Servo intakeServo;
 
 

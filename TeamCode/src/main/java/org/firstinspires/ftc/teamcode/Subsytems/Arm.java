@@ -1,29 +1,36 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-import static org.firstinspires.ftc.teamcode.Constants.*;
+import static org.firstinspires.ftc.teamcode.Constants.HOMING_POWER;
 
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public final class Arm {
+public class Arm {
 
     public final Elevator elevator;
     public final Worm worm;
-    public final Wrist wrist;
     public final Intake intake;
+
+    private HomingState homingState = HomingState.START;
+    private int[] targetPosition = new int[]{};
+
+    public enum HomingState {
+        START,
+        HOMING_ELEVATOR,
+        HOMING_WORM,
+        COMPLETE
+    }
 
     public Arm(@NonNull HardwareMap hardwareMap) {
         elevator = new Elevator(hardwareMap);
         worm     = new Worm(hardwareMap);
-        wrist    = new Wrist(hardwareMap);
         intake   = new Intake(hardwareMap);
     }
 
     public void init() {
         elevator.init();
         worm.init();
-        wrist.init();
     }
 
     public void checkLimitSwitch() {
@@ -38,86 +45,14 @@ public final class Arm {
     public void zero() {
         elevator.extend(0);
         worm.rotate(0);
-        wrist.level();
     }
 
-    public void moveToPosition(int elevatorPosition, int wormPosition, double wristPosition) {
+    public void moveToPosition(int elevatorPosition, int wormPosition) {
         worm.rotate(wormPosition);
         elevator.extend(elevatorPosition);
-        wrist.setPosition(wristPosition);
     }
 
-    public void moveToExtendedPosition(boolean downwards) {
-        double rotPower = DEFAULT_WORM_POWER;
-        double extPower = DEFAULT_ELEVATOR_POWER;
-        if (downwards) {
-            rotPower = DOWNWARDS_WORM_POWER;
-            extPower = DOWNWARDS_ELEVATOR_POWER;
-        }
-        worm.rotate(0, rotPower);
-        elevator.extend(MED_EXTEND_POSITION, extPower);
-        wrist.setPosition(WRIST_LEVEL_POSITION);
-    }
 
-    public void moveToBottomPosition(boolean downwards) {
-        double rotPower = DEFAULT_WORM_POWER;
-        double extPower = DEFAULT_ELEVATOR_POWER;
-        if (downwards) {
-            rotPower = DOWNWARDS_WORM_POWER;
-            extPower = DOWNWARDS_ELEVATOR_POWER;
-        }
-
-        worm.rotate(BOTTOM_ROT_POSITION, rotPower);
-        elevator.extend(BOTTOM_EXTEND_POSITION, extPower);
-        wrist.setPosition(BOTTOM_WRIST_POSITION);
-    }
-    public void moveToLowPosition(boolean downwards) {
-        double rotPower = DEFAULT_WORM_POWER;
-        double extPower = DEFAULT_ELEVATOR_POWER;
-        if (downwards) {
-            rotPower = DOWNWARDS_WORM_POWER;
-            extPower = DOWNWARDS_ELEVATOR_POWER;
-        }
-        worm.rotate(LOW_ROT_POSITION, rotPower);
-        elevator.extend(LOW_ROT_POSITION, extPower);
-        wrist.setPosition(LOW_WRIST_POSITION);
-    }
-
-    public void moveToMedPosition(boolean downwards) {
-        double rotPower = DEFAULT_WORM_POWER;
-        double extPower = DEFAULT_ELEVATOR_POWER;
-        if (downwards) {
-            rotPower = DOWNWARDS_WORM_POWER;
-            extPower = DOWNWARDS_ELEVATOR_POWER;
-        }
-        worm.rotate(MED_ROT_POSITION, rotPower);
-        elevator.extend(MED_EXTEND_POSITION,extPower);
-        wrist.setPosition(MED_WRIST_POSITION);
-    }
-
-    public void moveToHighPosition(boolean downwards) {
-        double rotPower = DEFAULT_WORM_POWER;
-        double extPower = DEFAULT_ELEVATOR_POWER;
-        if (downwards) {
-            rotPower = DOWNWARDS_WORM_POWER;
-            extPower = DOWNWARDS_ELEVATOR_POWER;
-        }
-        worm.rotate(MED_ROT_POSITION, rotPower);
-        elevator.extend(MED_EXTEND_POSITION, extPower);
-        wrist.setPosition(MED_WRIST_POSITION);
-    }
-
-    public void moveToTopPosition(boolean downwards) {
-        double rotPower = DEFAULT_WORM_POWER;
-        double extPower = DEFAULT_ELEVATOR_POWER;
-        if (downwards) {
-            rotPower = DOWNWARDS_WORM_POWER;
-            extPower = DOWNWARDS_ELEVATOR_POWER;
-        }
-        worm.rotate(TOP_ROT_POSITION, rotPower);
-        elevator.extend(TOP_EXTEND_POSITION, extPower);
-        wrist.setPosition(TOP_WRIST_POSITION);
-    }
 
     public boolean extensionLimitSwitchIsPressed() { return elevator.limitSwitchIsPressed(); }
 
@@ -125,14 +60,48 @@ public final class Arm {
 
     public void rotate(int position) { worm.rotate(position); }
 
-    public void powerWorm(double power) { worm.power(power); }
-
-    public void powerElevator(double power) { elevator.power(power); }
-
     public void extend(int position) { elevator.extend(position); }
 
-    public void stop() {
-        elevator.stop();
-        worm.stop();
+    public void powerWorm(double power) { worm.power(power); }
+
+    public void intake() { intake.intake(); }
+
+    public void outtake() { intake.outtake(); }
+
+    public void close() { intake.hold(); }
+
+    public int[] getTargetPosition() {
+        return new int[]{worm.getTargetPosition(), elevator.getTargetPosition()};
+    }
+
+    public int[] getCurrentPosition() {
+        return new int[]{worm.getCurrentPosition(), elevator.getCurrentPosition()};
+    }
+
+    public void resetHomingState() { homingState = HomingState.START; }
+
+    public HomingState getHomingState() { return homingState; }
+
+    public void home() {
+        switch (homingState) {
+            case START:
+                close(); // Close The Intake
+                homingState = HomingState.HOMING_ELEVATOR;
+                break;
+            case HOMING_ELEVATOR:
+                if (extensionLimitSwitchIsPressed()) {
+                    homingState = HomingState.HOMING_WORM;
+                }
+                elevator.power(HOMING_POWER);
+                break;
+            case HOMING_WORM:
+                if (rotationLimitSwitchIsPressed()) {
+                    homingState = HomingState.COMPLETE;
+                }
+                worm.power(HOMING_POWER);
+                break;
+            case COMPLETE:
+                break;
+        }
     }
 }
