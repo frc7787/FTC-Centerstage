@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsytems.Hanger;
 @Disabled
 public class HangTest extends OpMode {
 
-    public Hanger hanger;
+    private Hanger hanger;
 
     @Override public void init() { hanger = new Hanger(hardwareMap); }
 

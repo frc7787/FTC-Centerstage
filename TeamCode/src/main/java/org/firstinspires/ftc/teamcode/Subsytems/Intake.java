@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.CRServo;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.*;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -12,28 +12,37 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
 class Intake {
-    private final Servo intakeServo;
-
+    private final CRServo left, right;
+    private final Servo intakeDoor;
 
     public Intake(@NonNull HardwareMap hardwareMap) {
-        intakeServo = hardwareMap.get(Servo.class, "iS");
+        left  = hardwareMap.get(CRServo.class, "LeftIntakeServo");
+        right = hardwareMap.get(CRServo.class, "RightIntakeServo");
+        intakeDoor = hardwareMap.get(Servo.class, "IntakeDoor");
     }
 
+    public void init() { left.setDirection(REVERSE); }
+
 
     /**
-     * Puts the intake in the intake position
+     * Sets the servo to intake
      */
-    public void intake() { intakeServo.setPosition(INTAKE_POSITION); }
+    public void intake() {
+        left.setDirection(REVERSE);
+        right.setDirection(FORWARD);
+        left.setPower(INTAKE_SPEED);
+        right.setPower(INTAKE_SPEED);
+    }
 
     /**
-     * Puts the intake in the hold position
+     * Sets servo to outtake
      */
-    public void hold() { intakeServo.setPosition(HOLD_POSITION); }
-
-    /**
-     * Puts the intake in the outtake position
-     */
-    public void outtake() { intakeServo.setPosition(OUTTAKE_POSITION); }
+    public void outtake() {
+        left.setDirection(FORWARD);
+        right.setDirection(REVERSE);
+        left.setPower(OUTTAKE_SPEED);
+        right.setPower(OUTTAKE_SPEED);
+    }
 
 
     /**
@@ -42,9 +51,9 @@ class Intake {
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Intake Debug");
 
-        telemetry.addData("Intake Position", intakeServo.getPosition());
-        telemetry.addData("Intake Direction", intakeServo.getDirection());
-
-        telemetry.update();
+        telemetry.addData("Left Intake Servo Direction", left.getDirection());
+        telemetry.addData("Right Intake Servo Direction", right.getDirection());
+        telemetry.addData("Left Intake Servo Power", left.getPower());
+        telemetry.addData("Right Intake Servo Power", right.getPower());
      }
 }

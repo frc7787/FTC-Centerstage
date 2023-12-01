@@ -8,14 +8,19 @@ import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 
 @TeleOp(name = "Test - Drive Base", group = "Test")
 @Disabled
-public final class DriveBaseTest extends OpMode {
+public class DriveBaseTest extends OpMode {
 
-    public DriveBase driveBase;
+    private DriveBase driveBase;
 
     @Override public void init() { driveBase = new DriveBase(hardwareMap); }
 
     @Override public void loop() {
-        driveBase.run(gamepad1);
+        driveBase.drive(
+                gamepad2.left_stick_x,
+                gamepad2.left_stick_y,
+                gamepad2.right_stick_x
+        );
+
         driveBase.debug(telemetry);
     }
 }

@@ -12,11 +12,11 @@ public class Arm {
     public final Worm worm;
     public final Intake intake;
 
-    private HomingState homingState = HomingState.START;
-    private int[] targetPosition = new int[]{};
+    private HomingState homingState = HomingState.HOMING_WORM;
+
+    public boolean worm_is_busy() { return worm.is_busy(); }
 
     public enum HomingState {
-        START,
         HOMING_ELEVATOR,
         HOMING_WORM,
         COMPLETE
@@ -38,10 +38,6 @@ public class Arm {
         worm.checkLimitSwitch();
     }
 
-    public boolean worm_is_busy() { return worm.is_busy(); }
-
-    public boolean elevator_is_busy() { return elevator.is_busy(); }
-
     public void zero() {
         elevator.extend(0);
         worm.rotate(0);
@@ -53,22 +49,17 @@ public class Arm {
     }
 
 
-
     public boolean extensionLimitSwitchIsPressed() { return elevator.limitSwitchIsPressed(); }
 
     public boolean rotationLimitSwitchIsPressed() { return worm.limitSwitchIsPressed(); }
 
     public void rotate(int position) { worm.rotate(position); }
 
-    public void extend(int position) { elevator.extend(position); }
-
     public void powerWorm(double power) { worm.power(power); }
 
     public void intake() { intake.intake(); }
 
     public void outtake() { intake.outtake(); }
-
-    public void close() { intake.hold(); }
 
     public int[] getTargetPosition() {
         return new int[]{worm.getTargetPosition(), elevator.getTargetPosition()};
@@ -78,16 +69,12 @@ public class Arm {
         return new int[]{worm.getCurrentPosition(), elevator.getCurrentPosition()};
     }
 
-    public void resetHomingState() { homingState = HomingState.START; }
+    public void resetHomingState() { homingState = HomingState.HOMING_WORM; }
 
     public HomingState getHomingState() { return homingState; }
 
     public void home() {
         switch (homingState) {
-            case START:
-                close(); // Close The Intake
-                homingState = HomingState.HOMING_ELEVATOR;
-                break;
             case HOMING_ELEVATOR:
                 if (extensionLimitSwitchIsPressed()) {
                     homingState = HomingState.HOMING_WORM;

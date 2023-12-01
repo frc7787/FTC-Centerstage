@@ -43,13 +43,18 @@ public class TeleOpMain extends OpMode {
         ENDGAME
     }
 
+    private void home() {
+        arm.resetHomingState();
+        normalState = NormalState.HOMING;
+    }
+
     /**
      * Code to run elevator. <br>
      * This function sets the state of an elevator, however the state machine is located in the normal() function
      */
     private void run_elevator() {
         if (gamepad2.dpad_down) {
-            normalState = NormalState.HOMING;
+            home();
         } else if (gamepad2.dpad_up) {
             arm.moveToPosition(MED_EXTEND_POSITION, 0);
             normalState = NormalState.MOVING_TO_POSITION;
@@ -64,8 +69,10 @@ public class TeleOpMain extends OpMode {
             normalState = NormalState.MOVING_TO_POSITION;
         } else if (gamepad2.triangle) {
             arm.moveToPosition(HIGH_EXTEND_POSITION, HIGH_ROT_POSITION);
+            normalState = NormalState.MOVING_TO_POSITION;
         } else if (gamepad2.options) {
             arm.moveToPosition(TOP_EXTEND_POSITION, TOP_ROT_POSITION);
+            normalState = NormalState.MOVING_TO_POSITION;
         }
     }
 
@@ -96,10 +103,7 @@ public class TeleOpMain extends OpMode {
             case HOMING:
                 arm.home();
 
-                if (arm.getHomingState() == COMPLETE) {
-                    normalState = NormalState.AT_POSITION;
-                    arm.resetHomingState();
-                }
+                if (arm.getHomingState() == COMPLETE) { normalState = NormalState.AT_POSITION; }
                 break;
         }
     }

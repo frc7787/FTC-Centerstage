@@ -29,10 +29,6 @@ public abstract class Constants {
 
     public static final double HOMING_POWER = 0.8;
 
-    // ----------- WRIST CONSTANTS ---------- //
-
-    public static final double WRIST_LEVEL_POSITION = 0.6;
-
     // ----------- DRIVE CONSTANTS ---------- //
 
     public static final double DEAD_ZONE_LOW  = -0.05;
@@ -42,17 +38,8 @@ public abstract class Constants {
 
     // ----------- INTAKE CONSTANTS ---------- //
 
-    public static final double INTAKE_POSITION  = 0.25;
-    public static final double HOLD_POSITION    = 0.47;
-    public static final double OUTTAKE_POSITION = 0.17;
-
-    public static final double INTAKE_TRIGGER_SENSITIVITY = 0.9;
-
-//    public static final double BOTTOM_WRIST_POSITION = 0.1;
-//    public static final double LOW_WRIST_POSITION    = 0.1;
-//    public static final double MED_WRIST_POSITION    = 0.15;
-//    public static final double HIGH_WRIST_POSITION   = 0.21;
-//    public static final double TOP_WRIST_POSITION    = 0.23;
+    public static final double INTAKE_SPEED  = 1.0;
+    public static final double OUTTAKE_SPEED = 1.0;
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 
