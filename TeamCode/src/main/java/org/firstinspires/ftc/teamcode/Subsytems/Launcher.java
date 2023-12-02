@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import static org.firstinspires.ftc.teamcode.Properties.*;
 
-public final class Launcher {
+public class Launcher {
 
     private final ServoImplEx launcherServo;
 
@@ -25,8 +25,10 @@ public final class Launcher {
     /**
      * Releases The Launcher
      */
-    public void release() {
+    public void release() { releaseTest(LAUNCHER_SERVO_POSITION); }
+
+    public void releaseTest(double releasePosition) {
         launcherServo.setPwmEnable();
-        launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
+        launcherServo.setPosition(releasePosition);
     }
 }

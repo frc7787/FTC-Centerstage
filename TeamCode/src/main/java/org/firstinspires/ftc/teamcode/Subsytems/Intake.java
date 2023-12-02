@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static org.firstinspires.ftc.teamcode.Properties.*;
 
-class Intake {
+public class Intake {
     private final CRServo left, right;
 
 
@@ -19,18 +19,22 @@ class Intake {
         right = hardwareMap.get(CRServo.class, "RightIntake");
     }
 
-    public void intake() {
+    public void intake() { intakeTest(INTAKE_SPEED); }
+
+    public void intakeTest(double intakeSpeed) {
         left.setDirection(REVERSE);
         right.setDirection(FORWARD);
-        left.setPower(INTAKE_SPEED);
-        right.setPower(INTAKE_SPEED);
+        left.setPower(intakeSpeed);
+        right.setPower(intakeSpeed);
     }
 
-    public void outtake() {
+    public void outtake() { outtakeTest(OUTTAKE_SPEED); }
+
+    public void outtakeTest(double outtakeSpeed) {
         left.setDirection(FORWARD);
         right.setDirection(REVERSE);
-        left.setPower(OUTTAKE_SPEED);
-        right.setPower(OUTTAKE_SPEED);
+        left.setPower(outtakeSpeed);
+        right.setPower(outtakeSpeed);
     }
 
     /**

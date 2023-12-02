@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /**
  * Object to encapsulate elevator subsystem
  */
-class Elevator {
+public class Elevator {
 
     private final DcMotorImplEx extend;
     private final TouchSensor extLimitSwitch;

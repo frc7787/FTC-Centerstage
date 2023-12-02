@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-class Worm {
+public class Worm {
 
     private final DcMotorImplEx worm;
     private final TouchSensor rotLimitSwitch;

@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
-public final class DriveBase {
+public class DriveBase {
 
     private double motorPowerRatio, fLPower, fRPower, bLPower, bRPower;
 
@@ -46,8 +46,19 @@ public final class DriveBase {
      * Main function to control the drive base
      */
     public void drive(double strafe, double drive, double turn) {
+        driveTest(strafe, drive, turn, STRAFE_OFFSET);
+    }
+
+    /**
+     * Function to test the drive base
+     * @param strafe The strafe power to apply
+     * @param drive The drive power to apply
+     * @param turn The turn power to apply
+     * @param strafeOffset Correction for imperfect strafing
+     */
+    public void driveTest(double strafe, double drive, double turn, double strafeOffset) {
         drive  = deadZone(drive)  * -1;
-        strafe = deadZone(strafe) * STRAFE_OFFSET;
+        strafe = deadZone(strafe) * strafeOffset;
         turn   = deadZone(turn);
 
         motorPowerRatio = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);

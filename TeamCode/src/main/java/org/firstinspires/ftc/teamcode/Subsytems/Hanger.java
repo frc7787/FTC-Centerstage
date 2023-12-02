@@ -12,8 +12,8 @@ public class Hanger {
     private final Servo left, right;
 
     /**
-     * Hanger Subsystem Constructor
-     * @param opMode The opMode you are using the hanger in, likely "this"
+     * Hanger constructor
+     * @param hardwareMap The hardwareMap you are using, likely "hardwareMap"
      */
     public Hanger(@NonNull HardwareMap hardwareMap) {
         left  = hardwareMap.get(Servo.class, "LeftHangerServo");
@@ -29,7 +29,16 @@ public class Hanger {
      * Releases the Hanging Mechanism
      */
     public void release() {
-        left.setPosition(HANGER_SERVO_POSITION);
-        right.setPosition(HANGER_SERVO_POSITION);
+        releaseTest(HANGER_SERVO_POSITION, HANGER_SERVO_POSITION);
+    }
+
+    /**
+     * Allows you to manually change the hanger release for testing
+     * @param leftServoPos The position of the left hanger servo
+     * @param rightServoPos The position of the right hanger servo
+     */
+    public void releaseTest(double leftServoPos, double rightServoPos) {
+        left.setPosition(leftServoPos);
+        right.setPosition(rightServoPos);
     }
 }

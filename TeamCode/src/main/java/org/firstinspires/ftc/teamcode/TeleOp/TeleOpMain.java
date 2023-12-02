@@ -37,7 +37,6 @@ public class TeleOpMain extends OpMode {
 
     private enum ArmState {
         AT_POSITION,
-        HOMING,
         MOVING_TO_POSITION
     }
 
