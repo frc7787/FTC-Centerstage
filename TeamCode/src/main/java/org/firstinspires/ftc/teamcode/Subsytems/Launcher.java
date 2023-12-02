@@ -13,7 +13,7 @@ public final class Launcher {
 
 
     public Launcher(@NonNull HardwareMap hardwareMap) {
-        launcherServo = hardwareMap.get(ServoImplEx.class, "lS");
+        launcherServo = hardwareMap.get(ServoImplEx.class, "LauncherServo");
     }
 
     /**
