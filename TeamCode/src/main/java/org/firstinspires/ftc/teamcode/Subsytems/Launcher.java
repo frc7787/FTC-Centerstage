@@ -21,14 +21,11 @@ public class Launcher {
      */
     public void init() { launcherServo.setPwmDisable(); }
 
-
     /**
-     * Releases The Launcher
+     * Releases the launcher
      */
-    public void release() { releaseTest(LAUNCHER_SERVO_POSITION); }
-
-    public void releaseTest(double releasePosition) {
+    public void release() {
         launcherServo.setPwmEnable();
-        launcherServo.setPosition(releasePosition);
+        launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
     }
 }

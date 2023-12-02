@@ -1,27 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class Properties {
 
     // ---------- ELEVATOR CONSTANTS ---------- //
 
-    public static int BOTTOM_EXTEND_POSITION = GetRobotProperties.readInteger("BOTTOM_EXTEND_POSITION");
-    public static int BOTTOM_ROT_POSITION    = GetRobotProperties.readInteger("BOTTOM_ROT_POSITION");
+    public static int BOTTOM_EXT_POS = GetRobotProperties.readInteger("BOTTOM_EXT_POS");
+    public static int BOTTOM_ROT_POS = GetRobotProperties.readInteger("BOTTOM_ROT_POS");
 
-    public static int LOW_EXTEND_POSITION = GetRobotProperties.readInteger("LOW_EXTEND_POSITION");
-    public static int LOW_ROT_POSITION    = GetRobotProperties.readInteger("LOW_ROT_POSITION");
+    public static int LOW_EXT_POS = GetRobotProperties.readInteger("LOW_EXT_POS");
+    public static int LOW_ROT_POS = GetRobotProperties.readInteger("LOW_ROT_POS");
 
-    public static int MED_EXTEND_POSITION = GetRobotProperties.readInteger("MED_EXTEND_POSITION");
-    public static int MED_ROT_POSITION    = GetRobotProperties.readInteger("MED_ROT_POSITION");
+    public static int MED_EXT_POS = GetRobotProperties.readInteger("MED_EXT_POS");
+    public static int MED_ROT_POS = GetRobotProperties.readInteger("MED_ROT_POS");
 
-    public static int HIGH_EXTEND_POSITION = GetRobotProperties.readInteger("HIGH_EXTEND_POSITION");
-    public static int HIGH_ROT_POSITION    = GetRobotProperties.readInteger("HIGH_ROT_POSITION");
+    public static int HIGH_EXT_POS = GetRobotProperties.readInteger("HIGH_EXT_POS");
+    public static int HIGH_ROT_POS = GetRobotProperties.readInteger("HIGH_ROT_POS");
 
-    public static int TOP_EXTEND_POSITION = GetRobotProperties.readInteger("TOP_EXTEND_POSITION");
-    public static int TOP_ROT_POSITION    = GetRobotProperties.readInteger("TOP_ROT_POSITION");
+    public static int TOP_EXT_POS = GetRobotProperties.readInteger("TOP_EXT_POS");
+    public static int TOP_ROT_POS = GetRobotProperties.readInteger("TOP_ROT_POS");
 
-    public static int LAUNCH_POSITION = GetRobotProperties.readInteger("LAUNCH_POSITION");
-    public static int HANG_POSITION   = GetRobotProperties.readInteger("HANG_POSITION");
-    public static int HUNG_POSITION   = GetRobotProperties.readInteger("HUNG_POSITION");
+    public static int LAUNCH_POS = GetRobotProperties.readInteger("LAUNCH_POS");
+    public static int HANG_POS   = GetRobotProperties.readInteger("HANG_POS");
+    public static int HUNG_POS   = GetRobotProperties.readInteger("HUNG_POS");
 
     public static double DEFAULT_WORM_POWER     = GetRobotProperties.readDouble("DEFAULT_WORM_POWER");
     public static double DEFAULT_ELEVATOR_POWER = GetRobotProperties.readDouble("DEFAULT_ELEVATOR_POWER");

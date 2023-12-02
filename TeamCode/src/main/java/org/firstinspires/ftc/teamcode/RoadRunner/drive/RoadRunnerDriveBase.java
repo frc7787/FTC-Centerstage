@@ -39,9 +39,9 @@ import java.util.List;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID_FB = new PIDCoefficients(0, 0, 0);// was named Translational_PID
-    public static PIDCoefficients TRANSLATIONAL_PID_LR = TRANSLATIONAL_PID_FB ;//new PIDCoefficients(0, 0, 0);// With Mecanum wheels having a lateral PID with different values is useful
+public class RoadRunnerDriveBase extends MecanumDrive {
+    public static PIDCoefficients TRANSLATIONAL_PID_DRIVE  = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID_STRAFE = new PIDCoefficients(0,0,0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 41.8 / 41.875;
@@ -65,10 +65,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public RoadRunnerDriveBase(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_FB, TRANSLATIONAL_PID_LR, HEADING_PID,
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_DRIVE, TRANSLATIONAL_PID_STRAFE, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);// Modified to allow L/R tuning with another PID
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);

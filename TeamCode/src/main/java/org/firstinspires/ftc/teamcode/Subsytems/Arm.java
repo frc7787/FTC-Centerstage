@@ -109,21 +109,9 @@ public class Arm {
     public void intake() { intake.intake(); }
 
     /**
-     * Sets the intake to intake at a set speed
-     * @param intakeSpeed The speed to intake at
-     */
-    public void intakeTest(double intakeSpeed) { intake.intakeTest(intakeSpeed); }
-
-    /**
      * Sets the intake to outtake at the speed defined by the OUTTAKE_SPEED property
      */
     public void outtake() { intake.outtake(); }
-
-    /**
-     * Sets the intake to outtake at a set speed
-     * @param outtakeSpeed The speed to outtake at
-     */
-    public void outtakeTest(double outtakeSpeed) { intake.outtakeTest(outtakeSpeed); }
 
     /**
      * Gets the target position of the arm

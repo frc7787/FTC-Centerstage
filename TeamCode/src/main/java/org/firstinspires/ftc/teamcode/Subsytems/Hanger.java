@@ -25,20 +25,12 @@ public class Hanger {
      */
     public void init() { left.setDirection(REVERSE); }
 
-    /**
-     * Releases the Hanging Mechanism
-     */
-    public void release() {
-        releaseTest(HANGER_SERVO_POSITION, HANGER_SERVO_POSITION);
-    }
 
     /**
-     * Allows you to manually change the hanger release for testing
-     * @param leftServoPos The position of the left hanger servo
-     * @param rightServoPos The position of the right hanger servo
+     * Releases the hangers
      */
-    public void releaseTest(double leftServoPos, double rightServoPos) {
-        left.setPosition(leftServoPos);
-        right.setPosition(rightServoPos);
+    public void release() {
+        left.setPosition(HANGER_SERVO_POSITION);
+        right.setPosition(HANGER_SERVO_POSITION);
     }
 }

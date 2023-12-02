@@ -62,17 +62,17 @@ public class TeleOpMain extends OpMode {
         if (gamepad2.dpad_down) {
             home();
         } else if (gamepad2.dpad_up) {
-            arm.moveToPosition(MED_EXTEND_POSITION, 0);
+            arm.moveToPosition(MED_EXT_POS, 0);
         } else if (gamepad2.cross) {
-            arm.moveToPosition(BOTTOM_EXTEND_POSITION, BOTTOM_ROT_POSITION);
+            arm.moveToPosition(BOTTOM_EXT_POS, BOTTOM_ROT_POS);
         } else if (gamepad2.square) {
-            arm.moveToPosition(LOW_EXTEND_POSITION, LOW_ROT_POSITION);
+            arm.moveToPosition(LOW_EXT_POS, LOW_ROT_POS);
         } else if (gamepad2.circle) {
-            arm.moveToPosition(MED_EXTEND_POSITION, MED_ROT_POSITION);
+            arm.moveToPosition(MED_EXT_POS, MED_ROT_POS);
         } else if (gamepad2.triangle) {
-            arm.moveToPosition(HIGH_EXTEND_POSITION, HIGH_ROT_POSITION);
+            arm.moveToPosition(HIGH_EXT_POS, HIGH_ROT_POS);
         } else if (gamepad2.options) {
-            arm.moveToPosition(TOP_EXTEND_POSITION, TOP_ROT_POSITION);
+            arm.moveToPosition(TOP_EXT_POS, TOP_ROT_POS);
         }
     }
 
@@ -107,24 +107,24 @@ public class TeleOpMain extends OpMode {
         switch (endGameState) {
             case IDLE:
                 if (gamepad2.left_bumper) {
-                    arm.rotate(HANG_POSITION);
+                    arm.rotate(HANG_POS);
                     endGameState = EndGameState.TO_HANGING_POSITION;
                 } else if (gamepad2.right_bumper) {
-                    arm.rotate(LAUNCH_POSITION);
+                    arm.rotate(LAUNCH_POS);
                     endGameState = EndGameState.TO_LAUNCH_POSITION;
                 }
                 break;
             case TO_HANGING_POSITION:
                 if (!arm.worm_is_busy()) { endGameState = EndGameState.HANGING_POSITION; }
                 if (gamepad2.right_bumper) {
-                    arm.rotate(LAUNCH_POSITION);
+                    arm.rotate(LAUNCH_POS);
                     endGameState = EndGameState.TO_LAUNCH_POSITION;
                 }
                 break;
             case TO_LAUNCH_POSITION:
                 if (!arm.worm_is_busy()) { endGameState = EndGameState.LAUNCH_POSITION; }
                 if (gamepad2.left_bumper) {
-                    arm.rotate(HANG_POSITION);
+                    arm.rotate(HANG_POS);
                     endGameState = EndGameState.TO_HANGING_POSITION;
                 }
                 break;
@@ -132,19 +132,19 @@ public class TeleOpMain extends OpMode {
                 if (gamepad2.left_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY && gamepad2.right_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY ) {
                     launcher.release();
                 } else if (gamepad2.left_bumper) {
-                    arm.rotate(HANG_POSITION);
+                    arm.rotate(HANG_POS);
                     endGameState = EndGameState.TO_HANGING_POSITION;
                 }
                 break;
             case HANGING_POSITION:
                 if (gamepad2.right_bumper) {
-                    arm.rotate(LAUNCH_POSITION);
+                    arm.rotate(LAUNCH_POS);
                     endGameState = EndGameState.TO_LAUNCH_POSITION;
                 } else if (gamepad2.cross) {
                     hanger.release();
                     hangerHookReleased = true;
                 } else if (gamepad2.dpad_down && hangerHookReleased) {
-                    arm.rotate(HUNG_POSITION);
+                    arm.rotate(HUNG_POS);
                 }
                 break;
             case HUNG:

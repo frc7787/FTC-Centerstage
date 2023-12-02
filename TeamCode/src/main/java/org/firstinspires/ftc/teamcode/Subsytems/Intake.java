@@ -19,22 +19,18 @@ public class Intake {
         right = hardwareMap.get(CRServo.class, "RightIntake");
     }
 
-    public void intake() { intakeTest(INTAKE_SPEED); }
-
-    public void intakeTest(double intakeSpeed) {
+    public void intake() {
         left.setDirection(REVERSE);
         right.setDirection(FORWARD);
-        left.setPower(intakeSpeed);
-        right.setPower(intakeSpeed);
+        left.setPower(INTAKE_SPEED);
+        right.setPower(INTAKE_SPEED);
     }
 
-    public void outtake() { outtakeTest(OUTTAKE_SPEED); }
-
-    public void outtakeTest(double outtakeSpeed) {
+    public void outtake() {
         left.setDirection(FORWARD);
         right.setDirection(REVERSE);
-        left.setPower(outtakeSpeed);
-        right.setPower(outtakeSpeed);
+        left.setPower(OUTTAKE_SPEED);
+        right.setPower(OUTTAKE_SPEED);
     }
 
     /**

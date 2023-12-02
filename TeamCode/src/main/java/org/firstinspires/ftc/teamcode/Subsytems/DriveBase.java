@@ -41,24 +41,15 @@ public class DriveBase {
         return value;
     }
 
-
-    /**
-     * Main function to control the drive base
-     */
-    public void drive(double strafe, double drive, double turn) {
-        driveTest(strafe, drive, turn, STRAFE_OFFSET);
-    }
-
     /**
      * Function to test the drive base
      * @param strafe The strafe power to apply
      * @param drive The drive power to apply
      * @param turn The turn power to apply
-     * @param strafeOffset Correction for imperfect strafing
      */
-    public void driveTest(double strafe, double drive, double turn, double strafeOffset) {
+    public void drive(double strafe, double drive, double turn) {
         drive  = deadZone(drive)  * -1;
-        strafe = deadZone(strafe) * strafeOffset;
+        strafe = deadZone(strafe) * STRAFE_OFFSET;
         turn   = deadZone(turn);
 
         motorPowerRatio = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);

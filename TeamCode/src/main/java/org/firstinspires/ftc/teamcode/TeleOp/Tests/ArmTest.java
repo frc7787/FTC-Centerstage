@@ -2,15 +2,13 @@ package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
 import static org.firstinspires.ftc.teamcode.Subsytems.Arm.HomingState.COMPLETE;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.GetRobotProperties;
+import static org.firstinspires.ftc.teamcode.Properties.*;
 import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 
 @TeleOp(name = "Test - Arm", group = "Test")
-@Config
 public class ArmTest extends OpMode {
 
     private Arm arm;
@@ -23,26 +21,11 @@ public class ArmTest extends OpMode {
 
     public static ArmState armState = ArmState.AT_POSITION;
 
-    public static double INTAKE_SPEED  = GetRobotProperties.readDouble("INTAKE_SPEED");
-    public static double OUTTAKE_SPEED = GetRobotProperties.readDouble("OUTTAKE_SPEED");
-
-    public static int BOTTOM_EXT_POS = GetRobotProperties.readInteger("BOTTOM_ROT_POSITION");
-    public static int LOW_EXT_POS    = GetRobotProperties.readInteger("LOW_ROT_POSITION");
-    public static int MED_EXT_POS    = GetRobotProperties.readInteger("MED_ROT_POSITION");
-    public static int HIGH_EXT_POS   = GetRobotProperties.readInteger("HIGH_ROT_POSITION");
-    public static int TOP_EXT_POS    = GetRobotProperties.readInteger("TOP_ROT_POSITION");
-
-    public static int BOTTOM_ROT_POS = GetRobotProperties.readInteger("BOTTOM_EXTEND_POSITION");
-    public static int LOW_ROT_POS    = GetRobotProperties.readInteger("LOW_EXTEND_POSITION");
-    public static int MED_ROT_POS    = GetRobotProperties.readInteger("MED_EXTEND_POSITION");
-    public static int HIGH_ROT_POS   = GetRobotProperties.readInteger("HIGH_EXTEND_POSITION");
-    public static int TOP_ROT_POS    = GetRobotProperties.readInteger("TOP_EXTEND_POSITION");
-
     public void run_intake() {
         if (gamepad1.left_bumper) {
-            arm.intakeTest(INTAKE_SPEED);
+            arm.intake();
         } else if (gamepad1.right_bumper) {
-            arm.outtakeTest(OUTTAKE_SPEED);
+            arm.outtake();
         }
     }
 
