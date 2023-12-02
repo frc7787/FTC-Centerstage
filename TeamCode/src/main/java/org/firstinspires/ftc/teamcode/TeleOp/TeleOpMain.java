@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.hardware.lynx.LynxModule;
+import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.GetRobotProperties;
 import org.firstinspires.ftc.teamcode.Subsytems.*;
-import org.firstinspires.ftc.teamcode.TeleOp.Utility.ElevatorPositions;
-import static org.firstinspires.ftc.teamcode.Constants.*;
+
+import static org.firstinspires.ftc.teamcode.Properties.*;
 import static org.firstinspires.ftc.teamcode.Subsytems.Arm.HomingState.*;
 
 @TeleOp(name = "TeleOp 2023/2024 - Use This One", group = "Production")
@@ -18,21 +21,21 @@ public class TeleOpMain extends OpMode {
 
     // The following values should represent the robots starting configuration
     private EndGameState endGameState = EndGameState.IDLE;
-    private NormalState normalState   = NormalState.AT_POSITION;
-    private GamePeriod gamePeriod     = GamePeriod.NORMAL; // This will likely never need to change
+    private ArmState armState         = ArmState.AT_POSITION;
+    private GamePeriod gamePeriod     = GamePeriod.NORMAL;
 
+    private boolean hangerHookReleased = false;
 
     private enum EndGameState {
         IDLE,
         TO_HANGING_POSITION,
         HANGING_POSITION,
-        HANGING,
         HUNG,
         TO_LAUNCH_POSITION,
         LAUNCH_POSITION
     }
 
-    private enum NormalState {
+    private enum ArmState {
         AT_POSITION,
         HOMING,
         MOVING_TO_POSITION
@@ -43,25 +46,30 @@ public class TeleOpMain extends OpMode {
         ENDGAME
     }
 
+    private void home() {
+        arm.home();
+
+        if (arm.getHomingState() == COMPLETE) {
+            arm.resetHomingState();
+            armState = ArmState.AT_POSITION;
+        }
+    }
+
     /**
      * Code to run elevator. <br>
-     * This function sets the state of an elevator, however the state machine is located in the normal() function
+     * The state of the elevator is handled in the
      */
     private void run_elevator() {
         if (gamepad2.dpad_down) {
-            normalState = NormalState.HOMING;
+            home();
         } else if (gamepad2.dpad_up) {
             arm.moveToPosition(MED_EXTEND_POSITION, 0);
-            normalState = NormalState.MOVING_TO_POSITION;
         } else if (gamepad2.cross) {
             arm.moveToPosition(BOTTOM_EXTEND_POSITION, BOTTOM_ROT_POSITION);
-            normalState = NormalState.MOVING_TO_POSITION;
         } else if (gamepad2.square) {
             arm.moveToPosition(LOW_EXTEND_POSITION, LOW_ROT_POSITION);
-            normalState = NormalState.MOVING_TO_POSITION;
         } else if (gamepad2.circle) {
             arm.moveToPosition(MED_EXTEND_POSITION, MED_ROT_POSITION);
-            normalState = NormalState.MOVING_TO_POSITION;
         } else if (gamepad2.triangle) {
             arm.moveToPosition(HIGH_EXTEND_POSITION, HIGH_ROT_POSITION);
         } else if (gamepad2.options) {
@@ -73,40 +81,30 @@ public class TeleOpMain extends OpMode {
         if (gamepad2.left_bumper) {
             arm.intake();
         } else if (gamepad2.right_bumper) {
-            arm.close();
-        } else if (gamepad2.left_trigger > INTAKE_TRIGGER_SENSITIVITY) {
             arm.outtake();
         }
     }
 
     private void normal() {
-        switch (normalState) {
+        switch (armState) {
             case AT_POSITION:
                 run_intake();
                 run_elevator();
+
+                if (arm.is_busy()) { armState = ArmState.MOVING_TO_POSITION; }
+
                 break;
             case MOVING_TO_POSITION:
                 run_intake();
                 run_elevator();
 
-                if (arm.getCurrentPosition() == arm.getTargetPosition()) {
-                    normalState = NormalState.AT_POSITION;
-                }
-                break;
-            case HOMING:
-                arm.home();
+                if (!arm.is_busy()) { armState = ArmState.AT_POSITION; }
 
-                if (arm.getHomingState() == COMPLETE) {
-                    normalState = NormalState.AT_POSITION;
-                    arm.resetHomingState();
-                }
                 break;
         }
     }
 
     void endGame() {
-        arm.checkLimitSwitch(); // We want to stop the motors if the limit switch is pressed
-
         switch (endGameState) {
             case IDLE:
                 if (gamepad2.left_bumper) {
@@ -118,17 +116,19 @@ public class TeleOpMain extends OpMode {
                 }
                 break;
             case TO_HANGING_POSITION:
-                if (arm.worm_is_busy()) { endGameState = EndGameState.HANGING_POSITION; }
+                if (!arm.worm_is_busy()) { endGameState = EndGameState.HANGING_POSITION; }
                 if (gamepad2.right_bumper) {
                     arm.rotate(LAUNCH_POSITION);
                     endGameState = EndGameState.TO_LAUNCH_POSITION;
                 }
+                break;
             case TO_LAUNCH_POSITION:
-                if (arm.worm_is_busy()) { endGameState = EndGameState.LAUNCH_POSITION; }
+                if (!arm.worm_is_busy()) { endGameState = EndGameState.LAUNCH_POSITION; }
                 if (gamepad2.left_bumper) {
                     arm.rotate(HANG_POSITION);
                     endGameState = EndGameState.TO_HANGING_POSITION;
                 }
+                break;
             case LAUNCH_POSITION:
                 if (gamepad2.left_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY && gamepad2.right_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY ) {
                     launcher.release();
@@ -138,15 +138,16 @@ public class TeleOpMain extends OpMode {
                 }
                 break;
             case HANGING_POSITION:
-                if (gamepad2.cross) {
-                    hanger.release();
-                } else if (gamepad2.dpad_up) {
-                    arm.rotate(HUNG_POSITION);
-                    endGameState = EndGameState.HUNG;
-                } else if (gamepad2.right_bumper) {
+                if (gamepad2.right_bumper) {
                     arm.rotate(LAUNCH_POSITION);
                     endGameState = EndGameState.TO_LAUNCH_POSITION;
+                } else if (gamepad2.cross) {
+                    hanger.release();
+                    hangerHookReleased = true;
+                } else if (gamepad2.dpad_down && hangerHookReleased) {
+                    arm.rotate(HUNG_POSITION);
                 }
+                break;
             case HUNG:
                 driveBase.stop();
                 break;
@@ -154,6 +155,8 @@ public class TeleOpMain extends OpMode {
     }
     
     @Override public void init() {
+        GetRobotProperties.load();
+
         driveBase = new DriveBase(hardwareMap);
         hanger    = new Hanger(hardwareMap);
         launcher  = new Launcher(hardwareMap);
@@ -164,7 +167,7 @@ public class TeleOpMain extends OpMode {
         driveBase.init();
         hanger.init();
 
-        ElevatorPositions.updateElevatorConstants();
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { module.setBulkCachingMode(AUTO); }
     }
 
 

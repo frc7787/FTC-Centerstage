@@ -2,14 +2,13 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-import static org.firstinspires.ftc.teamcode.Constants.DEAD_ZONE_HIGH;
-import static org.firstinspires.ftc.teamcode.Constants.DEAD_ZONE_LOW;
-import static org.firstinspires.ftc.teamcode.Constants.STRAFE_OFFSET;
+import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_HIGH;
+import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_LOW;
+import static org.firstinspires.ftc.teamcode.Properties.STRAFE_OFFSET;
 
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;

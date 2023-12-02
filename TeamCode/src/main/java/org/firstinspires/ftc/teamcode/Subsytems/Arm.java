@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-import static org.firstinspires.ftc.teamcode.Constants.HOMING_POWER;
+import static org.firstinspires.ftc.teamcode.Properties.HOMING_POWER;
 
 import androidx.annotation.NonNull;
 
@@ -13,7 +13,6 @@ public class Arm {
     public final Intake intake;
 
     private HomingState homingState = HomingState.START;
-    private int[] targetPosition = new int[]{};
 
     public enum HomingState {
         START,
@@ -38,6 +37,8 @@ public class Arm {
         worm.checkLimitSwitch();
     }
 
+    public boolean is_busy() { return worm_is_busy() || elevator_is_busy(); }
+
     public boolean worm_is_busy() { return worm.is_busy(); }
 
     public boolean elevator_is_busy() { return elevator.is_busy(); }
@@ -52,8 +53,6 @@ public class Arm {
         elevator.extend(elevatorPosition);
     }
 
-
-
     public boolean extensionLimitSwitchIsPressed() { return elevator.limitSwitchIsPressed(); }
 
     public boolean rotationLimitSwitchIsPressed() { return worm.limitSwitchIsPressed(); }
@@ -62,21 +61,25 @@ public class Arm {
 
     public void extend(int position) { elevator.extend(position); }
 
-    public void powerWorm(double power) { worm.power(power); }
-
     public void intake() { intake.intake(); }
 
     public void outtake() { intake.outtake(); }
-
-    public void close() { intake.hold(); }
 
     public int[] getTargetPosition() {
         return new int[]{worm.getTargetPosition(), elevator.getTargetPosition()};
     }
 
+    public int getWormTargetPosition() { return worm.getTargetPosition(); }
+
+    public int getElevatorTargetPosition() { return elevator.getTargetPosition(); }
+
     public int[] getCurrentPosition() {
         return new int[]{worm.getCurrentPosition(), elevator.getCurrentPosition()};
     }
+
+    public int getWormCurrentPosition() { return worm.getCurrentPosition(); }
+
+    public int getElevatorCurrentPosition() { return elevator.getCurrentPosition(); }
 
     public void resetHomingState() { homingState = HomingState.START; }
 
@@ -85,7 +88,6 @@ public class Arm {
     public void home() {
         switch (homingState) {
             case START:
-                close(); // Close The Intake
                 homingState = HomingState.HOMING_ELEVATOR;
                 break;
             case HOMING_ELEVATOR:

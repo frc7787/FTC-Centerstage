@@ -3,17 +3,15 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
-import static org.firstinspires.ftc.teamcode.Constants.DEFAULT_ELEVATOR_POWER;
+import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_ELEVATOR_POWER;
 
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
 
 /**
  * Object to encapsulate elevator subsystem
@@ -25,26 +23,24 @@ class Elevator {
 
 
     public Elevator(@NonNull HardwareMap hardwareMap) {
-        extend     = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
+        extend         = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
         extLimitSwitch = hardwareMap.get(TouchSensor.class, "lmS");
     }
 
 
     /**
-     * Initializes the elevator subsystem.
-     * This Resets the elevator motor encoders and reverses the polarity of the right motor.
+     * Initializes the elevator subsystem. <br>
+     * This resets the elevator motor encoder
      */
     public void init() { extend.setMode(STOP_AND_RESET_ENCODER); }
 
 
     /**
-     * Checks the limit switch when the position is zero.
-     * If the position is zero, and the limit switch is pressed then we set the motor powers to
-     * zero and reset the encoders
+     * Checks to see if we should reset the elevator encoders
      */
     public void checkLimitSwitch() {
         if (extend.getCurrentPosition() == 0 && extLimitSwitch.isPressed()) {
-           MotorUtility.setMode(STOP_AND_RESET_ENCODER);
+           extend.setMode(STOP_AND_RESET_ENCODER);
         }
     }
 
@@ -54,6 +50,8 @@ class Elevator {
      * @param power The speed to extend it
      */
     public void extend(int position, double power) {
+        checkLimitSwitch();
+
         extend.setTargetPosition(position);
         extend.setMode(RUN_TO_POSITION);
         extend.setPower(power);
@@ -100,12 +98,15 @@ class Elevator {
 
 
     /**
-     * Stops the elevator by setting the power to zero
+     * Gets the current position of the elevator
+     * @return The current position of the elevator
      */
-    public void stop() { extend.setPower(0); }
-
     public int getCurrentPosition() { return extend.getCurrentPosition(); }
 
+    /**
+     * Gets the position that the elevator motor is trying to get to
+     * @return The position that the elevator motor is trying to get to.
+     */
     public int getTargetPosition() { return extend.getTargetPosition(); }
 }
 

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
-import static org.firstinspires.ftc.teamcode.Constants.DEFAULT_WORM_POWER;
+import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_WORM_POWER;
 
 import androidx.annotation.NonNull;
 
@@ -18,16 +18,18 @@ class Worm {
 
     public Worm(@NonNull HardwareMap hardwareMap) {
         worm           = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
-        rotLimitSwitch = hardwareMap.get(TouchSensor.class, "lmS2");
+        rotLimitSwitch = hardwareMap.get(TouchSensor.class, "WormLimitSwitch");
     }
 
-    /** Initializes the motors. This resets the left and right worm encoders*/
+    /**
+     * Initializes the worm subsystem. <br>
+     * This resets the worm motor encoders
+     */
     public void init() { worm.setMode(STOP_AND_RESET_ENCODER); }
 
 
     /**
-     * Checks to see if the worm limit switch is being pressed.
-     * If it is being pressed, stops the motors, then resets the encoders
+     * Checks to see if we should reset the encoder positions
      */
     public void checkLimitSwitch() {
         if (worm.getCurrentPosition() == 0 && rotLimitSwitch.isPressed()) {
@@ -48,6 +50,8 @@ class Worm {
      * @param power The power to supply to motors
      */
     public void rotate(int position, double power) {
+        checkLimitSwitch();
+
         worm.setTargetPosition(position);
         worm.setMode(RUN_TO_POSITION);
         worm.setPower(power);
@@ -74,11 +78,14 @@ class Worm {
     public void power(double power) { worm.setPower(power); }
 
     /**
-     * Stop to worm drive
+     * Gets the current position of the worm (rotation) motor
+     * @return The current position of the worm (rotation) motor
      */
-    public void stop() { worm.setPower(0); }
-
     public int getCurrentPosition() { return worm.getCurrentPosition(); }
 
+    /**
+     * Gets the position that the worm (rotation) motor is trying to get to
+     * @return The position the worm motor is trying to get to
+     */
     public int getTargetPosition() { return worm.getTargetPosition(); }
 }
