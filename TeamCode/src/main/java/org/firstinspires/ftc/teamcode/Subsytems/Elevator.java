@@ -38,7 +38,7 @@ public class Elevator {
     /**
      * Checks to see if we should reset the elevator encoders
      */
-    public void checkLimitSwitch() {
+    public void checkLimitSwitch() { // this is a confusing name for this method. checkLimitSwitchAndZero is a better name
         if (extend.getCurrentPosition() == 0 && extLimitSwitch.isPressed()) {
            extend.setMode(STOP_AND_RESET_ENCODER);
         }

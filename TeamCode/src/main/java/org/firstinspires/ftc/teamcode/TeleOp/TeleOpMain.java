@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.GetRobotProperties;
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
 import static org.firstinspires.ftc.teamcode.Properties.*;
-import static org.firstinspires.ftc.teamcode.Subsytems.Arm.HomingState.*;
 
 @TeleOp(name = "TeleOp 2023/2024 - Use This One", group = "Production")
 public class TeleOpMain extends OpMode {
@@ -21,12 +20,12 @@ public class TeleOpMain extends OpMode {
 
     // The following values should represent the robots starting configuration
     private EndGameState endGameState = EndGameState.IDLE;
-    private ArmState armState         = ArmState.AT_POSITION;
+    private ArmState armState         = ArmState.AT_POSITION;// if you want it to home first, set this to HOMING instead of using the boolean
     private IntakeState intakeState   = IntakeState.IDLE;
     private GamePeriod gamePeriod     = GamePeriod.NORMAL;
 
     private boolean hangerHookReleased = false;
-    private boolean homing             = true;
+    //private boolean homing             = true;
     private enum EndGameState {
         IDLE,
         TO_HANGING_POSITION,
@@ -57,10 +56,12 @@ public class TeleOpMain extends OpMode {
      * Listens for gamepad input and moves arm to desired position. <br>
      * The state of the code is handled in the normal() function.
      */
-    private void run_elevator() {
+    private void read_elevator_gamepad() {
         if (gamepad2.dpad_down) {
-            arm.home();
-            homing = true;
+            //arm.home();
+            //homing = true;
+            armState = ArmState.HOMING; // no need for booleans if you are using states in the same class.
+            arm.resetHomingState();
         } else if (gamepad2.dpad_up) {
             arm.moveToPosition(MED_EXT_POS, 0);
         } else if (gamepad2.cross) {
@@ -111,12 +112,12 @@ public class TeleOpMain extends OpMode {
         switch (armState) {
             case AT_POSITION:
                 run_intake();
-                run_elevator();
+                read_elevator_gamepad();
 
-                if (homing) {
-                    armState = ArmState.HOMING;
-                    break;
-                }
+//                if (homing) {// use the button press to switch the state directly
+//                    armState = ArmState.HOMING;
+//                    break;
+//                }
 
                 if (arm.is_busy()) {
                     armState = ArmState.MOVING_TO_POSITION;
@@ -124,19 +125,23 @@ public class TeleOpMain extends OpMode {
                 break;
             case MOVING_TO_POSITION:
                 run_intake();
-                run_elevator();
+                read_elevator_gamepad();
                 if (!arm.is_busy()) {
                     armState = ArmState.AT_POSITION;
                 }
                 break;
             case HOMING:
                 run_intake();
-                run_elevator();
+                read_elevator_gamepad();
+                arm.home(); // moved the homing command here, because it should be run whenever the arm is in the homing state.
 
                 if (!arm.is_busy()) {
+                    /*
+                       I am not sure I trust the "is Busy" logic to properly catch when both sets of motors are homed.
+                     */
                     armState = ArmState.AT_POSITION;
-                    arm.resetHomingState();
-                    homing = false;
+                    //arm.resetHomingState();// since you are using a button press to home, reset the homing state there
+                    //homing = false;
                 }
                 break;
         }

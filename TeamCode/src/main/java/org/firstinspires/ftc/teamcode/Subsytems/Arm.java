@@ -8,7 +8,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
 
-    public final Elevator elevator;
+    public final Elevator elevator; /**
+     So, the big question here, is if the elevator and worm should be run like their own subsystems, or just as a group of hardware controls.
+     At the moment, Elevator has nothing in it to make it a "subsystem" it acts more as a group of methods for the arm subsystem
+     with straight pass throughs to all of the hardware and minimal logical processing.
+     It can stay as it's own class, but it should get some logical functionality so that it acts a bit more like a true subsystem.
+     It seems excessive, but if it can be in a separate homing state,
+     it should have it's own state machine that tracks homing or other features added later,
+     and the Limit switch status or motor status should not be accessible to higher level subsystems
+     **unless it is used as a sensor to control another action in a different subsystem
+     (eg if you read the motor position and make a logical decision on how much power to send the drive subsystem)
+     */
     public final Worm worm;
     public final Intake intake;
 
@@ -166,18 +176,22 @@ public class Arm {
         switch (homingState) {
             case START:
                 homingState = HomingState.HOMING_ELEVATOR;
+                //you need to set your motor Modes here to RunUsingEncoder and set powers to zero
+                // OR, and probably better would be to give your elevator and worm subsystems their own homing sequence and start them separately
                 break;
             case HOMING_ELEVATOR:
-                if (elevatorLimitSwitchIsPressed()) {
+                //keep calling the elevator.home() method once created
+                if (elevatorLimitSwitchIsPressed()) { //ideally use an elevator state machine to let you know when it has completed homing
                     homingState = HomingState.HOMING_WORM;
                 }
-                elevator.power(HOMING_POWER);
+                elevator.power(HOMING_POWER);//this will not do anything if the motors are still set to run to position.
                 break;
             case HOMING_WORM:
-                if (wormLimitSwitchIsPressed()) {
+                //keep calling the worm.home() method once created
+                if (wormLimitSwitchIsPressed()) {//ideally use a worm state machine to let you know when it has completed homing
                     homingState = HomingState.COMPLETE;
                 }
-                worm.power(HOMING_POWER);
+                worm.power(HOMING_POWER); //this will not do anything if the motors are still set to run to position.
                 break;
             case COMPLETE:
                 break;
