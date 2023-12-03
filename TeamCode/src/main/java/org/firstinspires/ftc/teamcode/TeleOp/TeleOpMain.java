@@ -22,10 +22,11 @@ public class TeleOpMain extends OpMode {
     // The following values should represent the robots starting configuration
     private EndGameState endGameState = EndGameState.IDLE;
     private ArmState armState         = ArmState.AT_POSITION;
+    private IntakeState intakeState   = IntakeState.IDLE;
     private GamePeriod gamePeriod     = GamePeriod.NORMAL;
 
     private boolean hangerHookReleased = false;
-
+    private boolean homing             = true;
     private enum EndGameState {
         IDLE,
         TO_HANGING_POSITION,
@@ -37,7 +38,14 @@ public class TeleOpMain extends OpMode {
 
     private enum ArmState {
         AT_POSITION,
-        MOVING_TO_POSITION
+        MOVING_TO_POSITION,
+        HOMING
+    }
+
+    private enum IntakeState {
+        IDLE,
+        INTAKE,
+        OUTTAKE
     }
 
     private enum GamePeriod {
@@ -45,22 +53,14 @@ public class TeleOpMain extends OpMode {
         ENDGAME
     }
 
-    private void home() {
-        arm.home();
-
-        if (arm.getHomingState() == COMPLETE) {
-            arm.resetHomingState();
-            armState = ArmState.AT_POSITION;
-        }
-    }
-
     /**
-     * Code to run elevator. <br>
-     * The state of the elevator is handled in the
+     * Listens for gamepad input and moves arm to desired position. <br>
+     * The state of the code is handled in the normal() function.
      */
     private void run_elevator() {
         if (gamepad2.dpad_down) {
-            home();
+            arm.home();
+            homing = true;
         } else if (gamepad2.dpad_up) {
             arm.moveToPosition(MED_EXT_POS, 0);
         } else if (gamepad2.cross) {
@@ -76,33 +76,75 @@ public class TeleOpMain extends OpMode {
         }
     }
 
+    /**
+     * Code to handle the state of the intake
+     */
     private void run_intake() {
-        if (gamepad2.left_bumper) {
-            arm.intake();
-        } else if (gamepad2.right_bumper) {
-            arm.outtake();
+        switch (intakeState) {
+            case IDLE:
+                if (gamepad2.left_bumper) {
+                    intakeState = IntakeState.INTAKE;
+                } else if (gamepad2.right_bumper) {
+                    intakeState = IntakeState.OUTTAKE;
+                }
+                break;
+            case INTAKE:
+                arm.intake();
+                if (gamepad2.right_bumper) {
+                    intakeState = IntakeState.OUTTAKE;
+                }
+                break;
+            case OUTTAKE:
+                arm.outtake();
+                if (gamepad2.left_bumper) {
+                    intakeState = IntakeState.INTAKE;
+                }
+                break;
         }
     }
 
+    /**
+     * Code to run in the normal period of the match.
+     * This is where the arm state is handled
+     */
     private void normal() {
         switch (armState) {
             case AT_POSITION:
                 run_intake();
                 run_elevator();
 
-                if (arm.is_busy()) { armState = ArmState.MOVING_TO_POSITION; }
+                if (homing) {
+                    armState = ArmState.HOMING;
+                    break;
+                }
 
+                if (arm.is_busy()) {
+                    armState = ArmState.MOVING_TO_POSITION;
+                }
                 break;
             case MOVING_TO_POSITION:
                 run_intake();
                 run_elevator();
+                if (!arm.is_busy()) {
+                    armState = ArmState.AT_POSITION;
+                }
+                break;
+            case HOMING:
+                run_intake();
+                run_elevator();
 
-                if (!arm.is_busy()) { armState = ArmState.AT_POSITION; }
-
+                if (!arm.is_busy()) {
+                    armState = ArmState.AT_POSITION;
+                    arm.resetHomingState();
+                    homing = false;
+                }
                 break;
         }
     }
 
+    /**
+     * Code to be run in the endgame period.
+     */
     void endGame() {
         switch (endGameState) {
             case IDLE:
