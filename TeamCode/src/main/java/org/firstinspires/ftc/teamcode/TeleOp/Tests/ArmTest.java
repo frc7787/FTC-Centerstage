@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
-import static org.firstinspires.ftc.teamcode.Subsytems.Arm.HomingState.COMPLETE;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -23,26 +21,9 @@ public class ArmTest extends OpMode {
 
     public static ArmState armState = ArmState.AT_POSITION;
 
-    public void run_intake() {
-        if (gamepad1.left_bumper) {
-            arm.intake();
-        } else if (gamepad1.right_bumper) {
-            arm.outtake();
-        }
-    }
-
-    private void home() {
-        arm.home();
-
-        if (arm.getHomingState() == COMPLETE) {
-            arm.resetHomingState();
-            armState = ArmState.AT_POSITION;
-        }
-    }
-
-    public void run_arm() {
+    public void listenForArmCommand() {
         if (gamepad1.dpad_down) {
-            home();
+            arm.isHoming = true;
         } else if (gamepad1.dpad_up) {
             arm.moveToPosition(MED_EXT_POS, 0);
         } else if (gamepad1.cross) {
@@ -63,17 +44,24 @@ public class ArmTest extends OpMode {
     }
 
     @Override public void loop() {
+        arm.debug(telemetry);
+
+        telemetry.addData("Arm State", armState);
+
+        if (gamepad1.left_bumper) { arm.intake(); }
+
         switch (armState) {
             case AT_POSITION:
-                run_intake();
-                run_arm();
+                listenForArmCommand();
 
                 if (arm.is_busy()) { armState = ArmState.TO_POSITION; }
+                break;
             case TO_POSITION:
-                run_intake();
-                run_arm();
+                listenForArmCommand();
 
                 if (!arm.is_busy()) { armState = ArmState.AT_POSITION; }
+                break;
         }
+        telemetry.update();
     }
 }

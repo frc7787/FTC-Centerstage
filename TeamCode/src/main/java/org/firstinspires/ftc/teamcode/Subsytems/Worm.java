@@ -11,14 +11,17 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 public class Worm {
 
     private final DcMotorImplEx worm;
-    private final TouchSensor rotLimitSwitch;
+    private final TouchSensor limitSwitch;
 
     public Worm(@NonNull HardwareMap hardwareMap) {
-        worm           = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
-        rotLimitSwitch = hardwareMap.get(TouchSensor.class, "WormLimitSwitch");
+        worm        = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
+        limitSwitch = hardwareMap.get(TouchSensor.class, "WormLimitSwitch");
     }
 
     /**
@@ -32,11 +35,10 @@ public class Worm {
      * Checks to see if we should stop and reset encoders.
      */
     public void update() {
-        if (worm.getCurrentPosition() == 0 && rotLimitSwitch.isPressed()) {
+        if (worm.getCurrentPosition() == 0 && limitSwitch.isPressed()) {
             worm.setMode(STOP_AND_RESET_ENCODER);
         }
     }
-
 
     /**
      * Rotates the worm to a position at the speed defined by the DEFAULT_WORM_POWER constant.
@@ -60,7 +62,7 @@ public class Worm {
      * Checks to see if the worm limit switch is pressed
      * @return Whether or not the worm limit switch is pressed
      */
-    public boolean limitSwitchIsPressed() { return rotLimitSwitch.isPressed(); }
+    public boolean limitSwitchIsPressed() { return limitSwitch.isPressed(); }
 
 
     /**
@@ -86,4 +88,17 @@ public class Worm {
      * @return The position the worm motor is trying to get to
      */
     public int getTargetPosition() { return worm.getTargetPosition(); }
+
+    /**
+     * Displays debug information for the worm
+     */
+
+    public void debug(@NonNull Telemetry telemetry) {
+        telemetry.addLine("Worm Debug");
+
+        telemetry.addData("Worm Direction", worm.getDirection());
+        telemetry.addData("Worm Current Position", worm.getCurrentPosition());
+        telemetry.addData("Worm Target Position", worm.getTargetPosition());
+        telemetry.addData("Worm Current (AMPS)", worm.getCurrent(CurrentUnit.AMPS));
+    }
 }

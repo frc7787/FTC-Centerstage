@@ -12,7 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.TeleOp.Utility.MotorUtility;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
 
 public class DriveBase {
 
@@ -73,9 +74,20 @@ public class DriveBase {
         telemetry.addLine("Drive Base Debug\n");
 
         telemetry.addData("Motor Power Ratio", motorPowerRatio);
+
         telemetry.addData("Front Left Drive Motor Power", fLPower);
         telemetry.addData("Front Right Drive Motor Power", fRPower);
         telemetry.addData("Back Left Drive Motor Power", bLPower);
         telemetry.addData("Back Right Drive Motor Power", bRPower);
+
+        telemetry.addData("Front Left Drive Motor Direction", fL.getDirection());
+        telemetry.addData("Front Right Drive Motor Direction", fR.getDirection());
+        telemetry.addData("Back Left Drive Motor Direction", bL.getDirection());
+        telemetry.addData("Back Right Drive Motor Direction", bR.getDirection());
+
+        telemetry.addData("Front Left Drive Motor Current (AMPS)", fL.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Front Right Drive Motor Current (AMPS)", fR.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Back Left Drive Motor Current (AMPS)", bL.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Back Right Drive Motor Current (AMPS)", bR.getCurrent(CurrentUnit.AMPS));
     }
 }

@@ -21,7 +21,6 @@ public class TeleOpMain extends OpMode {
     // The following values should represent the robots starting configuration
     private EndGameState endGameState = EndGameState.IDLE;
     private ArmState armState         = ArmState.AT_POSITION;
-    private IntakeState intakeState   = IntakeState.IDLE;
     private GamePeriod gamePeriod     = GamePeriod.NORMAL;
 
     private boolean hangerHookReleased = false;
@@ -39,12 +38,6 @@ public class TeleOpMain extends OpMode {
         MOVING_TO_POSITION,
     }
 
-    private enum IntakeState {
-        IDLE,
-        INTAKE,
-        OUTTAKE
-    }
-
     private enum GamePeriod {
         NORMAL,
         ENDGAME
@@ -54,7 +47,7 @@ public class TeleOpMain extends OpMode {
      * Listens for gamepad input and moves arm to desired position. <br>
      * The state of the code is handled in the normal() function.
      */
-    private void run_elevator() {
+    private void listenForArmCommand() {
         if (gamepad2.dpad_down) {
             arm.isHoming = true;
         } else if (gamepad2.dpad_up) {
@@ -72,32 +65,7 @@ public class TeleOpMain extends OpMode {
         }
     }
 
-    /**
-     * Code to handle the state of the intake
-     */
-    private void run_intake() {
-        switch (intakeState) {
-            case IDLE:
-                if (gamepad2.left_bumper) {
-                    intakeState = IntakeState.INTAKE;
-                } else if (gamepad2.right_bumper) {
-                    intakeState = IntakeState.OUTTAKE;
-                }
-                break;
-            case INTAKE:
-                arm.intake();
-                if (gamepad2.right_bumper) {
-                    intakeState = IntakeState.OUTTAKE;
-                }
-                break;
-            case OUTTAKE:
-                arm.outtake();
-                if (gamepad2.left_bumper) {
-                    intakeState = IntakeState.INTAKE;
-                }
-                break;
-        }
-    }
+
 
     /**
      * Code to run in the normal period of the match.
@@ -106,18 +74,20 @@ public class TeleOpMain extends OpMode {
     private void normal() {
         arm.update();
 
+        if (gamepad2.left_bumper) {
+            arm.intake();
+        }
+
         switch (armState) {
             case AT_POSITION:
-                run_intake();
-                run_elevator();
+                listenForArmCommand();
 
                 if (arm.is_busy()) {
                     armState = ArmState.MOVING_TO_POSITION;
                 }
                 break;
             case MOVING_TO_POSITION:
-                run_intake();
-                run_elevator();
+                listenForArmCommand();
                 if (!arm.is_busy()) {
                     armState = ArmState.AT_POSITION;
                 }

@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Arm {
 
     public final Elevator elevator;
@@ -16,7 +18,7 @@ public class Arm {
 
     private HomingState homingState = HomingState.START;
 
-    public enum HomingState {
+    private enum HomingState {
         START,
         HOMING_ELEVATOR,
         HOMING_WORM,
@@ -53,7 +55,6 @@ public class Arm {
         worm.update();
     }
 
-
     /**
      * @return worm_is_busy || elevator_is_busy
      */
@@ -68,14 +69,6 @@ public class Arm {
      * @return If the elevator is busy
      */
     public boolean elevator_is_busy() { return elevator.is_busy(); }
-
-    /**
-     * Moves the elevator and worm to their zero positions
-     */
-    public void zero() {
-        elevator.extend(0);
-        worm.rotate(0);
-    }
 
     /**
      * Moves the arm to a specified position
@@ -103,72 +96,17 @@ public class Arm {
      */
     public void rotate(int position) { worm.rotate(position); }
 
-    /**
-     * Extends the elevator to the input position
-     * @param position The position to extend the elevator to
-     */
-    public void extend(int position) { elevator.extend(position); }
 
     /**
-     * Sets the intake to intake at the speed defined by the INTAKE_SPEED property
+     * Spins the Intake
      */
     public void intake() { intake.intake(); }
-
-    /**
-     * Sets the intake to outtake at the speed defined by the OUTTAKE_SPEED property
-     */
-    public void outtake() { intake.outtake(); }
-
-    /**
-     * Gets the target position of the arm
-     * @return The target position of the arm [WormPos, ElevatorPos]
-     */
-    public int[] getTargetPosition() {
-        return new int[]{worm.getTargetPosition(), elevator.getTargetPosition()};
-    }
-
-    /**
-     * @return The target position of the worm
-     */
-    public int getWormTargetPosition() { return worm.getTargetPosition(); }
-
-    /**
-     * @return The target position of the elevator
-     */
-    public int getElevatorTargetPosition() { return elevator.getTargetPosition(); }
-
-    /**
-     * Gets the current position of the arm
-     * @return The current position of the arm [WormPos, ElevatorPos]
-     */
-    public int[] getCurrentPosition() {
-        return new int[]{worm.getCurrentPosition(), elevator.getCurrentPosition()};
-    }
-
-    /**
-     * @return The current position of the worm motor
-     */
-    public int getWormCurrentPosition() { return worm.getCurrentPosition(); }
-
-    /**
-     * @return The current position of the elevator motor.
-     */
-    public int getElevatorCurrentPosition() { return elevator.getCurrentPosition(); }
-
-    /**
-     * Sets the homing state to START
-     */
-    public void resetHomingState() { homingState = HomingState.START; }
-
-    /**
-     * @return The current state of the homing sequence
-     */
-    public HomingState getHomingState() { return homingState; }
 
     /**
      * Runs the arm homing sequence
      */
     public void home() {
+        // Cancel homing if we start moving anywhere else
         if (elevator.getTargetPosition() != 0 || worm.getTargetPosition() != 0) {
             homingState = HomingState.COMPLETE;
         }
@@ -193,5 +131,14 @@ public class Arm {
                 isHoming = false;
                 break;
         }
+    }
+
+    /**
+     * Displays debug info for the arm subsystem
+     * @param telemetry The telemetry you are using to display the data
+     */
+    public void debug(@NonNull Telemetry telemetry) {
+        elevator.debug(telemetry);
+        worm.debug(telemetry);
     }
 }

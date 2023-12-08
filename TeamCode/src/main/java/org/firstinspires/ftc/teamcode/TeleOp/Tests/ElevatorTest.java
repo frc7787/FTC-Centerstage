@@ -44,6 +44,10 @@ public class ElevatorTest extends OpMode {
     }
 
     @Override public void loop() {
+        elevator.debug(telemetry);
+
+        telemetry.addData("Elevator State", elevatorState);
+
         switch (elevatorState) {
             case AT_POSITION:
                 run_elevator();
@@ -54,5 +58,7 @@ public class ElevatorTest extends OpMode {
                 if (!elevator.is_busy()) { elevatorState = ElevatorState.AT_POSITION; }
                 break;
          }
+
+         telemetry.update();
     }
 }

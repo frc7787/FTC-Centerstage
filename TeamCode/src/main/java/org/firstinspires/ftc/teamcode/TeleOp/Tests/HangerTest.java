@@ -19,6 +19,8 @@ public class HangerTest extends OpMode {
     }
 
     @Override public void loop() {
-        if (gamepad1.triangle) { hanger.release(); }
+
+        if (gamepad1.triangle) { hanger.release();
+        }
     }
 }

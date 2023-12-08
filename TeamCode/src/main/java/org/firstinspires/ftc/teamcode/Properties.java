@@ -7,51 +7,50 @@ public class Properties {
 
     // ---------- ELEVATOR CONSTANTS ---------- //
 
-    public static volatile int BOTTOM_EXT_POS = RobotPropertyParser.getInt("BOTTOM_EXT_POS");
-    public static volatile int BOTTOM_ROT_POS = RobotPropertyParser.getInt("BOTTOM_ROT_POS");
+    public static volatile int BOTTOM_EXT_POS = 1890;
+    public static volatile int BOTTOM_ROT_POS = 528;
 
-    public static volatile int LOW_EXT_POS = RobotPropertyParser.getInt("LOW_EXT_POS");
-    public static volatile int LOW_ROT_POS = RobotPropertyParser.getInt("LOW_ROT_POS");
+    public static volatile int LOW_EXT_POS = 2041;
+    public static volatile int LOW_ROT_POS = 2633;
 
-    public static volatile int MED_EXT_POS = RobotPropertyParser.getInt("MED_EXT_POS");
-    public static volatile int MED_ROT_POS = RobotPropertyParser.getInt("MED_ROT_POS");
+    public static volatile int MED_EXT_POS = 2421;
+    public static volatile int MED_ROT_POS = 804;
 
-    public static volatile int HIGH_EXT_POS = RobotPropertyParser.getInt("HIGH_EXT_POS");
-    public static volatile int HIGH_ROT_POS = RobotPropertyParser.getInt("HIGH_ROT_POS");
+    public static volatile int HIGH_EXT_POS = 2983;
+    public static volatile int HIGH_ROT_POS = 947;
 
-    public static volatile int TOP_EXT_POS = RobotPropertyParser.getInt("TOP_EXT_POS");
-    public static volatile int TOP_ROT_POS = RobotPropertyParser.getInt("TOP_ROT_POS");
+    public static volatile int TOP_EXT_POS = 3045;
+    public static volatile int TOP_ROT_POS = 1107;
 
-    public static volatile int LAUNCH_POS = RobotPropertyParser.getInt("LAUNCH_POS");
-    public static volatile int HANG_POS   = RobotPropertyParser.getInt("HANG_POS");
-    public static volatile int HUNG_POS   = RobotPropertyParser.getInt("HUNG_POS");
+    public static volatile int LAUNCH_POS = 1630;
+    public static volatile int HANG_POS   = 2326;
+    public static volatile int HUNG_POS   = 420;
 
-    public static volatile double DEFAULT_WORM_POWER     = RobotPropertyParser.getDouble("DEFAULT_WORM_POWER");
-    public static volatile double DEFAULT_ELEVATOR_POWER = RobotPropertyParser.getDouble("DEFAULT_ELEVATOR_POWER");
-    public static volatile double HOMING_POWER           = RobotPropertyParser.getDouble("HOMING_POWER");
+    public static volatile double DEFAULT_WORM_POWER     = 0.8;
+    public static volatile double DEFAULT_ELEVATOR_POWER = 0.9;
+    public static volatile double HOMING_POWER           = 0.7;
 
     // ----------- DRIVE CONSTANTS ---------- //
 
-    public static volatile double DEAD_ZONE_LOW  = RobotPropertyParser.getDouble("DEAD_ZONE_LOW");
-    public static volatile double DEAD_ZONE_HIGH = RobotPropertyParser.getDouble("DEAD_ZONE_HIGH");
-    public static volatile double STRAFE_OFFSET  = RobotPropertyParser.getDouble("STRAFE_OFFSET");
+    public static volatile double DEAD_ZONE_LOW  = 0.9;
+    public static volatile double DEAD_ZONE_HIGH = 0.9;
+    public static volatile double STRAFE_OFFSET  = 1.1;
 
 
     // ----------- INTAKE CONSTANTS ---------- //
 
-    public static volatile double INTAKE_SPEED  = RobotPropertyParser.getDouble("INTAKE_SPEED");
-    public static volatile double OUTTAKE_SPEED = RobotPropertyParser.getDouble("OUTTAKE_SPEED");
+    public static volatile double INTAKE_POWER = 1.0;
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 
-    public static volatile double LAUNCHER_SERVO_POSITION = RobotPropertyParser.getDouble("LAUNCHER_SERVO_POSITION");
+    public static volatile double LAUNCHER_SERVO_POSITION = 1.0;
 
     // ---------- HANGER CONSTANTS ---------- //
 
-    public static volatile double HANGER_SERVO_POSITION = RobotPropertyParser.getDouble("HANGER_SERVO_POSITION");
+    public static volatile double HANGER_SERVO_POSITION = 1.0;
 
     // ---------- OTHER CONSTANTS ------------ //
 
-    public static volatile double ENDGAME_TRIGGER_SENSITIVITY      = RobotPropertyParser.getDouble("ENDGAME_TRIGGER_SENSITIVITY");
-    public static volatile double PLANE_LAUNCH_TRIGGER_SENSITIVITY = RobotPropertyParser.getDouble("PLANE_LAUNCH_TRIGGER_SENSITIVITY");
+    public static volatile double ENDGAME_TRIGGER_SENSITIVITY      = 0.9;
+    public static volatile double PLANE_LAUNCH_TRIGGER_SENSITIVITY = 0.9;
 }

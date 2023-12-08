@@ -40,8 +40,6 @@ public class Elevator {
      * Checks to see if we should stop and reset encoders
      */
     public void update() {
-
-
         if (extend.getCurrentPosition() == 0 && extLimitSwitch.isPressed()) {
             extend.setMode(STOP_AND_RESET_ENCODER);
         }
@@ -53,7 +51,6 @@ public class Elevator {
      * @param power The speed to extend it
      */
     public void extend(int position, double power) {
-
         extend.setTargetPosition(position);
         extend.setMode(RUN_TO_POSITION);
         extend.setPower(power);

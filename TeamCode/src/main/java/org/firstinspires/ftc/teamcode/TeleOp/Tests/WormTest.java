@@ -43,6 +43,10 @@ public class WormTest extends OpMode {
     }
 
     @Override public void loop() {
+        worm.debug(telemetry);
+
+        telemetry.addData("Worm State", wormState);
+
         switch (wormState) {
             case AT_POSITION:
                 run_worm();
@@ -53,5 +57,7 @@ public class WormTest extends OpMode {
                 if (!worm.is_busy()) { wormState = WormState.AT_POSITION; }
                 break;
         }
+
+        telemetry.update();
     }
 }
