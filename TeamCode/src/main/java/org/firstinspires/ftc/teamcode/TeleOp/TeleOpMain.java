@@ -177,16 +177,16 @@ public class TeleOpMain extends OpMode {
 
         switch (gamePeriod) {
             case NORMAL:
-                gamepad1.setLedColor(0, 255, 0, 200);
-                gamepad2.setLedColor(0, 255, 0, 200);
+                gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
                 normalPeriodLoop(currentGamepad2, prevGamepad2);
                 if (gamepad2.left_trigger > ENDGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENDGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.ENDGAME;
                 }
                 break;
             case ENDGAME:
-                gamepad1.setLedColor(128, 0, 128, 200);
-                gamepad2.setLedColor(128, 0, 128, 200);
+                gamepad1.setLedColor(128, 0, 128, Gamepad.LED_DURATION_CONTINUOUS);
+                gamepad2.setLedColor(128, 0, 128, Gamepad.LED_DURATION_CONTINUOUS);
                 endGameLoop(currentGamepad2, prevGamepad2);
                 if (gamepad2.left_trigger > ENDGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENDGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.NORMAL;
