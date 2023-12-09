@@ -12,7 +12,9 @@ import static org.firstinspires.ftc.teamcode.Properties.*;
 @Disabled
 public class ElevatorTest extends OpMode {
 
-    private static Elevator elevator;
+    private Elevator elevator;
+
+    private double maxCurrent = 0.0;
 
     private enum ElevatorState {
         TO_POSITION,
@@ -27,7 +29,7 @@ public class ElevatorTest extends OpMode {
         elevator.init();
     }
 
-    private void run_elevator() {
+    private void listenForElevatorCommand() {
         if (gamepad1.dpad_down) {
             elevator.extend(MED_EXT_POS);
         } else if (gamepad1.cross) {
@@ -44,17 +46,23 @@ public class ElevatorTest extends OpMode {
     }
 
     @Override public void loop() {
+        if (elevator.getCurrentAmps() > maxCurrent) {
+            maxCurrent = elevator.getCurrentAmps();
+        }
+
+        telemetry.addData("Max Elevator Current Draw (AMPS)", maxCurrent);
+
         elevator.debug(telemetry);
 
         telemetry.addData("Elevator State", elevatorState);
 
         switch (elevatorState) {
             case AT_POSITION:
-                run_elevator();
+                listenForElevatorCommand();
                 if (elevator.is_busy()) { elevatorState = ElevatorState.TO_POSITION; }
                 break;
             case TO_POSITION:
-                run_elevator();
+                listenForElevatorCommand();
                 if (!elevator.is_busy()) { elevatorState = ElevatorState.AT_POSITION; }
                 break;
          }

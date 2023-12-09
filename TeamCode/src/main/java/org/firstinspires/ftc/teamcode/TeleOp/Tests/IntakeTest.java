@@ -16,10 +16,12 @@ public class IntakeTest extends OpMode {
 
     @Override
     public void loop() {
+       intake.debug(telemetry);
+
         if (gamepad1.left_bumper) {
             intake.intake();
-        } else if (gamepad1.right_bumper) {
-            intake.outtake();
         }
+
+        telemetry.update();
     }
 }

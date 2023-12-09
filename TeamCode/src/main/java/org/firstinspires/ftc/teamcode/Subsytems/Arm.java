@@ -141,4 +141,8 @@ public class Arm {
         elevator.debug(telemetry);
         worm.debug(telemetry);
     }
+
+    public double getElevatorCurrentAmps() { return elevator.getCurrentAmps(); }
+
+    public double getWormCurrentAmps() { return worm.getWormCurrent(); }
 }

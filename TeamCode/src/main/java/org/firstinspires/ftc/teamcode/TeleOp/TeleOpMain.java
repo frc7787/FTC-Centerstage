@@ -71,26 +71,20 @@ public class TeleOpMain extends OpMode {
      * Code to run in the normal period of the match.
      * This is where the arm state is handled
      */
-    private void normal() {
+    private void runNormalPeriod() {
         arm.update();
 
-        if (gamepad2.left_bumper) {
-            arm.intake();
-        }
+        if (gamepad2.left_bumper) { arm.intake(); }
 
+        // This state machine is currently useless, we don't do anything based on the states
         switch (armState) {
             case AT_POSITION:
                 listenForArmCommand();
-
-                if (arm.is_busy()) {
-                    armState = ArmState.MOVING_TO_POSITION;
-                }
+                if (arm.is_busy()) { armState = ArmState.MOVING_TO_POSITION; }
                 break;
             case MOVING_TO_POSITION:
                 listenForArmCommand();
-                if (!arm.is_busy()) {
-                    armState = ArmState.AT_POSITION;
-                }
+                if (!arm.is_busy()) { armState = ArmState.AT_POSITION; }
                 break;
         }
     }
@@ -98,7 +92,7 @@ public class TeleOpMain extends OpMode {
     /**
      * Code to be run in the endgame period.
      */
-    void endGame() {
+    void runEndGame() {
         switch (endGameState) {
             case IDLE:
                 if (gamepad2.left_bumper) {
@@ -174,14 +168,15 @@ public class TeleOpMain extends OpMode {
 
         switch (gamePeriod) {
             case NORMAL:
-                normal();
+                telemetry.addLine("Normal Period");
+                runNormalPeriod();
                 if (gamepad2.left_trigger > ENDGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENDGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.ENDGAME;
                 }
                 break;
             case ENDGAME:
                 telemetry.addLine("End Game");
-                endGame();
+                runEndGame();
                 if (gamepad2.left_trigger > ENDGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENDGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.NORMAL;
                 }

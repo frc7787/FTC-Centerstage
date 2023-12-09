@@ -101,4 +101,6 @@ public class Worm {
         telemetry.addData("Worm Target Position", worm.getTargetPosition());
         telemetry.addData("Worm Current (AMPS)", worm.getCurrent(CurrentUnit.AMPS));
     }
+
+    public double getWormCurrent() { return worm.getCurrent(CurrentUnit.AMPS); }
 }

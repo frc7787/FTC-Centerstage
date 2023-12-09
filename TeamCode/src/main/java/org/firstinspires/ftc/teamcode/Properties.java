@@ -26,8 +26,8 @@ public class Properties {
     public static volatile int HANG_POS   = 2326;
     public static volatile int HUNG_POS   = 420;
 
-    public static volatile double DEFAULT_WORM_POWER     = 0.8;
-    public static volatile double DEFAULT_ELEVATOR_POWER = 0.9;
+    public static volatile double DEFAULT_WORM_POWER     = 1;
+    public static volatile double DEFAULT_ELEVATOR_POWER = 1;
     public static volatile double HOMING_POWER           = 0.7;
 
     // ----------- DRIVE CONSTANTS ---------- //

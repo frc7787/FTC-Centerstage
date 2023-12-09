@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /**
  * Object to encapsulate elevator subsystem
@@ -24,7 +25,7 @@ public class Elevator {
 
     public Elevator(@NonNull HardwareMap hardwareMap) {
         extend         = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
-        extLimitSwitch = hardwareMap.get(TouchSensor.class, "lmS");
+        extLimitSwitch = hardwareMap.get(TouchSensor.class, "ExtensionLimitSwitch");
     }
 
 
@@ -107,5 +108,10 @@ public class Elevator {
      * @return The position that the elevator motor is trying to get to.
      */
     public int getTargetPosition() { return extend.getTargetPosition(); }
+
+    /**
+     * @return The current draw of the motor in AMPS
+     */
+    public double getCurrentAmps() { return extend.getCurrent(CurrentUnit.AMPS); }
 }
 

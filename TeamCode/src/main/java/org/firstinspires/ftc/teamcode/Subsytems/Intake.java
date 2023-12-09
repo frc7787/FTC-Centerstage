@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 
 import androidx.annotation.NonNull;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static org.firstinspires.ftc.teamcode.Properties.INTAKE_POWER;
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
 
@@ -22,7 +22,7 @@ public class Intake {
      * Initializes the motor subsystem.
      * This sets the zero power behavior of the intake motor to brake
      */
-    public void init() { intake.setZeroPowerBehavior(BRAKE); }
+    public void init() { intake.setZeroPowerBehavior(FLOAT); }
 
     /**
      * Spins the intake
