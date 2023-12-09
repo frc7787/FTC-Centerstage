@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 @Disabled
 public class DriveBaseTest extends OpMode {
 
-    private DriveBase driveBase;
+    DriveBase driveBase;
 
     @Override public void init() {
         driveBase = new DriveBase(hardwareMap);

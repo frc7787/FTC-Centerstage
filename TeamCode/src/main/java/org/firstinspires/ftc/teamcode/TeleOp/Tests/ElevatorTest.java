@@ -3,54 +3,59 @@ package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Subsytems.Elevator;
 
 import static org.firstinspires.ftc.teamcode.Properties.*;
 
+import androidx.annotation.NonNull;
+
 @TeleOp(name = "Test Elevator", group = "Test")
 @Disabled
 public class ElevatorTest extends OpMode {
 
-    private Elevator elevator;
+    Elevator elevator;
 
-    private double maxCurrent = 0.0;
+    double maxCurrent = 0.0;
 
-    private enum ElevatorState {
+    enum ElevatorState {
         TO_POSITION,
         AT_POSITION
     }
 
-    public static ElevatorState elevatorState = ElevatorState.AT_POSITION;
+    ElevatorState elevatorState = ElevatorState.AT_POSITION;
+
+    Gamepad currentGamepad, prevGamepad;
 
     @Override public void init() {
-        elevator = new Elevator(hardwareMap);
+        currentGamepad = new Gamepad();
+        prevGamepad    = new Gamepad();
 
+        elevator = new Elevator(hardwareMap);
         elevator.init();
     }
 
-    private void listenForElevatorCommand() {
-        if (gamepad1.dpad_down) {
+    void listenForElevatorCommand(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
+        if (currentGamepad.dpad_up && !prevGamepad.dpad_up) {
             elevator.extend(MED_EXT_POS);
-        } else if (gamepad1.cross) {
+        } else if (currentGamepad.cross && !prevGamepad.cross) {
             elevator.extend(BOTTOM_EXT_POS);
-        } else if (gamepad1.square) {
+        } else if (currentGamepad.square && !prevGamepad.square) {
             elevator.extend(LOW_EXT_POS);
-        } else if (gamepad1.circle) {
+        } else if (currentGamepad.circle && !prevGamepad.circle) {
             elevator.extend(MED_EXT_POS);
-        } else if (gamepad1.triangle) {
+        } else if (currentGamepad.triangle && !prevGamepad.triangle) {
             elevator.extend(HIGH_EXT_POS);
-        } else if (gamepad1.options) {
+        } else if (currentGamepad.options && !prevGamepad.options) {
             elevator.extend(TOP_EXT_POS);
         }
     }
 
     @Override public void loop() {
-        if (elevator.getCurrentAmps() > maxCurrent) {
-            maxCurrent = elevator.getCurrentAmps();
-        }
+        prevGamepad.copy(currentGamepad);
 
-        telemetry.addData("Max Elevator Current Draw (AMPS)", maxCurrent);
+        currentGamepad.copy(gamepad2);
 
         elevator.debug(telemetry);
 
@@ -58,11 +63,11 @@ public class ElevatorTest extends OpMode {
 
         switch (elevatorState) {
             case AT_POSITION:
-                listenForElevatorCommand();
+                listenForElevatorCommand(prevGamepad, currentGamepad);
                 if (elevator.is_busy()) { elevatorState = ElevatorState.TO_POSITION; }
                 break;
             case TO_POSITION:
-                listenForElevatorCommand();
+                listenForElevatorCommand(prevGamepad, currentGamepad);
                 if (!elevator.is_busy()) { elevatorState = ElevatorState.AT_POSITION; }
                 break;
          }

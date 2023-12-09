@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
-import static org.firstinspires.ftc.teamcode.Properties.TOP_ROT_POS;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,10 +8,10 @@ import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 @TeleOp(name = "Test - Arm Current", group = "Test")
 public class ArmCurrentTest extends OpMode {
 
-    private Arm arm;
+    Arm arm;
 
-    private double maxElevatorCurrent = 0.0;
-    private double maxWormCurrent     = 0.0;
+    double maxElevatorCurrent = 0.0;
+    double maxWormCurrent     = 0.0;
 
     public void init() {
         arm = new Arm(hardwareMap);
