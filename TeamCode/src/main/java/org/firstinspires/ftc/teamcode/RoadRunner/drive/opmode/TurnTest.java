@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
  * This is a simple routine to test turning capabilities.
  */
 @Config
-@Autonomous(name = "Turn Test", group = "drive")
+@Autonomous(name = "Turn Test", group = "Roadrunner")
 @Disabled
 public class TurnTest extends LinearOpMode {
-    public static double ANGLE = 180; // deg
+    public static double ANGLE = Math.PI; // deg
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,6 +24,6 @@ public class TurnTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        drive.turn(Math.toRadians(ANGLE));
+        drive.turn(ANGLE);
     }
 }

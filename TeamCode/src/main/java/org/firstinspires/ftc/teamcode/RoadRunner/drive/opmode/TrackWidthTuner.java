@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
  * accurate track width estimate is important or else the angular constraints will be thrown off.
  */
 @Config
-@Autonomous(name = "Track Width Tuner", group = "drive")
+@Autonomous(name = "Track Width Tuner", group = "Roadrunner")
 @Disabled
 public class TrackWidthTuner extends LinearOpMode {
     public static double ANGLE = 180; // deg
@@ -37,8 +37,6 @@ public class TrackWidthTuner extends LinearOpMode {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         RoadRunnerDriveBase drive = new RoadRunnerDriveBase(hardwareMap);
-        // TODO: if you haven't already, set the localizer to something that doesn't depend on
-        // drive encoders for computing the heading
 
         telemetry.addLine("Press play to begin the track width tuner routine");
         telemetry.addLine("Make sure your robot has enough clearance to turn smoothly");

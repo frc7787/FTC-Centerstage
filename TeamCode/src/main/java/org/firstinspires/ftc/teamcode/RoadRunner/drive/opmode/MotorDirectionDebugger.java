@@ -38,9 +38,9 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
  *
  * Uncomment the @Disabled tag below to use this opmode.
  */
-@Disabled
 @Config
-@TeleOp(name = "Motor Direction Debugger", group = "drive")
+@TeleOp(name = "Motor Direction Debugger", group = "Roadrunner")
+@Disabled
 public class MotorDirectionDebugger extends LinearOpMode {
     public static double MOTOR_POWER = 0.7;
 

@@ -29,17 +29,17 @@ public class DriveConstants {
     // Inches
     public static double WHEEL_RADIUS = 1.85d;
     public static double GEAR_RATIO   = 1.01d;
-    public static double TRACK_WIDTH  = 15.0d;
+    public static double TRACK_WIDTH  = 15.84;
 
     // Feedforward PID values
-    public static double kV      = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA      = 0.0d;
+    public static double kV      = 0.01375;
+    public static double kA      = 0.002;
     public static double kStatic = 0.0d;
 
     // It is best if you don't exceed 80% of your robots abilities; All units are inches and Radians
-    public static double MAX_VEL        = 69.0;
+    public static double MAX_VEL        = 74.3;
     public static double MAX_ACCEL      = 50.0d;
-    public static double MAX_ANG_VEL    = Math.PI;
+    public static double MAX_ANG_VEL    = 3.6;
     public static double MAX_ANG_ACCEL  = Math.PI;
 
     // Orientation Adjusting, since we aren't using the IMU we shouldn't need to change

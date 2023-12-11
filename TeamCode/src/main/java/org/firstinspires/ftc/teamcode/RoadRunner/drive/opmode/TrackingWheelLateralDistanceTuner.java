@@ -63,7 +63,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLoca
  * precision. The heading should still line up.
  */
 @Config
-@TeleOp(name = "Tracking Wheel Lateral Distance Tuner", group = "drive")
+@TeleOp(name = "Tracking Wheel Lateral Distance Tuner", group = "Roadrunner")
 public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
     public static int NUM_TURNS = 10;
 

@@ -70,21 +70,21 @@ public class RobotPropertyParser {
     public static void populateProperties(){
         Field[] fields = org.firstinspires.ftc.teamcode.Properties.class.getDeclaredFields();
 
-        for (Field field1: fields){
-            if(Modifier.isStatic(field1.getModifiers())){
+        for (Field field: fields) {
+            if(Modifier.isStatic(field.getModifiers())){
 
-                String fieldName = field1.getName();
+                String fieldName = field.getName();
 
-                Class clazz = field1.getType();
+                Class fieldType = field.getType();
 
                 try {
-                    if(clazz.isAssignableFrom(double.class)) {
-                        double value = field1.getDouble(null);
+                    if(fieldType.isAssignableFrom(double.class)) {
+                        double value = field.getDouble(null);
                         robotProperties.setProperty(fieldName,Double.toString(value));
                     }
 
-                    if(clazz.isAssignableFrom(int.class)){
-                        int value = field1.getInt(null);
+                    if(fieldType.isAssignableFrom(int.class)){
+                        int value = field.getInt(null);
                         robotProperties.setProperty(fieldName,Integer.toString(value));
                     }
 

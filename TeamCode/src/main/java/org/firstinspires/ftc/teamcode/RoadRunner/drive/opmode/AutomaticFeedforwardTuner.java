@@ -31,7 +31,7 @@ import java.util.List;
  *      regression.
  */
 @Config
-@Autonomous(name = "Automatic FeedForward Tuner", group = "drive")
+@Autonomous(name = "Automatic FeedForward Tuner", group = "Roadrunner")
 @Disabled
 public class AutomaticFeedforwardTuner extends LinearOpMode {
     public static double MAX_POWER = 0.7;

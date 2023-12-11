@@ -45,7 +45,7 @@ import java.util.List;
  * Pressing B/O (Xbox/PS4) will cede control back to the tuning process.
  */
 @Config
-@Autonomous(name = "Drive Velocity PID Tuner", group = "drive")
+@Autonomous(name = "Drive Velocity PID Tuner", group = "Roadrunner")
 @Disabled
 public class DriveVelocityPIDTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in

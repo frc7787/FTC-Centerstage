@@ -23,8 +23,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySe
  * These coefficients can be tuned live in dashboard.
  */
 @Config
-@Autonomous(name = "Follower PID Tuner", group = "drive")
-@Disabled
+@Autonomous(name = "Follower PID Tuner", group = "Roadrunner")
 public class FollowerPIDTuner extends LinearOpMode {
     public static double DISTANCE = 48; // in
 

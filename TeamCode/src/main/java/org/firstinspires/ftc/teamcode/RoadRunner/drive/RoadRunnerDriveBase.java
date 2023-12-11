@@ -41,7 +41,7 @@ import java.util.List;
 @Config
 public class RoadRunnerDriveBase extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID_DRIVE  = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients TRANSLATIONAL_PID_STRAFE = new PIDCoefficients(0,0,0);
+    //public static PIDCoefficients TRANSLATIONAL_PID_STRAFE = new PIDCoefficients(0,0,0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1.0;
@@ -68,7 +68,7 @@ public class RoadRunnerDriveBase extends MecanumDrive {
     public RoadRunnerDriveBase(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_DRIVE, TRANSLATIONAL_PID_STRAFE, HEADING_PID,
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_DRIVE, TRANSLATIONAL_PID_DRIVE, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);// Modified to allow L/R tuning with another PID
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
@@ -79,10 +79,10 @@ public class RoadRunnerDriveBase extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront  = hardwareMap.get(DcMotorEx.class, "fldm");
-        leftRear   = hardwareMap.get(DcMotorEx.class, "bldm");
-        rightRear  = hardwareMap.get(DcMotorEx.class, "brdm");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frdm");
+        leftFront  = hardwareMap.get(DcMotorEx.class, "FrontLeftDriveMotor");
+        leftRear   = hardwareMap.get(DcMotorEx.class, "BackLeftDriveMotor");
+        rightRear  = hardwareMap.get(DcMotorEx.class, "BackRightDriveMotor");
+        rightFront = hardwareMap.get(DcMotorEx.class, "FrontRightDriveMotor");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);

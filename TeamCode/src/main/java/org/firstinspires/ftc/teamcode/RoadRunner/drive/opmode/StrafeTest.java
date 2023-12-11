@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Autonomous(name = "Strafe Test", group = "drive")
+@Autonomous(name = "Strafe Test", group = "Roadrunner")
 @Disabled
 public class StrafeTest extends LinearOpMode {
     public static double DISTANCE = 60; // in

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Autonomous(name = "Spline Test", group = "drive")
+@Autonomous(name = "Spline Test", group = "Roadrunner")
 @Disabled
 public class SplineTest extends LinearOpMode {
     @Override
