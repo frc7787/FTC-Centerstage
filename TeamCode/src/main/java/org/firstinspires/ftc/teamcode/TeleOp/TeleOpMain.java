@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
-import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.teamcode.RobotPropertyParser;
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
+import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.AUTO;
 import static org.firstinspires.ftc.teamcode.Properties.*;
 
 import androidx.annotation.NonNull;
@@ -27,6 +27,7 @@ public class TeleOpMain extends OpMode {
     GamePeriod gamePeriod     = GamePeriod.NORMAL;
 
     boolean hangerHookReleased = false;
+
     enum EndGameState {
         IDLE,
         TO_HANGING_POSITION,
@@ -47,6 +48,17 @@ public class TeleOpMain extends OpMode {
     }
 
     Gamepad prevGamepad2, currentGamepad2;
+
+    /**
+     * Set the LED color of gamepad1 and gamepad2. The color will continue until another color is set
+     * @param r Red value
+     * @param g Green value
+     * @param b Blue value
+     */
+    void setGamepadLedColors(int r, int g, int b) {
+        gamepad1.setLedColor(r, g, b, Gamepad.LED_DURATION_CONTINUOUS);
+        gamepad2.setLedColor(r, g, b, Gamepad.LED_DURATION_CONTINUOUS);
+    }
 
     /**
      * Listens for arm commands
@@ -70,14 +82,16 @@ public class TeleOpMain extends OpMode {
             arm.moveToPosition(TOP_EXT_POS, TOP_ROT_POS);
         }
     }
+
     /**
-     * Code to run in the normal period of the match.
-     * This is where the arm state is handled
+     * Code to run every iteration of the loop during the normal period (before endgame) of the match
+     * @param currentGamepad The current state of the gamepad
+     * @param prevGamepad The state of the gamepad during the previous loop iteration
      */
     void normalPeriodLoop(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
         arm.update();
 
-        if (gamepad2.left_bumper) { arm.intake(); }
+        if (!currentGamepad.left_bumper && prevGamepad.left_bumper) { arm.intake(); }
 
         // This state machine is currently useless, we don't do anything based on the states
         switch (armState) {
@@ -93,9 +107,13 @@ public class TeleOpMain extends OpMode {
     }
 
     /**
-     * Code to be run in the endgame period.
+     * Code to run every iteration of the loop during the endgame period of the match
+     * @param currentGamepad The current state of the gamepad
+     * @param prevGamepad The state of the gamepad during the previous loop iteration
      */
     void endGameLoop(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
+        arm.update();
+
         switch (endGameState) {
             case IDLE:
                 if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
@@ -161,9 +179,10 @@ public class TeleOpMain extends OpMode {
         driveBase.init();
         hanger.init();
 
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) { module.setBulkCachingMode(AUTO); }
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(AUTO);
+        }
     }
-
 
     @Override public void loop() {
         prevGamepad2.copy(currentGamepad2);
@@ -177,16 +196,14 @@ public class TeleOpMain extends OpMode {
 
         switch (gamePeriod) {
             case NORMAL:
-                gamepad1.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
-                gamepad2.setLedColor(0, 255, 0, Gamepad.LED_DURATION_CONTINUOUS);
+                setGamepadLedColors(0, 255, 0); // Red
                 normalPeriodLoop(currentGamepad2, prevGamepad2);
                 if (gamepad2.left_trigger > ENDGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENDGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.ENDGAME;
                 }
                 break;
             case ENDGAME:
-                gamepad1.setLedColor(128, 0, 128, Gamepad.LED_DURATION_CONTINUOUS);
-                gamepad2.setLedColor(128, 0, 128, Gamepad.LED_DURATION_CONTINUOUS);
+                setGamepadLedColors(128, 0, 128); // Purple
                 endGameLoop(currentGamepad2, prevGamepad2);
                 if (gamepad2.left_trigger > ENDGAME_TRIGGER_SENSITIVITY && gamepad2.right_trigger > ENDGAME_TRIGGER_SENSITIVITY) {
                     gamePeriod = GamePeriod.NORMAL;

@@ -78,12 +78,6 @@ public class Worm {
     public void power(double power) { worm.setPower(power); }
 
     /**
-     * Gets the current position of the worm (rotation) motor
-     * @return The current position of the worm (rotation) motor
-     */
-    public int getCurrentPosition() { return worm.getCurrentPosition(); }
-
-    /**
      * Gets the position that the worm (rotation) motor is trying to get to
      * @return The position the worm motor is trying to get to
      */
