@@ -14,14 +14,6 @@ public class DriveConstants {
     public static final double TICKS_PER_REV = 537.7d;
     public static final double MAX_RPM       = 312.0d;
 
-    /*
-     * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
-     * Set this flag to false if drive encoders are not present and an alternative localization
-     * method is in use (e.g., tracking wheels).
-     *
-     * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
-     * from DriveVelocityPIDTuner.
-     */
     public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
@@ -48,14 +40,25 @@ public class DriveConstants {
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
+    /**
+     * Converts encoder ticks to inches using the following formula: <br>
+     * Wheel Radius * 2 * pi * Gear Ratio * Ticks / Ticks Per Revolution (Motor)
+     * @param ticks The ticks to convert into inches
+     * @return The inches, converted from ticks
+     */
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
+    /**
+     * Converts RPM (Revolutions Per Minute) into velocity using the following formula: <br>
+     * RPM * Gear Ratio * 2 * Pi * Wheel Radius / 60.0
+     * @param rpm The RPM to convert
+     * @return The calculated velocity
+     */
     public static double rpmToVelocity(double rpm) {
         return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
     }
 
-    public static double getMotorVelocityF(double ticksPerSecond) { return 32767 / ticksPerSecond;
-    }
+    public static double getMotorVelocityF(double ticksPerSecond) { return 32767 / ticksPerSecond; }
 }

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.util.Encoder;
+import static org.firstinspires.ftc.teamcode.RoadRunner.util.Encoder.Direction.REVERSE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,12 +25,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private final Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    public static double X_MULTIPLIER = 0.96; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1.0; // Don't change this
+    public static double X_MULTIPLIER = 0.96; // Drive (Forwards Backwards) multiplier
+    public static double Y_MULTIPLIER = 1.0; // Strafe multiplier
 
     private final List<Integer> lastEncPositions, lastEncVels;
 
-    public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
+    public StandardTrackingWheelLocalizer(@NonNull HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(Arrays.asList(
                 new Pose2d(0, LATERAL_DISTANCE / 2, 0),  // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
@@ -43,7 +44,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontRightDriveMotor"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackLeftDriveMotor"));
 
-        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        rightEncoder.setDirection(REVERSE);
+        frontEncoder.setDirection(REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
