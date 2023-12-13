@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PropDetectorBlue extends OpenCvPipeline {
-    public enum SkystoneLocation {
+    public enum PropLocation {
         LEFT,
         RIGHT,
         NONE
     }
 
     private int width = 340; // width of the image
-    SkystoneLocation location;
+    PropLocation location;
 
 
     @Override
@@ -39,7 +39,7 @@ public class PropDetectorBlue extends OpenCvPipeline {
 
         // if something is wrong, we assume there's no skystone
         if (mat.empty()) {
-            location = SkystoneLocation.NONE;
+            location = PropLocation.NONE;
             return input;
         }
 
@@ -49,16 +49,16 @@ public class PropDetectorBlue extends OpenCvPipeline {
         Scalar lowHSV = new Scalar(97, 100, 100); // lower bound HSV for blue
         Scalar highHSV = new Scalar(115, 255, 255); // higher bound HSV for blue
 
-        Mat thresh = new Mat();
+        Mat dst = new Mat();
 
         // We'll get a black and white image. The white regions represent the regular stones.
         // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
-        Core.inRange(mat, lowHSV, highHSV, thresh);
+        Core.inRange(mat, lowHSV, highHSV, dst);
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
         Mat edges = new Mat();
-        Imgproc.Canny(thresh, edges, 100, 300);
+        Imgproc.Canny(dst, edges, 100, 300);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
@@ -95,15 +95,15 @@ public class PropDetectorBlue extends OpenCvPipeline {
         // if there is no yellow regions on a side
         // that side should be a Skystone
         // IDK MAN, IT'S REVERSED!
-        if (!right) location = SkystoneLocation.LEFT;
-        else if (!left) location = SkystoneLocation.RIGHT;
+        if (!right) location = PropLocation.LEFT;
+        else if (!left) location = PropLocation.RIGHT;
             // if both are true, then there's no Skystone in front.
             // since our team's camera can only detect two at a time
             // we will need to scan the next 2 stones
-        else location = SkystoneLocation.NONE;
+        else location = PropLocation.NONE;
 
         if (boundRect.length == 0) {
-            location = SkystoneLocation.NONE;
+            location = PropLocation.NONE;
         }
 
 
@@ -111,7 +111,7 @@ public class PropDetectorBlue extends OpenCvPipeline {
         return mat; // return the mat with rectangles drawn
     }
 
-    public SkystoneLocation getLocation() {
+    public PropLocation getLocation() {
         return this.location;
     }
 }
