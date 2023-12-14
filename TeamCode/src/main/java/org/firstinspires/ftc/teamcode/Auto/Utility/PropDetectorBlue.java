@@ -23,21 +23,17 @@ public class PropDetectorBlue extends OpenCvPipeline {
     private int width = 340; // width of the image
     PropLocation location;
 
+    Mat mat = new Mat();
+    Mat dst = new Mat();
+    Mat edges = new Mat();
+    Mat hierarchy = new Mat();
+
 
     @Override
     public Mat processFrame(Mat input) {
-        // "Mat" stands for matrix, which is basically the image that the detector will process
-        // the input matrix is the image coming from the camera
-        // the function will return a matrix to be drawn on your phone's screen
-
-        // The detector detects regular stones. The camera fits two stones.
-        // If it finds one regular stone then the other must be the skystone.
-        // If both are regular stones, it returns NONE to tell the robot to keep looking
-
         input = input.submat(new Rect(0, 80, 320, 80));
 
         // Make a working copy of the input matrix in HSV
-        Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         // if something is wrong, we assume there's no skystone
@@ -52,7 +48,6 @@ public class PropDetectorBlue extends OpenCvPipeline {
         Scalar lowHSV = new Scalar(97, 100, 100); // lower bound HSV for blue
         Scalar highHSV = new Scalar(115, 255, 255); // higher bound HSV for blue
 
-        Mat dst = new Mat();
 
         // We'll get a black and white image. The white regions represent the regular stones.
         // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
@@ -60,14 +55,12 @@ public class PropDetectorBlue extends OpenCvPipeline {
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
-        Mat edges = new Mat();
         Imgproc.Canny(dst, edges, 100, 300);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
         // We then find the bounding rectangles of those contours
         List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];

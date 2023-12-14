@@ -83,14 +83,14 @@ public class AutoModeRedLong extends LinearOpMode {
 
 
             if (location == PropDetectorRed.PropLocation.LEFT) {
-                drive.turn(Math.toRadians(-45));
+                //drive.turn(Math.toRadians(-45));
             } else if (location == PropDetectorRed.PropLocation.RIGHT) {
-                drive.turn(Math.toRadians(45));
+               // drive.turn(Math.toRadians(45));
             } else if (location == PropDetectorRed.PropLocation.NONE) {
 
             }
 
-            sleep(1000000);
+            //sleep(1000000);
         }
     }
 }

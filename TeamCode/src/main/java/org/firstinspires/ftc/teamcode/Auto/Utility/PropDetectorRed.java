@@ -23,6 +23,14 @@ public class PropDetectorRed extends OpenCvPipeline {
     private final int width = 340; // width of the image
     PropLocation location = PropLocation.NONE;
 
+    Mat mat = new Mat();
+    Mat mat1 = new Mat();
+    Mat thresh0 = new Mat();
+    Mat thresh1 = new Mat();
+    Mat thresh = new Mat();
+    Mat edges = new Mat();
+    Mat hierarchy = new Mat();
+
 
     @Override
     public Mat processFrame(Mat input) {
@@ -30,7 +38,6 @@ public class PropDetectorRed extends OpenCvPipeline {
         // Make a working copy of the input matrix in HSV
         input = input.submat(new Rect(0, 80, 320, 80));
 
-        Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         // if something is wrong, we assume there's no skystone
@@ -39,7 +46,6 @@ public class PropDetectorRed extends OpenCvPipeline {
             return input;
         }
 
-        Mat mat1 = new Mat();
 
         Imgproc.cvtColor(input, mat1, Imgproc.COLOR_RGB2HSV);
 
@@ -53,32 +59,27 @@ public class PropDetectorRed extends OpenCvPipeline {
         // First scalar
         Scalar lowHSV0 = new Scalar(160, 180, 0); // lower bound HSV for red
         Scalar highHSV0 = new Scalar(180, 255, 255); // higher bound HSV for red
-        Mat thresh0 = new Mat();
 
         // Second scalar
         Scalar lowHSV1 = new Scalar(0, 180, 0); // lower bound HSV for red
         Scalar highHSV1 = new Scalar(10, 255, 255); // higher bound HSV for red
-        Mat thresh1 = new Mat();
 
         // We'll get a black and white image. The white regions represent the regular stones.
         // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
         Core.inRange(mat, lowHSV0, highHSV0, thresh0);
         Core.inRange(mat1, lowHSV1, highHSV1, thresh1);
 
-        Mat thresh = new Mat();
 
         Core.add(thresh0, thresh1, thresh);
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
-        Mat edges = new Mat();
         Imgproc.Canny(thresh, edges, 0, 100);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
         // We then find the bounding rectangles of those contours
         List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
