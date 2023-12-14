@@ -1,25 +1,21 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import android.icu.lang.UProperty;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorBlue;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorRed;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Auto Test - Blue", group = "Test")
-public class AutoModeRed extends LinearOpMode {
+@Autonomous(name = "Auto Mode Red Long", group = "Test")
+public class AutoModeRedLong extends LinearOpMode {
 
     OpenCvCamera camera;
 
@@ -66,24 +62,35 @@ public class AutoModeRed extends LinearOpMode {
 
         location = propDetector.getLocation();
 
+
+        // Our drive sequences
+
+
+
+
+
         waitForStart();
 
         while(opModeIsActive()) {
             location = propDetector.getLocation();
 
+            telemetry.addData("LOCATION: ", location);
+            telemetry.update();
+
             localizer.update();
 
             Pose2d currentPose = localizer.getPoseEstimate();
 
+
             if (location == PropDetectorRed.PropLocation.LEFT) {
-                telemetry.addLine("Left");
+                drive.turn(Math.toRadians(-45));
             } else if (location == PropDetectorRed.PropLocation.RIGHT) {
-                telemetry.addLine("Right");
+                drive.turn(Math.toRadians(45));
             } else if (location == PropDetectorRed.PropLocation.NONE) {
-                telemetry.addLine("None");
+
             }
 
-            telemetry.update();
+            sleep(1000000);
         }
     }
 }

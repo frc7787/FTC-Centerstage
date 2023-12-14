@@ -6,6 +6,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -32,6 +33,8 @@ public class PropDetectorBlue extends OpenCvPipeline {
         // The detector detects regular stones. The camera fits two stones.
         // If it finds one regular stone then the other must be the skystone.
         // If both are regular stones, it returns NONE to tell the robot to keep looking
+
+        input = input.submat(new Rect(0, 80, 320, 80));
 
         // Make a working copy of the input matrix in HSV
         Mat mat = new Mat();
@@ -106,6 +109,8 @@ public class PropDetectorBlue extends OpenCvPipeline {
             location = PropLocation.NONE;
         }
 
+
+        Imgproc.resize(mat, mat, new Size(320, 240));
 
 
         return mat; // return the mat with rectangles drawn
