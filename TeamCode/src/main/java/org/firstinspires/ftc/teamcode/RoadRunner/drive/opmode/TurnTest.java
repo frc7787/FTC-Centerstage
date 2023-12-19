@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
  */
 @Config
 @Autonomous(name = "Turn Test", group = "Roadrunner")
-@Disabled
 public class TurnTest extends LinearOpMode {
     public static double ANGLE = Math.PI; // deg
 

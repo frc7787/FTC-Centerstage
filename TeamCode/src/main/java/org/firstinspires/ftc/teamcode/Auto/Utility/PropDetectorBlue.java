@@ -4,11 +4,13 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +26,11 @@ public class PropDetectorBlue extends OpenCvPipeline {
     PropLocation location;
 
     Mat mat = new Mat();
-    Mat dst = new Mat();
+    Mat output = new Mat();
     Mat edges = new Mat();
     Mat hierarchy = new Mat();
+    Mat cvErodeKernel = new Mat();
+    Mat cvDilateKernel = new Mat();
 
 
     @Override
@@ -51,11 +55,28 @@ public class PropDetectorBlue extends OpenCvPipeline {
 
         // We'll get a black and white image. The white regions represent the regular stones.
         // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
-        Core.inRange(mat, lowHSV, highHSV, dst);
+        Core.inRange(mat, lowHSV, highHSV, output);
+
+
+        // Run erode to remove noise
+        Point cvErodeAnchor = new Point(-1, -1);
+        int cvErodeIterations = 7;
+        int cvErodeBordertype = Core.BORDER_CONSTANT;
+        Scalar cvErodeBordervalue = new Scalar(-1);
+        Imgproc.erode(output, output, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue);
+
+
+        // Run dilation to increase the stuff we want
+        Point cvDilateAnchor = new Point(-1, -1);
+        int cvDilateIterations = 11;
+        int cvDilateBordertype = Core.BORDER_CONSTANT;
+        Scalar cvDilateBordervalue = new Scalar(-1);
+        Imgproc.dilate(output, output, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue);
+
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
-        Imgproc.Canny(dst, edges, 100, 300);
+        Imgproc.Canny(output, edges, 100, 300);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.

@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
  */
 @Config
 @Autonomous(name = "Straight Line Test", group = "Roadrunner")
-@Disabled
 public class StraightTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 

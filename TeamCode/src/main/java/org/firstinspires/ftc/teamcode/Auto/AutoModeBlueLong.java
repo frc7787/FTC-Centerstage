@@ -54,8 +54,6 @@ public class AutoModeBlueLong extends LinearOpMode {
             }
         });
 
-
-
         // Roadrunner stuff
         StandardTrackingWheelLocalizer localizer = new StandardTrackingWheelLocalizer(
                 hardwareMap,
@@ -63,7 +61,7 @@ public class AutoModeBlueLong extends LinearOpMode {
                 new ArrayList<>()
         );
 
-        Pose2d pose = new Pose2d(0,0, Math.toRadians(90));
+        Pose2d pose = new Pose2d(-36.04, 71.71, Math.toRadians(270));
 
         localizer.setPoseEstimate(pose);
 
@@ -71,13 +69,13 @@ public class AutoModeBlueLong extends LinearOpMode {
 
 
         // Our drive sequences
-        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-36.04, 71.71, Math.toRadians(-89.29)))
-                .lineTo(new Vector2d(-47.59, 35.75))
+        TrajectorySequence left = drive.trajectorySequenceBuilder(pose)
+                .splineTo(new Vector2d(-47.59, 35.75), Math.toRadians(270.00))
                 .build();
 
 
 
-        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-36.18, 71.71, Math.toRadians(252.05)))
+        TrajectorySequence right = drive.trajectorySequenceBuilder(pose)
                 .lineTo(new Vector2d(-47.45, 35.75))
                 .lineTo(new Vector2d(56.98, 36.04))
                 .build();

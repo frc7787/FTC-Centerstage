@@ -4,6 +4,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -30,7 +31,8 @@ public class PropDetectorRed extends OpenCvPipeline {
     Mat thresh = new Mat();
     Mat edges = new Mat();
     Mat hierarchy = new Mat();
-
+    Mat cvDilateKernel = new Mat();
+    Mat cvErodeKernel = new Mat();
 
     @Override
     public Mat processFrame(Mat input) {
@@ -57,11 +59,11 @@ public class PropDetectorRed extends OpenCvPipeline {
 
 
         // First scalar
-        Scalar lowHSV0 = new Scalar(160, 180, 0); // lower bound HSV for red
+        Scalar lowHSV0 = new Scalar(160, 150, 0); // lower bound HSV for red
         Scalar highHSV0 = new Scalar(180, 255, 255); // higher bound HSV for red
 
         // Second scalar
-        Scalar lowHSV1 = new Scalar(0, 180, 0); // lower bound HSV for red
+        Scalar lowHSV1 = new Scalar(0, 160, 0); // lower bound HSV for red
         Scalar highHSV1 = new Scalar(10, 255, 255); // higher bound HSV for red
 
         // We'll get a black and white image. The white regions represent the regular stones.
@@ -69,8 +71,22 @@ public class PropDetectorRed extends OpenCvPipeline {
         Core.inRange(mat, lowHSV0, highHSV0, thresh0);
         Core.inRange(mat1, lowHSV1, highHSV1, thresh1);
 
-
         Core.add(thresh0, thresh1, thresh);
+
+        // Erode to remove noise
+        Point cvErodeAnchor = new Point(-1, -1);
+        int cvErodeIterations = 7;
+        int cvErodeBordertype = Core.BORDER_CONSTANT;
+        Scalar cvErodeBordervalue = new Scalar(-1);
+        Imgproc.erode(thresh, thresh, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue);
+
+        // Dilate to increase the goodies
+        Point cvDilateAnchor = new Point(-1, -1);
+        int cvDilateIterations = 11;
+        int cvDilateBordertype = Core.BORDER_CONSTANT;
+        Scalar cvDilateBordervalue = new Scalar(-1);
+        Imgproc.dilate(thresh, thresh, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue);
+
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
