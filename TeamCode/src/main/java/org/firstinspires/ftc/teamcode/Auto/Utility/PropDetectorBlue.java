@@ -11,27 +11,23 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class PropDetectorBlue extends OpenCvPipeline {
-    public enum PropLocation {
-        LEFT,
-        RIGHT,
-        NONE
-    }
 
     private int width = 340; // width of the image
     PropLocation location;
 
-    Mat mat = new Mat();
-    Mat output = new Mat();
-    Mat edges = new Mat();
-    Mat hierarchy = new Mat();
-    Mat cvErodeKernel = new Mat();
+    Mat mat            = new Mat();
+    Mat output         = new Mat();
+    Mat edges          = new Mat();
+    Mat hierarchy      = new Mat();
+    Mat cvErodeKernel  = new Mat();
     Mat cvDilateKernel = new Mat();
 
+    public final int ERODE_ITERATIONS   = 7;
+    public final int DIALATE_ITERATIONS = 11;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -40,50 +36,39 @@ public class PropDetectorBlue extends OpenCvPipeline {
         // Make a working copy of the input matrix in HSV
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-        // if something is wrong, we assume there's no skystone
+        // If something goes wrong, we assume there is no prop and return the input
         if (mat.empty()) {
             location = PropLocation.NONE;
             return input;
         }
 
-        // We create a HSV range for blue to detect regular stones
-        // NOTE: In OpenCV's implementation,
-        // Hue values are half the real value
-        Scalar lowHSV = new Scalar(97, 100, 100); // lower bound HSV for blue
+        // HSV values are half of what they actually are
+        Scalar lowHSV  = new Scalar(97, 100, 100);   // lower bound HSV for blue
         Scalar highHSV = new Scalar(115, 255, 255); // higher bound HSV for blue
 
-
-        // We'll get a black and white image. The white regions represent the regular stones.
-        // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
         Core.inRange(mat, lowHSV, highHSV, output);
 
-
         // Run erode to remove noise
-        Point cvErodeAnchor = new Point(-1, -1);
-        int cvErodeIterations = 7;
-        int cvErodeBordertype = Core.BORDER_CONSTANT;
+        Point cvErodeAnchor       = new Point(-1, -1);
+        int cvErodeBordertype     = Core.BORDER_CONSTANT;
         Scalar cvErodeBordervalue = new Scalar(-1);
-        Imgproc.erode(output, output, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue);
+        Imgproc.erode(output, output, cvErodeKernel, cvErodeAnchor, ERODE_ITERATIONS, cvErodeBordertype, cvErodeBordervalue);
 
 
         // Run dilation to increase the stuff we want
-        Point cvDilateAnchor = new Point(-1, -1);
-        int cvDilateIterations = 11;
-        int cvDilateBordertype = Core.BORDER_CONSTANT;
+        Point cvDilateAnchor       = new Point(-1, -1);
+        int cvDilateBordertype     = Core.BORDER_CONSTANT;
         Scalar cvDilateBordervalue = new Scalar(-1);
-        Imgproc.dilate(output, output, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue);
-
+        Imgproc.dilate(output, output, cvDilateKernel, cvDilateAnchor, DIALATE_ITERATIONS, cvDilateBordertype, cvDilateBordervalue);
 
         // Use Canny Edge Detection to find edges
-        // you might have to tune the thresholds for hysteresis
         Imgproc.Canny(output, edges, 100, 300);
 
-        // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
-        // Oftentimes the edges are disconnected. findContours connects these edges.
-        // We then find the bounding rectangles of those contours
+        // Find the contours
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        // Draw bounding boxes around the contours
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
         Rect[] boundRect = new Rect[contours.size()];
         for (int i = 0; i < contours.size(); i++) {
@@ -92,9 +77,7 @@ public class PropDetectorBlue extends OpenCvPipeline {
             boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
         }
 
-        // Iterate and check whether the bounding boxes
-        // cover left and/or right side of the image
-        double left_x = 0.25 * width;
+        double left_x  = 0.25 * width;
         double right_x = 0.75 * width;
         boolean left = false; // true if regular stone found on the left side
         boolean right = false; // "" "" on the right side
@@ -109,20 +92,14 @@ public class PropDetectorBlue extends OpenCvPipeline {
             Imgproc.rectangle(mat, boundRect[i], new Scalar(0.5, 76.9, 89.8));
         }
 
-        // if there is no yellow regions on a side
-        // that side should be a Skystone
         // IDK MAN, IT'S REVERSED!
-        if (!right) location = PropLocation.LEFT;
+        if (!right)     location = PropLocation.LEFT;
         else if (!left) location = PropLocation.RIGHT;
-            // if both are true, then there's no Skystone in front.
-            // since our team's camera can only detect two at a time
-            // we will need to scan the next 2 stones
         else location = PropLocation.NONE;
 
         if (boundRect.length == 0) {
             location = PropLocation.NONE;
         }
-
 
         Imgproc.resize(mat, mat, new Size(320, 240));
 

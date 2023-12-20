@@ -41,7 +41,6 @@ public class PropDetector extends OpenCvPipeline {
     Mat mat1 = new Mat();
     Mat thresh0 = new Mat();
     Mat thresh1 = new Mat();
-    Mat thresh = new Mat();
     Mat edges = new Mat();
     Mat hierarchy = new Mat();
     Mat cvDilateKernel = new Mat();
@@ -100,19 +99,19 @@ public class PropDetector extends OpenCvPipeline {
         int cvErodeIterations = 7;
         int cvErodeBordertype = Core.BORDER_CONSTANT;
         Scalar cvErodeBordervalue = new Scalar(-1);
-        Imgproc.erode(thresh, thresh, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue);
+        Imgproc.erode(output, output, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue);
 
         // Dilate to increase the goodies
         Point cvDilateAnchor = new Point(-1, -1);
         int cvDilateIterations = 11;
         int cvDilateBordertype = Core.BORDER_CONSTANT;
         Scalar cvDilateBordervalue = new Scalar(-1);
-        Imgproc.dilate(thresh, thresh, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue);
+        Imgproc.dilate(output, output, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue);
 
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
-        Imgproc.Canny(thresh, edges, 0, 100);
+        Imgproc.Canny(output, edges, 0, 100);
 
         // Oftentimes the edges are disconnected. findContours connects these edges.
         // We then find the bounding rectangles of those contours

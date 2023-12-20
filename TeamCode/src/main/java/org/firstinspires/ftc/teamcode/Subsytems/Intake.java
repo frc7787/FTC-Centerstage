@@ -40,6 +40,14 @@ public class Intake {
         rightIntake.setPower(INTAKE_POWER);
     }
 
+    public void intake(long duration) {
+        long start = System.currentTimeMillis();
+
+        while (start + duration < System.currentTimeMillis()) {
+            intake();
+        }
+    }
+
     /**
      * Displays debug information for the intake
      */
