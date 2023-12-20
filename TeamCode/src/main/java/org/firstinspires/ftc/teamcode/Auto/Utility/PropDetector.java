@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto.Utility;
 
+import androidx.annotation.NonNull;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -14,20 +16,39 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PropDetectorRed extends OpenCvPipeline {
+public class PropDetector extends OpenCvPipeline {
+    public enum PropLocation {
+        LEFT,
+        RIGHT,
+        NONE
+    }
 
-    private final int width = 340; // width of the image
+    public enum PropColor {
+        RED,
+        BLUE
+    }
+
+    public PropColor propColor;
+
+    public PropDetector(@NonNull PropColor color) {
+        propColor = color;
+    }
+
+    private final int width = 320; // width of the image
     PropLocation location = PropLocation.NONE;
 
     Mat mat = new Mat();
     Mat mat1 = new Mat();
     Mat thresh0 = new Mat();
     Mat thresh1 = new Mat();
-    Mat thresh = new Mat();
     Mat edges = new Mat();
     Mat hierarchy = new Mat();
     Mat cvDilateKernel = new Mat();
     Mat cvErodeKernel = new Mat();
+    Mat output = new Mat();
+
+    Scalar lowHSV;
+    Scalar highHSV;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -52,42 +73,46 @@ public class PropDetectorRed extends OpenCvPipeline {
             return input;
         }
 
+        if (propColor == PropColor.RED) {
+            // First scalar
+            lowHSV = new Scalar(160, 150, 0); // lower bound HSV for red
+            highHSV = new Scalar(180, 255, 255); // higher bound HSV for red
 
-        // First scalar
-        Scalar lowHSV0 = new Scalar(160, 150, 0); // lower bound HSV for red
-        Scalar highHSV0 = new Scalar(180, 255, 255); // higher bound HSV for red
+            // Second scalar
+            Scalar lowHSV1 = new Scalar(0, 160, 0); // lower bound HSV for red
+            Scalar highHSV1 = new Scalar(10, 255, 255); // higher bound HSV for red
 
-        // Second scalar
-        Scalar lowHSV1 = new Scalar(0, 160, 0); // lower bound HSV for red
-        Scalar highHSV1 = new Scalar(10, 255, 255); // higher bound HSV for red
+            Core.inRange(mat, lowHSV, highHSV, thresh0);
+            Core.inRange(mat1, lowHSV1, highHSV1, thresh1);
 
-        // We'll get a black and white image. The white regions represent the regular stones.
-        // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
-        Core.inRange(mat, lowHSV0, highHSV0, thresh0);
-        Core.inRange(mat1, lowHSV1, highHSV1, thresh1);
+            Core.add(thresh0, thresh1, output);
+        } else if (propColor == PropColor.BLUE) {
+            lowHSV = new Scalar(97, 100, 100); // lower bound HSV for blue
+            highHSV = new Scalar(115, 255, 255); // higher bound HSV for blue
 
-        Core.add(thresh0, thresh1, thresh);
+            Core.inRange(mat, lowHSV, highHSV, output);
+        }
+
 
         // Erode to remove noise
         Point cvErodeAnchor = new Point(-1, -1);
         int cvErodeIterations = 7;
         int cvErodeBordertype = Core.BORDER_CONSTANT;
         Scalar cvErodeBordervalue = new Scalar(-1);
-        Imgproc.erode(thresh, thresh, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue);
+        Imgproc.erode(output, output, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue);
 
         // Dilate to increase the goodies
         Point cvDilateAnchor = new Point(-1, -1);
         int cvDilateIterations = 11;
         int cvDilateBordertype = Core.BORDER_CONSTANT;
         Scalar cvDilateBordervalue = new Scalar(-1);
-        Imgproc.dilate(thresh, thresh, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue);
+        Imgproc.dilate(output, output, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue);
 
 
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
-        Imgproc.Canny(thresh, edges, 0, 100);
+        Imgproc.Canny(output, edges, 0, 100);
 
-        // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
         // We then find the bounding rectangles of those contours
         List<MatOfPoint> contours = new ArrayList<>();

@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorRed;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -28,7 +27,7 @@ public class AutoModeBlueShort extends LinearOpMode {
                 new ArrayList<>()
         );
 
-        PropDetectorRed propDetector = new PropDetectorRed();
+        PropDetector propDetector = new PropDetector(PropDetector.PropColor.BLUE);
 
         Pose2d pose = new Pose2d(0,0, Math.toRadians(90));
 
@@ -59,7 +58,8 @@ public class AutoModeBlueShort extends LinearOpMode {
             }
         });
 
-        PropLocation location;
+
+        PropDetector.PropLocation location;
 
         location = propDetector.getLocation();
 
@@ -83,11 +83,11 @@ public class AutoModeBlueShort extends LinearOpMode {
             Pose2d currentPose = localizer.getPoseEstimate();
 
 
-            if (location == PropLocation.LEFT) {
+            if (location == PropDetector.PropLocation.LEFT) {
                 drive.turn(Math.toRadians(-45));
-            } else if (location == PropLocation.RIGHT) {
+            } else if (location == PropDetector.PropLocation.RIGHT) {
                 drive.turn(Math.toRadians(45));
-            } else if (location == PropLocation.NONE) {
+            } else if (location == PropDetector.PropLocation.NONE) {
 
             }
 

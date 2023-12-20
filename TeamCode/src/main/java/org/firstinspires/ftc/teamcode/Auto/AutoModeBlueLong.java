@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorBlue;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
@@ -23,9 +22,8 @@ import java.util.ArrayList;
 public class AutoModeBlueLong extends LinearOpMode {
 
     public static OpenCvCamera camera;
-    public static PropDetectorBlue propDetector = new PropDetectorBlue();
 
-    public static PropLocation location;
+    public static PropDetector.PropLocation location;
 
     public static final Pose2d START_POSE = new Pose2d(-36.04, 71.71, Math.toRadians(270));;
 
@@ -34,6 +32,12 @@ public class AutoModeBlueLong extends LinearOpMode {
                 .appContext
                 .getResources()
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        PropDetector propDetector = new PropDetector(PropDetector.PropColor.BLUE);
+
+        PropDetector.PropLocation location;
+
+        location = propDetector.getLocation();
 
         camera = OpenCvCameraFactory
                 .getInstance()
@@ -89,14 +93,15 @@ public class AutoModeBlueLong extends LinearOpMode {
 
             Pose2d currentPose = localizer.getPoseEstimate();
 
-            if (location == PropLocation.LEFT) {
+
+            if (location == PropDetector.PropLocation.LEFT) {
                 telemetry.addLine("RUNNING LEFT");
-                //drive.followTrajectorySequence(left);
-            } else if (location == PropLocation.RIGHT) {
+                drive.followTrajectorySequence(left);
+            } else if (location == PropDetector.PropLocation.RIGHT) {
                 telemetry.addLine("RUNNING RIGHT");
-                //drive.followTrajectorySequence(right);
-            } else if (location == PropLocation.NONE) {
-                telemetry.addLine("RUNNING NONE");
+                drive.followTrajectorySequence(right);
+            } else if (location == PropDetector.PropLocation.NONE) {
+
             }
 
             //telemetry.update();
