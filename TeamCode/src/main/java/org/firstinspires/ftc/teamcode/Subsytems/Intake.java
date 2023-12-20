@@ -14,11 +14,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake {
-    private final DcMotorImplEx leftIntake, rightIntake;
+    private final DcMotorImplEx intake;
 
     public Intake(@NonNull HardwareMap hardwareMap) {
-        leftIntake  = hardwareMap.get(DcMotorImplEx.class, "LeftIntakeMotor");
-        rightIntake = hardwareMap.get(DcMotorImplEx.class, "RightIntakeMotor");
+       intake = hardwareMap.get(DcMotorImplEx.class, "IntakeMotor");
     }
 
     /**
@@ -26,18 +25,14 @@ public class Intake {
      * This sets the zero power behavior of the intake motor to brake
      */
     public void init() {
-        leftIntake.setZeroPowerBehavior(FLOAT);
-        rightIntake.setZeroPowerBehavior(FLOAT);
-
-        leftIntake.setDirection(REVERSE);
+        intake.setZeroPowerBehavior(FLOAT);
     }
 
     /**
      * Spins the intake
      */
     public void intake() {
-        leftIntake.setPower(INTAKE_POWER);
-        rightIntake.setPower(INTAKE_POWER);
+       intake.setPower(INTAKE_POWER);
     }
 
     public void intake(long duration) {
@@ -53,14 +48,5 @@ public class Intake {
      */
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Intake Debug");
-
-        telemetry.addData("Left Motor Direction", leftIntake.getDirection());
-        telemetry.addData("Right Motor Direction", rightIntake.getDirection());
-
-        telemetry.addData("Left Motor Power", leftIntake.getPower());
-        telemetry.addData("Right Motor Power", rightIntake.getPower());
-
-        telemetry.addData("Left Motor Current", leftIntake.getCurrent(AMPS));
-        telemetry.addData("Right Motor Current", rightIntake.getCurrent(AMPS));
     }
 }
