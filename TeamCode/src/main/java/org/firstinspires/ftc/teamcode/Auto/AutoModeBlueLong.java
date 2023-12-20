@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorBlue;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorRed;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
@@ -30,9 +31,9 @@ public class AutoModeBlueLong extends LinearOpMode {
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
 
-        PropDetectorBlue propDetector = new PropDetectorBlue();
+        PropDetector propDetector = new PropDetector(PropDetector.PropColor.BLUE);
 
-        PropDetectorBlue.PropLocation location;
+        PropDetector.PropLocation location;
 
         location = propDetector.getLocation();
 
@@ -94,13 +95,13 @@ public class AutoModeBlueLong extends LinearOpMode {
             Pose2d currentPose = localizer.getPoseEstimate();
 
 
-            if (location == PropDetectorBlue.PropLocation.LEFT) {
+            if (location == PropDetector.PropLocation.LEFT) {
                 telemetry.addLine("RUNNING LEFT");
-                //drive.followTrajectorySequence(left);
-            } else if (location == PropDetectorBlue.PropLocation.RIGHT) {
+                drive.followTrajectorySequence(left);
+            } else if (location == PropDetector.PropLocation.RIGHT) {
                 telemetry.addLine("RUNNING RIGHT");
-                //drive.followTrajectorySequence(right);
-            } else if (location == PropDetectorBlue.PropLocation.NONE) {
+                drive.followTrajectorySequence(right);
+            } else if (location == PropDetector.PropLocation.NONE) {
                 telemetry.addLine("RUNNING NONE");
             }
 
