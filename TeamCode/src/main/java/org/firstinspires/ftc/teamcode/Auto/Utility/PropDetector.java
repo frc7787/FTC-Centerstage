@@ -34,7 +34,7 @@ public class PropDetector extends OpenCvPipeline {
         propColor = color;
     }
 
-    private final int width = 340; // width of the image
+    private final int width = 320; // width of the image
     PropLocation location = PropLocation.NONE;
 
     Mat mat = new Mat();
