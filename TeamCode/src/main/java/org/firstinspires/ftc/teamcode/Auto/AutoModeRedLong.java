@@ -10,8 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorRed;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
@@ -47,7 +46,7 @@ public class AutoModeRedLong extends LinearOpMode {
 
     StandardTrackingWheelLocalizer localizer;
 
-    PropDetectorRed propDetector;
+    PropDetector propDetector;
 
     Pose2d startPose = new Pose2d(0, 0, Math.toRadians(90));
 
@@ -70,7 +69,7 @@ public class AutoModeRedLong extends LinearOpMode {
                 new ArrayList<>()
         );
 
-        propDetector = new PropDetectorRed();
+        propDetector = new PropDetector(PropDetector.PropColor.RED);
 
         localizer.setPoseEstimate(startPose);
 
@@ -103,7 +102,7 @@ public class AutoModeRedLong extends LinearOpMode {
             }
         });
 
-        PropLocation location;
+        PropDetector.PropLocation location;
 
         initAprilTag();
 
@@ -211,7 +210,6 @@ public class AutoModeRedLong extends LinearOpMode {
 
     /**
      * Creates a new backdrop trajectory based on the current position of the robot
-     * @param startPose The current position of the robot
      * @return The new trajectory
      */
     TrajectorySequence toBackDropTrajectoryBuilder() {
@@ -227,7 +225,6 @@ public class AutoModeRedLong extends LinearOpMode {
 
     /**
      * Creates a new trajectory to go from the backdrop to the pixel stack, based on the current position of the robot
-     * @param startPose The current position of the robot
      * @return The new trajectory
      */
     TrajectorySequence fromBackDropTrajectoryBuilder() {

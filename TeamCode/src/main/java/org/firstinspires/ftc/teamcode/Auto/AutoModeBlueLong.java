@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetectorBlue;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 public class AutoModeBlueLong extends LinearOpMode {
 
     public static OpenCvCamera camera;
-    public static PropDetectorBlue propDetector = new PropDetectorBlue();
 
     public static PropLocation location;
 
