@@ -15,11 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PropDetectorRed extends OpenCvPipeline {
-    public enum PropLocation {
-        LEFT,
-        RIGHT,
-        NONE
-    }
 
     private final int width = 340; // width of the image
     PropLocation location = PropLocation.NONE;
