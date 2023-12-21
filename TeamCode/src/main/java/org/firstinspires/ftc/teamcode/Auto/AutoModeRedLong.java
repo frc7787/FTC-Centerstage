@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.AprilTag;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
@@ -35,10 +34,7 @@ public class AutoModeRedLong extends LinearOpMode {
 
     private WebcamName webcam1, webcam2;
 
-    public int pixelStackTagId = 10;
-    public int backDropTagId = 5;
-
-    AprilTag aprilTagDetection = new AprilTag();
+    public int pixelStackTagId, backDropTagId;
 
     OpenCvCamera camera;
 
@@ -106,7 +102,7 @@ public class AutoModeRedLong extends LinearOpMode {
         switch (location) {
             case LEFT:
                 roadRunnerDriveBase.turn(90);
-                // Release the preloaded pixel osmehow???
+                // Release the preloaded pixel somehow???
                 break;
             case RIGHT:
                 roadRunnerDriveBase.turn(-90);
@@ -131,9 +127,9 @@ public class AutoModeRedLong extends LinearOpMode {
 
             visionPortal.setActiveCamera(webcam1);
 
-            pixelStackTag = aprilTagDetection.detectAprilTag(pixelStackTagId);
+            detectAprilTag(pixelStackTagId, pixelStackTag);
 
-            centerOnAprilTag(pixelStackTag);
+            centerOnAprilTag(pixelStackTag, 5);
 
             intake.intake(2000); // Pick up the pixel
 
@@ -143,9 +139,9 @@ public class AutoModeRedLong extends LinearOpMode {
             // If we do it at the top, we will get a stale value for the current robot Pose
             roadRunnerDriveBase.followTrajectorySequence(toBackDropTrajectoryBuilder());
 
-            backDropTag = aprilTagDetection.detectAprilTag(backDropTagId);
+            detectAprilTag(pixelStackTagId, backDropTag);
 
-            centerOnAprilTag(pixelStackTag);
+            centerOnAprilTag(pixelStackTag, 5);
 
             // We need to build a new trajectory sequence with the current position of the robot
             // If we do it at the top, we will get a stale value for the current robot Pose
@@ -231,7 +227,17 @@ public class AutoModeRedLong extends LinearOpMode {
         });
     }
 
-    void centerOnAprilTag(AprilTagDetection tag) {
+    void centerOnAprilTag(@NonNull AprilTagDetection tag, int distance) {
+    }
 
+    AprilTagDetection detectAprilTag(int id, @NonNull AprilTagDetection output) {
+        for (AprilTagDetection detection : aprilTag.getDetections()) {
+            if (detection.metadata != null) {
+                if ((backDropTagId < 0) || (detection.id == id)) {
+                    output = detection;
+                }
+            }
+        }
+        return output;
     }
 }
