@@ -23,10 +23,10 @@ public class DriveBase {
     private final DcMotorImplEx[] motors;
 
     public DriveBase(@NonNull HardwareMap hardwareMap) {
-        fL  = hardwareMap.get(DcMotorImplEx.class, "fldm");
-        fR  = hardwareMap.get(DcMotorImplEx.class, "frdm");
-        bL  = hardwareMap.get(DcMotorImplEx.class, "bldm");
-        bR  =  hardwareMap.get(DcMotorImplEx.class, "brdm");
+        fL  = hardwareMap.get(DcMotorImplEx.class, "FrontLeftDriveMotor");
+        fR  = hardwareMap.get(DcMotorImplEx.class, "FrontRightDriveMotor");
+        bL  = hardwareMap.get(DcMotorImplEx.class, "BackLeftDriveMotor");
+        bR  =  hardwareMap.get(DcMotorImplEx.class, "BackRightDriveMotor");
 
         motors = new DcMotorImplEx[]{fL, fR, bL, bR};
     }

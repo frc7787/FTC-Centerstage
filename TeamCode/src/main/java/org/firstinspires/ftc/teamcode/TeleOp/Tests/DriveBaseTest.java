@@ -20,7 +20,11 @@ public class DriveBaseTest extends OpMode {
     }
 
     @Override public void loop() {
-        if (gamepad1.left_bumper) { intake.intake(); }
+        if (gamepad1.left_bumper) {
+            intake.intake();
+        } else {
+            intake.stop();
+        }
 
         driveBase.drive(
                 gamepad1.left_stick_x,

@@ -35,6 +35,10 @@ public class Intake {
        intake.setPower(INTAKE_POWER);
     }
 
+    public void stop() {
+        intake.setPower(0);
+    }
+
     public void intake(long duration) {
         long start = System.currentTimeMillis();
 

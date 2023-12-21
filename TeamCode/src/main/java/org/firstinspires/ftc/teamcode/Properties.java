@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.opencv.core.Scalar;
+
 @Config
 public class Properties {
 
@@ -53,4 +55,21 @@ public class Properties {
 
     public static volatile double ENDGAME_TRIGGER_SENSITIVITY      = 0.9;
     public static volatile double PLANE_LAUNCH_TRIGGER_SENSITIVITY = 0.9;
+
+    // ----------- Camera Constants ------------ //
+
+    public static volatile int CAMERA_WIDTH       = 340;
+    public static volatile int ERODE_ITERATIONS   = 7;
+    public static volatile int DIALATE_ITERATIONS = 11;
+
+    public static volatile double LEFT_X  = 0.25 * (double) CAMERA_WIDTH;
+    public static volatile double RIGHT_X = 0.75 * (double) CAMERA_WIDTH;
+
+    public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(0.5, 76.9, 89.8);
+
+    public static volatile Scalar LOW_HSV_RANGE_BLUE;
+    public static volatile Scalar HIGH_HSV_RANGE_BLUE;
+
+    public static volatile Scalar LOW_HSV_RANGE_RED_ONE;
+    public static volatile Scalar HIGH_HSV_RANGE_RED_ONE;
 }
