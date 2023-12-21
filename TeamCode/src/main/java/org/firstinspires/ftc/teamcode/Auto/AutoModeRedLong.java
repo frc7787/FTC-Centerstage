@@ -228,7 +228,7 @@ public class AutoModeRedLong extends LinearOpMode {
     }
 
     void centerOnAprilTag(@NonNull AprilTagDetection tag, int distance) {
-       // Epic code that I am going to make Kai write cause I don't feel like figuring it out
+
     }
 
     AprilTagDetection detectAprilTag(int id, @NonNull AprilTagDetection output) {
