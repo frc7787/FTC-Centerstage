@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.opencv.core.Core;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
 @Config
@@ -67,9 +70,17 @@ public class Properties {
 
     public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(0.5, 76.9, 89.8);
 
-    public static volatile Scalar LOW_HSV_RANGE_BLUE;
-    public static volatile Scalar HIGH_HSV_RANGE_BLUE;
+    public static volatile Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 100);
+    public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(115, 255, 255);
 
-    public static volatile Scalar LOW_HSV_RANGE_RED_ONE;
-    public static volatile Scalar HIGH_HSV_RANGE_RED_ONE;
+    public static volatile Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 150, 0);
+    public static volatile Scalar HIGH_HSV_RANGE_RED_ONE = new Scalar(180, 255, 255);
+
+    public static volatile Scalar LOW_HSV_RANGE_RED_TWO   = new Scalar(0, 160, 0);
+    public static volatile Scalar HIGH_HSV_RANGLE_RED_TWO = new Scalar(10, 255, 255);
+
+    public static volatile Point CV_ANCHOR        = new Point(-1, -1);
+    public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
+    public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
+    public static volatile Rect CROP_RECT         = new Rect(0, 80, 320, 80);
 }

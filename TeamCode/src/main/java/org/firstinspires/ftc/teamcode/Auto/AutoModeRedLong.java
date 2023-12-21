@@ -44,19 +44,21 @@ public class AutoModeRedLong extends LinearOpMode {
 
     VisionPortal visionPortal;
 
-    StandardTrackingWheelLocalizer localizer;
+    StandardTrackingWheelLocalizer localizer = new StandardTrackingWheelLocalizer(
+            hardwareMap,
+            new ArrayList<>(),
+            new ArrayList<>()
+    );
 
-    PropDetector propDetector;
+    PropDetector propDetector = new PropDetector(PropDetector.PropColor.RED);
 
     Pose2d startPose = new Pose2d(0, 0, Math.toRadians(90));
 
     RoadRunnerDriveBase roadRunnerDriveBase = new RoadRunnerDriveBase(hardwareMap);
 
     DriveBase driveBase = new DriveBase(hardwareMap);
-
-    Arm arm = new Arm(hardwareMap);
-
-    Intake intake = new Intake(hardwareMap);
+    Arm arm             = new Arm(hardwareMap);
+    Intake intake       = new Intake(hardwareMap);
 
     TrajectorySequence toSpikeStrip = roadRunnerDriveBase.trajectorySequenceBuilder(new Pose2d(-36.32, -63.77, Math.toRadians(90.00)))
             .lineTo(new Vector2d(-36.18, -34.01))
@@ -69,38 +71,13 @@ public class AutoModeRedLong extends LinearOpMode {
                 new ArrayList<>()
         );
 
-        propDetector = new PropDetector(PropDetector.PropColor.RED);
-
         localizer.setPoseEstimate(startPose);
-
-        roadRunnerDriveBase = new RoadRunnerDriveBase(hardwareMap);
 
         driveBase.init();
         arm.init();
         intake.init();
 
-        int cameraMonitorViewId = hardwareMap
-                .appContext
-                .getResources()
-                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        camera = OpenCvCameraFactory
-                .getInstance()
-                .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
-                );
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                camera.setPipeline(propDetector);
-            }
-
-            @Override public void onError(int errorCode) {
-                telemetry.addData("Failed to open camera due to error code", errorCode);
-                telemetry.update();
-            }
-        });
+        initCamera();
 
         PropDetector.PropLocation location;
 
@@ -140,53 +117,40 @@ public class AutoModeRedLong extends LinearOpMode {
 
         // ---------- Main Auto ---------- //
 
-        getPixelFromStackAndPlaceOnBackdrop();
-        getPixelFromStackAndPlaceOnBackdrop();
-        getPixelFromStackAndPlaceOnBackdrop();
-        getPixelFromStackAndPlaceOnBackdrop();
-        getPixelFromStackAndPlaceOnBackdrop();
+        getPixelFromStackAndPlaceOnBackdrop(5);
     }
 
-    private void getPixelFromStackAndPlaceOnBackdrop() {
-        visionPortal.setActiveCamera(webcam1);
+    private void getPixelFromStackAndPlaceOnBackdrop(int iterations) {
+        int iteration = 0;
 
-        for (AprilTagDetection detection : aprilTag.getDetections()) {
-            if (detection.metadata != null) {
-                if ((pixelStackTagId < 0) || (detection.id == pixelStackTagId)) {
-                    pixelStackTag = detection;
-                }
-            }
+        while (iteration <= iterations) {
+
+            visionPortal.setActiveCamera(webcam1);
+
+            detectAprilTag(pixelStackTagId, pixelStackTag);
+
+            centerOnAprilTag(pixelStackTag, 5);
+
+            intake.intake(2000); // Pick up the pixel
+
+            visionPortal.setActiveCamera(webcam2); // Switch to the camera on the back of the robot
+
+            // We need to build a new trajectory sequence with the current position of the robot
+            // If we do it at the top, we will get a stale value for the current robot Pose
+            roadRunnerDriveBase.followTrajectorySequence(toBackDropTrajectoryBuilder());
+
+            detectAprilTag(pixelStackTagId, backDropTag);
+
+            centerOnAprilTag(pixelStackTag, 5);
+
+            // We need to build a new trajectory sequence with the current position of the robot
+            // If we do it at the top, we will get a stale value for the current robot Pose
+            roadRunnerDriveBase.followTrajectorySequence(fromBackDropTrajectoryBuilder());
+
+            // Drop of pixel with intake that does not currently exist
+
+            iteration += 1;
         }
-
-        while (pixelStackTag.ftcPose.range > 0.5) {
-            driveBase.drive(0, 0.5, 0);
-        }
-
-        intake.intake(2000); // Pick up the pixel
-
-        visionPortal.setActiveCamera(webcam2); // Switch to the camera on the back of the robot
-
-        // We need to build a new trajectory sequence with the current position of the robot
-        // If we do it at the top, we will get a stale value for the current robot Pose
-        roadRunnerDriveBase.followTrajectorySequence(toBackDropTrajectoryBuilder());
-
-        for (AprilTagDetection detection : aprilTag.getDetections()) {
-            if (detection.metadata != null) {
-                if ((backDropTagId < 0) || (detection.id == backDropTagId)) {
-                    backDropTag = detection;
-                }
-            }
-        }
-
-        while (pixelStackTag.ftcPose.range > 0.5) {
-            driveBase.drive(0, 0.5, 0);
-        }
-
-        // We need to build a new trajectory sequence with the current position of the robot
-        // If we do it at the top, we will get a stale value for the current robot Pose
-        roadRunnerDriveBase.followTrajectorySequence(fromBackDropTrajectoryBuilder());
-
-        // Drop of pixel with intake that does not currently exist
     }
 
     /**
@@ -238,7 +202,43 @@ public class AutoModeRedLong extends LinearOpMode {
                 .build();
     }
 
-    void centerOnAprilTag(@NonNull AprilTagDetection detection) {
+    void initCamera() {
+        int cameraMonitorViewId = hardwareMap
+                .appContext
+                .getResources()
+                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
+        camera = OpenCvCameraFactory
+                .getInstance()
+                .createWebcam(
+                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
+                );
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override public void onOpened() {
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                camera.setPipeline(propDetector);
+            }
+
+            @Override public void onError(int errorCode) {
+                telemetry.addData("Failed to open camera due to error code", errorCode);
+                telemetry.update();
+            }
+        });
+    }
+
+    void centerOnAprilTag(@NonNull AprilTagDetection tag, int distance) {
+       // Epic code that I am going to make Kai write cause I don't feel like figuring it out
+    }
+
+    AprilTagDetection detectAprilTag(int id, @NonNull AprilTagDetection output) {
+        for (AprilTagDetection detection : aprilTag.getDetections()) {
+            if (detection.metadata != null) {
+                if ((backDropTagId < 0) || (detection.id == id)) {
+                    output = detection;
+                }
+            }
+        }
+        return output;
     }
 }
