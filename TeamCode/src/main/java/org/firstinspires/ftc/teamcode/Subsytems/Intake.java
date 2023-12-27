@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 import androidx.annotation.NonNull;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.Properties.INTAKE_POWER;
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
@@ -26,6 +27,7 @@ public class Intake {
      */
     public void init() {
         intake.setZeroPowerBehavior(FLOAT);
+        intake.setDirection(REVERSE);
     }
 
     /**
@@ -33,6 +35,11 @@ public class Intake {
      */
     public void intake() {
        intake.setPower(INTAKE_POWER);
+    }
+
+    public void outtake(double power) {
+        intake.setDirection(FORWARD);
+        intake.setPower(power);
     }
 
     public void stop() {
