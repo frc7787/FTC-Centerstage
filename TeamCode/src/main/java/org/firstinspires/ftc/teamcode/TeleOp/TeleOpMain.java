@@ -5,6 +5,8 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RobotPropertyParser;
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
@@ -16,7 +18,7 @@ import androidx.annotation.NonNull;
 @TeleOp(name = "TeleOp 2023/2024 - Use This One", group = "Production")
 public class TeleOpMain extends OpMode {
 
-    DriveBase driveBase;
+    MecanumDriveBase driveBase;
     Arm arm;
     Hanger hanger;
     Launcher launcher;
@@ -158,7 +160,6 @@ public class TeleOpMain extends OpMode {
                 }
                 break;
             case HUNG:
-                driveBase.stop();
                 break;
         }
     }
@@ -169,14 +170,13 @@ public class TeleOpMain extends OpMode {
         prevGamepad2    = new Gamepad();
         currentGamepad2 = new Gamepad();
 
-        driveBase = new DriveBase(hardwareMap);
+        driveBase = new MecanumDriveBase(hardwareMap);
         hanger    = new Hanger(hardwareMap);
         launcher  = new Launcher(hardwareMap);
         arm       = new Arm(hardwareMap);
 
         arm.init();
         launcher.init();
-        driveBase.init();
         hanger.init();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -188,7 +188,7 @@ public class TeleOpMain extends OpMode {
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
 
-        driveBase.drive(
+        driveBase.driveManual(
                 gamepad1.left_stick_x,
                 gamepad1.left_stick_y,
                 gamepad1.right_stick_x

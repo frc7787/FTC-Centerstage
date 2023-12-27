@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.RoadRunner.drive;
 
+import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_HIGH;
+import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_LOW;
+import static org.firstinspires.ftc.teamcode.Properties.STRAFE_OFFSET;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -39,7 +43,7 @@ import java.util.List;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class RoadRunnerDriveBase extends MecanumDrive {
+public class MecanumDriveBase extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID_DRIVE  = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients TRANSLATIONAL_PID_STRAFE = new PIDCoefficients(0,0,0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
@@ -57,7 +61,7 @@ public class RoadRunnerDriveBase extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx fL, bL, bR, fR;
     private List<DcMotorEx> motors;
 
     private VoltageSensor batteryVoltageSensor;
@@ -65,7 +69,7 @@ public class RoadRunnerDriveBase extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    public RoadRunnerDriveBase(HardwareMap hardwareMap) {
+    public MecanumDriveBase(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_DRIVE, TRANSLATIONAL_PID_STRAFE, HEADING_PID,
@@ -79,15 +83,15 @@ public class RoadRunnerDriveBase extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront  = hardwareMap.get(DcMotorEx.class, "FrontLeftDriveMotor");
-        leftRear   = hardwareMap.get(DcMotorEx.class, "BackLeftDriveMotor");
-        rightRear  = hardwareMap.get(DcMotorEx.class, "BackRightDriveMotor");
-        rightFront = hardwareMap.get(DcMotorEx.class, "FrontRightDriveMotor");
+        fL = hardwareMap.get(DcMotorEx.class, "FrontLeftDriveMotor");
+        fR = hardwareMap.get(DcMotorEx.class, "FrontRightDriveMotor");
+        bL = hardwareMap.get(DcMotorEx.class, "BackLeftDriveMotor");
+        bR = hardwareMap.get(DcMotorEx.class, "BackRightDriveMotor");
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        fL.setDirection(DcMotorSimple.Direction.REVERSE);
+        bL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        motors = Arrays.asList(fL, bL, bR, fR);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -112,6 +116,29 @@ public class RoadRunnerDriveBase extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
+    }
+
+    private double deadZone(double value) {
+        if (DEAD_ZONE_LOW < value && DEAD_ZONE_HIGH > value ) { return 0.0; }
+        return value;
+    }
+
+    public void driveManual(double drive, double strafe, double turn) {
+        drive  = deadZone(drive)  * -1.0;
+        strafe = deadZone(strafe) * STRAFE_OFFSET;
+        turn   = deadZone(turn);
+
+        double motorPowerRatio = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);
+
+        double fLPower = (drive + strafe + turn) / motorPowerRatio;
+        double fRPower = (drive - strafe - turn) / motorPowerRatio;
+        double bLPower = (drive - strafe + turn) / motorPowerRatio;
+        double bRPower = (drive + strafe - turn) / motorPowerRatio;
+
+        fL.setPower(fLPower);
+        fR.setPower(fRPower);
+        bL.setPower(bLPower);
+        bR.setPower(bRPower);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -260,10 +287,10 @@ public class RoadRunnerDriveBase extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        fL.setPower(v);
+        bL.setPower(v1);
+        bR.setPower(v2);
+        fR.setPower(v3);
     }
 
     @Override
