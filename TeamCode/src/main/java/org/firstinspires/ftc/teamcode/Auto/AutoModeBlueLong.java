@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
@@ -66,7 +66,7 @@ public class AutoModeBlueLong extends LinearOpMode {
 
         localizer.setPoseEstimate(START_POSE);
 
-        RoadRunnerDriveBase drive = new RoadRunnerDriveBase(hardwareMap);
+        MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
 
         // Our drive sequences

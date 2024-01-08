@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -33,7 +33,7 @@ public class AutoModeBlueShort extends LinearOpMode {
 
         localizer.setPoseEstimate(pose);
 
-        RoadRunnerDriveBase drive = new RoadRunnerDriveBase(hardwareMap);
+        MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
         int cameraMonitorViewId = hardwareMap
                 .appContext

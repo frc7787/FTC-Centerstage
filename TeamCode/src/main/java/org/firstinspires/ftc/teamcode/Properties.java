@@ -83,4 +83,7 @@ public class Properties {
     public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
     public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
     public static volatile Rect CROP_RECT         = new Rect(0, 80, 320, 80);
+
+    public static volatile int BACKDROP_WORM_POS     = 500;
+    public static volatile int BACKDROP_ELEVATOR_POS = 500;
 }
