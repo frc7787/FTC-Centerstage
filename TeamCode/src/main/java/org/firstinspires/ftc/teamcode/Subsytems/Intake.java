@@ -38,7 +38,7 @@ public class Intake {
     }
 
     public void outtake(double power) {
-        intake.setDirection(FORWARD);
+        intake.setDirection(REVERSE);
         intake.setPower(power);
     }
 
