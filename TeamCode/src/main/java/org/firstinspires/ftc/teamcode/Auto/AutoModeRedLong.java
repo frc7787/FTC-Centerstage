@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Auto.Utility.AprilTag;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
@@ -38,11 +39,12 @@ public class AutoModeRedLong extends LinearOpMode {
 
     private WebcamName webcam1, webcam2;
 
-    public int pixelStackTagId, backDropTagId;
+    public int pixelStackTagId = 7;
+    public int backDropStackTagId = 5;
+
+    AprilTag aprilTagDetection = new AprilTag();
 
     OpenCvCamera camera;
-
-    AprilTagProcessor aprilTag;
 
     AprilTagDetection pixelStackTag, backDropTag;
 
@@ -68,6 +70,9 @@ public class AutoModeRedLong extends LinearOpMode {
             .build();
 
     @Override public void runOpMode() {
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+
         localizer = new StandardTrackingWheelLocalizer(
                 hardwareMap,
                 new ArrayList<>(),
@@ -83,7 +88,7 @@ public class AutoModeRedLong extends LinearOpMode {
 
         PropDetector.PropLocation location;
 
-        initAprilTag();
+        visionPortal = aprilTagDetection.initAprilTag(webcam1, webcam2);
 
         // -----------------------------------------------------------------------------------------
         // AUTO START
@@ -129,9 +134,9 @@ public class AutoModeRedLong extends LinearOpMode {
 
             visionPortal.setActiveCamera(webcam1);
 
-            detectAprilTag(pixelStackTagId, pixelStackTag);
+            aprilTagDetection.detectAprilTag(pixelStackTagId);
 
-            centerOnAprilTag(pixelStackTag, 5);
+            aprilTagDetection.centerOnAprilTag(pixelStackTag);
 
             intake.intake(2000); // Pick up the pixel
 
@@ -141,9 +146,9 @@ public class AutoModeRedLong extends LinearOpMode {
             // If we do it at the top, we will get a stale value for the current robot Pose
             roadRunnerDriveBase.followTrajectorySequence(toBackDropTrajectoryBuilder(PropDetector.PropColor.RED, AutoPath.LONG));
 
-            detectAprilTag(pixelStackTagId, backDropTag);
+            aprilTagDetection.detectAprilTag(pixelStackTagId);
 
-            centerOnAprilTag(pixelStackTag, 5);
+            aprilTagDetection.centerOnAprilTag(pixelStackTag);
 
             // We need to build a new trajectory sequence with the current position of the robot
             // If we do it at the top, we will get a stale value for the current robot Pose
@@ -153,25 +158,6 @@ public class AutoModeRedLong extends LinearOpMode {
 
             iteration += 1;
         }
-    }
-
-    /**
-     * Initialize the AprilTag processor.
-     */
-    void initAprilTag() {
-        // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder().build();
-
-        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-        webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
-        CameraName switchableCamera = ClassFactory.getInstance()
-                .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
-
-        // Create the vision portal by using a builder.
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(switchableCamera)
-                .addProcessor(aprilTag)
-                .build();
     }
 
     /**
@@ -257,19 +243,5 @@ public class AutoModeRedLong extends LinearOpMode {
                 telemetry.update();
             }
         });
-    }
-
-    void centerOnAprilTag(@NonNull AprilTagDetection tag, int distance) {
-    }
-
-    AprilTagDetection detectAprilTag(int id, @NonNull AprilTagDetection output) {
-        for (AprilTagDetection detection : aprilTag.getDetections()) {
-            if (detection.metadata != null) {
-                if ((backDropTagId < 0) || (detection.id == id)) {
-                    output = detection;
-                }
-            }
-        }
-        return output;
     }
 }
