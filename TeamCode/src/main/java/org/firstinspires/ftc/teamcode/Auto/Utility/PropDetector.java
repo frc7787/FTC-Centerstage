@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Auto.Utility;
 
+import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.LEFT;
+import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.NONE;
+import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.RIGHT;
 import static org.firstinspires.ftc.teamcode.Properties.BOUNDING_RECTANGLE_COLOR;
-import static org.firstinspires.ftc.teamcode.Properties.CAMERA_WIDTH;
 import static org.firstinspires.ftc.teamcode.Properties.CROP_RECT;
 import static org.firstinspires.ftc.teamcode.Properties.CV_ANCHOR;
 import static org.firstinspires.ftc.teamcode.Properties.CV_BORDER_TYPE;
@@ -10,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.Properties.DIALATE_ITERATIONS;
 import static org.firstinspires.ftc.teamcode.Properties.ERODE_ITERATIONS;
 import static org.firstinspires.ftc.teamcode.Properties.HIGH_HSV_RANGE_BLUE;
 import static org.firstinspires.ftc.teamcode.Properties.HIGH_HSV_RANGE_RED_ONE;
-import static org.firstinspires.ftc.teamcode.Properties.HIGH_HSV_RANGLE_RED_TWO;
+import static org.firstinspires.ftc.teamcode.Properties.HIGH_HSV_RANGE_RED_TWO;
 import static org.firstinspires.ftc.teamcode.Properties.LEFT_X;
 import static org.firstinspires.ftc.teamcode.Properties.LOW_HSV_RANGE_BLUE;
 import static org.firstinspires.ftc.teamcode.Properties.LOW_HSV_RANGE_RED_ONE;
@@ -23,9 +25,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -34,20 +34,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PropDetector extends OpenCvPipeline {
-    public enum PropLocation {
-        LEFT,
-        RIGHT,
-        NONE
-    }
-
-    public enum PropColor {
-        RED,
-        BLUE
-    }
 
     public PropColor propColor;
 
-    PropLocation location = PropLocation.NONE;
+    PropLocation location = NONE;
 
     private Mat mat            = new Mat(),
                 mat1           = new Mat(),
@@ -81,7 +71,7 @@ public class PropDetector extends OpenCvPipeline {
             case RED:
                 // Check if the image is in range, then adds the ranges together
                 Core.inRange(mat, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, thresh0);
-                Core.inRange(mat1, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGLE_RED_TWO, thresh1);
+                Core.inRange(mat1, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, thresh1);
                 Core.add(thresh0, thresh1, output);
             case BLUE:
                 // Checks if the image is in range
@@ -137,9 +127,9 @@ public class PropDetector extends OpenCvPipeline {
 
         // I think the logic may be reversed
         if (biggestBoundingBox.x < LEFT_X) {
-            location = PropLocation.RIGHT;
+            location = RIGHT;
         } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X) {
-            location = PropLocation.LEFT;
+            location = LEFT;
         }
 
         Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);

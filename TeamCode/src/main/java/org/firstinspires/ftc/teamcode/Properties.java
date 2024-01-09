@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.opencv.core.Core;
 import org.opencv.core.Point;
@@ -76,8 +77,8 @@ public class Properties {
     public static volatile Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 150, 0);
     public static volatile Scalar HIGH_HSV_RANGE_RED_ONE = new Scalar(180, 255, 255);
 
-    public static volatile Scalar LOW_HSV_RANGE_RED_TWO   = new Scalar(0, 160, 0);
-    public static volatile Scalar HIGH_HSV_RANGLE_RED_TWO = new Scalar(10, 255, 255);
+    public static volatile Scalar LOW_HSV_RANGE_RED_TWO  = new Scalar(0, 160, 0);
+    public static volatile Scalar HIGH_HSV_RANGE_RED_TWO = new Scalar(10, 255, 255);
 
     public static volatile Point CV_ANCHOR        = new Point(-1, -1);
     public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
@@ -86,4 +87,10 @@ public class Properties {
 
     public static volatile int BACKDROP_WORM_POS     = 500;
     public static volatile int BACKDROP_ELEVATOR_POS = 500;
+
+    public static volatile Pose2d BLUE_LEFT_START_POS  = new Pose2d(-32, 71, Math.toRadians(270));
+    public static volatile Pose2d BLUE_RIGHT_START_POS = new Pose2d(12, 66, Math.toRadians(270));
+
+    public static volatile Pose2d RED_LEFT_START_POS  = new Pose2d(32, 71, Math.toRadians(90));
+    public static volatile Pose2d RED_RIGHT_START_POS = new Pose2d(12, -66, Math.toRadians(90));
 }

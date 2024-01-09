@@ -1,14 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
-import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_HIGH;
-import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_LOW;
-import static org.firstinspires.ftc.teamcode.Properties.STRAFE_OFFSET;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
 

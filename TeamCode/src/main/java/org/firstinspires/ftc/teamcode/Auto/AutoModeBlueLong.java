@@ -68,17 +68,18 @@ public class AutoModeBlueLong extends LinearOpMode {
 
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
-
         // Our drive sequences
         TrajectorySequence left = drive.trajectorySequenceBuilder(localizer.getPoseEstimate())
                 .splineTo(new Vector2d(-47.59, 35.75), Math.toRadians(270.00))
                 .build();
 
-
         TrajectorySequence right = drive.trajectorySequenceBuilder(localizer.getPoseEstimate())
                 .lineTo(new Vector2d(-47.45, 35.75))
                 .lineTo(new Vector2d(56.98, 36.04))
                 .build();
+
+        TrajectorySequence straight = drive.trajectorySequenceBuilder(localizer.getPoseEstimate())
+                        .line
 
 
         waitForStart();
