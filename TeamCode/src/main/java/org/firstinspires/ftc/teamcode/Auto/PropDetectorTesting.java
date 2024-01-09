@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -12,13 +14,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name = "PROP DETECTOR TESTING")
 public class PropDetectorTesting extends LinearOpMode {
     PropDetector propDetector;
-    PropDetector.PropLocation location;
+    PropLocation location;
     public static OpenCvCamera camera;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        propDetector = new PropDetector(PropDetector.PropColor.BLUE);
+        propDetector = new PropDetector(PropColor.BLUE);
 
         int cameraMonitorViewId = hardwareMap
                 .appContext

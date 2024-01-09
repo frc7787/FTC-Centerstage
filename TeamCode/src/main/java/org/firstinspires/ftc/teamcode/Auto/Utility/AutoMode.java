@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector.PropColor;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 
 import java.util.ArrayList;
 
@@ -66,7 +66,7 @@ public abstract class AutoMode extends LinearOpMode {
             new ArrayList<>()
     );
 
-    public void autoInit(@NonNull PropDetector.PropColor color, @NonNull AutoPath path, @NonNull AutoLocation location) {
+    public void autoInit(@NonNull PropColor color, @NonNull AutoPath path, @NonNull AutoLocation location) {
         if (isInit) { return; }
 
         autoColor    = color;
@@ -80,7 +80,7 @@ public abstract class AutoMode extends LinearOpMode {
         isInit = true;
     }
 
-    public final void initPropDetector(@NonNull PropDetector.PropColor color) {
+    public final void initPropDetector(@NonNull PropColor color) {
         if (!propDetectorColorIsSet) {
             propDetector = new PropDetector(color);
             propDetectorColorIsSet = true;

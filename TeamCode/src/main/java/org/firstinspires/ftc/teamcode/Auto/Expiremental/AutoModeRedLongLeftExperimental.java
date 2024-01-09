@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.Auto.Expiremental;
 
 import static org.firstinspires.ftc.teamcode.Auto.Utility.AutoMode.AutoPath.LONG;
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector.PropColor.RED;
+import static org.firstinspires.ftc.teamcode.Auto.Utility.PropColor.RED;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Auto.Utility.AutoMode;
 import static org.firstinspires.ftc.teamcode.Auto.Utility.AutoMode.AutoLocation.LEFT;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector.PropLocation;
+import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 
 @Autonomous(name = "Auto - Experimental Run at your own risk!", group = "Experimental")
 public class AutoModeRedLongLeftExperimental extends AutoMode {
