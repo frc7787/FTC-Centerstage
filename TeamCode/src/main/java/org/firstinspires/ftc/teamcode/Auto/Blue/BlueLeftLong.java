@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto.Blue;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -8,7 +9,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -26,16 +29,23 @@ public class BlueLeftLong extends LinearOpMode {
 
     StandardTrackingWheelLocalizer localizer;
 
+    MecanumDriveBase drive;
+
+    TrajectorySequence toSpikeStrip = drive.trajectorySequenceBuilder(START_POS)
+            .lineTo(new Vector2d(-47, -35))
+            .build();
+
     int cameraMonitorViewId;
 
     @Override public void runOpMode() {
+        drive = new MecanumDriveBase(hardwareMap);
+
         localizer = new StandardTrackingWheelLocalizer(
                 hardwareMap,
                 new ArrayList<>(),
                 new ArrayList<>());
 
         localizer.setPoseEstimate(START_POS);
-
 
         cameraMonitorViewId = hardwareMap
                 .appContext
@@ -62,6 +72,16 @@ public class BlueLeftLong extends LinearOpMode {
                 telemetry.addLine("Camera failed to open with error code: " + err_code);
             }
         });
+
+        while (opModeIsActive() && !isStopRequested()) {
+            location = detector.getLocation();
+
+            drive.followTrajectorySequence(toSpikeStrip);
+
+            switch (location) {
+                case LEFT:
+            }
+        }
 
     }
 }
