@@ -72,6 +72,12 @@ public class TeleOpMain extends OpMode {
         gamepad2.setLedColor(r, g, b, Gamepad.LED_DURATION_CONTINUOUS);
     }
 
+    /**
+     * Listens for gamepad input to move the tray
+     * 
+     * @param currentGamePad: The current state of the gamepad
+     * @param prevGamePad: The state of the gamepad during the previous loop iteration
+     */
     void listenForDeliveryTrayCommand(@NonNull Gamepad currentGamePad, @NonNull Gamepad prevGamepad) {
         if (currentGamePad.right_bumper && !prevGamepad.right_bumper) {
             doorToggle = !doorToggle;
@@ -84,6 +90,12 @@ public class TeleOpMain extends OpMode {
         }
     }
 
+    /**
+     * Listens for gamepad input to toggle the intake
+     * 
+     * @param currentGamePad: The current state of the gamepad
+     * @param prevGamePad: The state of the gamepad during the previous loop iteration
+     */
     void listenForIntakeCommand(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
         if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
             intakeToggle = !intakeToggle;
