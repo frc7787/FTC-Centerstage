@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Blue Left Long", group =  "Blue")
+@Autonomous(name = "Blue Right Long", group =  "Blue")
 public class BlueLeftLong extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.BLUE);
     final Pose2d START_POS = new Pose2d(-36, 71.7, Math.toRadians(270));
@@ -31,8 +31,23 @@ public class BlueLeftLong extends LinearOpMode {
 
     MecanumDriveBase drive;
 
-    TrajectorySequence toSpikeStrip = drive.trajectorySequenceBuilder(START_POS)
-            .lineTo(new Vector2d(-47, -35))
+    TrajectorySequence initial_path = drive.trajectorySequenceBuilder(START_POS)
+            .lineTo(new Vector2d(-36, 64.5))
+            .build();
+
+    TrajectorySequence to_pixel_stack = drive.trajectorySequenceBuilder(new Pose2d(-36, 64.5, Math.toRadians(0)))
+            .lineTo(new Vector2d(-59, 38))
+            .lineTo(new Vector2d(-59.5, 12.5))
+            .build();
+
+    TrajectorySequence to_backdrop_from_pixel_stack = drive.trajectorySequenceBuilder(new Pose2d(-59.5, 12.5, Math.toRadians(0)))
+            .lineTo(new Vector2d(49, 14))
+            .lineTo(new Vector2d(49, 39))
+            .build();
+
+    TrajectorySequence to_pixel_stack_from_backdrop = drive.trajectorySequenceBuilder(new Pose2d(49, 39, Math.toRadians(0)))
+            .lineTo(new Vector2d(39.42, 12.5))
+            .lineTo(new Vector2d(-59.5, 12.5))
             .build();
 
     int cameraMonitorViewId;
@@ -74,13 +89,46 @@ public class BlueLeftLong extends LinearOpMode {
         });
 
         while (opModeIsActive() && !isStopRequested()) {
+            // Drive forward so we don't clip the wall when we turn
+            drive.followTrajectorySequence(initial_path);
+
+            // Get the prop location
             location = detector.getLocation();
 
-            drive.followTrajectorySequence(toSpikeStrip);
-
+            // Place the pixel based on the prop location
             switch (location) {
                 case LEFT:
+                    drive.turn(0); // TODO Add Values
+                    // Drop off pixel
+                    drive.turn(0); // TODO Find value to turn away from pixel stacks
+                case RIGHT:
+                    drive.turn(0); // TODO Find value to to turn to the right spike strip
+                    // Drop off pixel
+                    drive.turn(0); // TODO Find the value to turn away from the pixel stacks
+                case NONE:
+                    // Drop off pixel
+                    drive.turn(0); // TODO Find value to turn away from the pixel stacks
             }
+
+            // Drive to the pixel stack
+            drive.followTrajectorySequence(to_pixel_stack);
+
+            // Intake pixel from stack
+
+            // Drive to the backdrop
+            drive.followTrajectorySequence(to_backdrop_from_pixel_stack);
+
+            // Place the pixels on the backdrop
+
+            // Drive to the pixel stack from the back drop
+            drive.followTrajectorySequence(to_pixel_stack_from_backdrop);
+
+            // Intake pixel from stack
+
+            // Go back to the backdrop
+            drive.followTrajectorySequence(to_backdrop_from_pixel_stack);
+
+            // Place pixels on the backdrop
         }
 
     }
