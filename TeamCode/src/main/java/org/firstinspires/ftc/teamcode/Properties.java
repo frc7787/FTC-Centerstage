@@ -47,6 +47,13 @@ public class Properties {
 
     public static volatile double INTAKE_POWER = 1.0;
 
+    // --------- DELIVERY TRAY CONSTANTS ---------- //
+
+    public static volatile double TRAY_DOOR_OPEN_POS = 1.0;
+    public static volatile double TRAY_DOOR_CLOSED_POS = 0.0;
+    public static volatile double TRAY_UP_WRIST_POS = 1.0;
+    public static volatile double TRAY_DOWN_WRIST_POS = 1.0;
+
     // ---------- LAUNCHER CONSTANTS ---------- //
 
     public static volatile double LAUNCHER_SERVO_POSITION = 1.0;
@@ -84,13 +91,4 @@ public class Properties {
     public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
     public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
     public static volatile Rect CROP_RECT         = new Rect(0, 80, 320, 80);
-
-    public static volatile int BACKDROP_WORM_POS     = 500;
-    public static volatile int BACKDROP_ELEVATOR_POS = 500;
-
-    public static volatile Pose2d BLUE_LEFT_START_POS  = new Pose2d(-32, 71, Math.toRadians(270));
-    public static volatile Pose2d BLUE_RIGHT_START_POS = new Pose2d(12, 66, Math.toRadians(270));
-
-    public static volatile Pose2d RED_LEFT_START_POS  = new Pose2d(32, 71, Math.toRadians(90));
-    public static volatile Pose2d RED_RIGHT_START_POS = new Pose2d(12, -66, Math.toRadians(90));
 }

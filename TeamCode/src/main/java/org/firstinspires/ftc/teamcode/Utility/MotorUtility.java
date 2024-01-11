@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Utility;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import static com.qualcomm.robotcore.hardware.DcMotorImplEx.*;
 
@@ -12,8 +13,8 @@ public class MotorUtility {
      * @param runMode The mode to run the motors in
      * @param motors  The motors to set the mode of
      */
-    public static void setMode(@NonNull RunMode runMode, @NonNull DcMotorImplEx ... motors) {
-        for (DcMotorImplEx motor : motors) { motor.setMode(runMode); }
+    public static void setMode(@NonNull RunMode runMode, @NonNull DcMotor ... motors) {
+        for (DcMotor motor : motors) { motor.setMode(runMode); }
     }
 
     /**
@@ -21,8 +22,8 @@ public class MotorUtility {
      * @param zeroPowerBehavior The zero power behaviour to set the motors to
      * @param motors            The motors you are setting the zero power behaviour of
      */
-    public static void setZeroPowerBehaviour(@NonNull ZeroPowerBehavior zeroPowerBehavior, @NonNull DcMotorImplEx ... motors) {
-        for (DcMotorImplEx motor : motors) { motor.setZeroPowerBehavior(zeroPowerBehavior); }
+    public static void setZeroPowerBehaviour(@NonNull ZeroPowerBehavior zeroPowerBehavior, @NonNull DcMotor ... motors) {
+        for (DcMotor motor : motors) { motor.setZeroPowerBehavior(zeroPowerBehavior); }
     }
 
     /**
@@ -30,8 +31,8 @@ public class MotorUtility {
      * @param direction The direction to set the motors
      * @param motors    The motors you are setting the direction of
      */
-    public static void setDirection(@NonNull Direction direction, @NonNull DcMotorImplEx ... motors) {
-        for (DcMotorImplEx motor : motors) { motor.setDirection(direction); }
+    public static void setDirection(@NonNull Direction direction, @NonNull DcMotor ... motors) {
+        for (DcMotor motor : motors) { motor.setDirection(direction); }
     }
 
     /**
@@ -40,7 +41,7 @@ public class MotorUtility {
      * @param Power The power of the motors
      * @param motors The motors to set the power of
      */
-    public static void setPower(double power, @NonNull DcMotorImplEx ... motors) {
-        for (DcMotorImplEx motor : motors) { motor.setPower(power); }
+    public static void setPower(double power, @NonNull DcMotor ... motors) {
+        for (DcMotor motor : motors) { motor.setPower(power); }
     }
 }

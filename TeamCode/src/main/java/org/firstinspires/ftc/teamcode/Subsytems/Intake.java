@@ -23,18 +23,26 @@ public class Intake {
 
     /**
      * Initializes the motor subsystem.
-     * This sets the zero power behavior of the intake motor to brake
+     * This sets the zero power behavior of the intake motor to float
      */
     public void init() {
         intake.setZeroPowerBehavior(FLOAT);
-        intake.setDirection(REVERSE);
     }
 
     /**
      * Spins the intake
      */
     public void intake() {
+       intake.setDirection(FORWARD);
        intake.setPower(INTAKE_POWER);
+    }
+
+    public void intake(long duration) {
+        long start = System.currentTimeMillis();
+
+        while (start + duration < System.currentTimeMillis()) {
+            intake();
+        }
     }
 
     public void outtake(double power) {
@@ -46,18 +54,14 @@ public class Intake {
         intake.setPower(0);
     }
 
-    public void intake(long duration) {
-        long start = System.currentTimeMillis();
-
-        while (start + duration < System.currentTimeMillis()) {
-            intake();
-        }
-    }
 
     /**
      * Displays debug information for the intake
      */
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Intake Debug");
+
+        telemetry.addData("Intake direction", intake.getDirection());
+        telemetry.addData("Intake power", intake.getPower());
     }
 }

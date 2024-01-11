@@ -96,13 +96,6 @@ public class Elevator {
         telemetry.addData("Elevator Limit Switch Is Pressed", extLimitSwitch.isPressed());
     }
 
-
-    /**
-     * Gets the current position of the elevator
-     * @return The current position of the elevator
-     */
-    public int getCurrentPosition() { return extend.getCurrentPosition(); }
-
     /**
      * Gets the position that the elevator motor is trying to get to
      * @return The position that the elevator motor is trying to get to.

@@ -15,10 +15,9 @@ import static org.firstinspires.ftc.teamcode.Properties.*;
 
 import androidx.annotation.NonNull;
 
-@TeleOp(name = "TeleOp 2023/2024 - Use This One", group = "Production")
+@TeleOp(name = "TeleOp 2023/2024 - Robot Centric", group = "Production")
 public class TeleOpMain extends OpMode {
-
-    MecanumDriveBase driveBase;
+    DriveBase driveBase;
     Arm arm;
     Hanger hanger;
     Launcher launcher;
@@ -27,8 +26,15 @@ public class TeleOpMain extends OpMode {
     EndGameState endGameState = EndGameState.IDLE;
     ArmState armState         = ArmState.AT_POSITION;
     GamePeriod gamePeriod     = GamePeriod.NORMAL;
+    DriveType driveType       = DriveType.ROBOT_CENTRIC;
 
     boolean hangerHookReleased = false;
+
+    enum DriveType {
+        ROBOT_CENTRIC,
+        FIELD_CENTRIC
+    }
+
 
     enum EndGameState {
         IDLE,
@@ -170,17 +176,27 @@ public class TeleOpMain extends OpMode {
         prevGamepad2    = new Gamepad();
         currentGamepad2 = new Gamepad();
 
-        driveBase = new MecanumDriveBase(hardwareMap);
+        driveBase = new DriveBase(hardwareMap);
         hanger    = new Hanger(hardwareMap);
         launcher  = new Launcher(hardwareMap);
         arm       = new Arm(hardwareMap);
 
+        driveBase.init();
         arm.init();
         launcher.init();
-        hanger.init();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(AUTO);
+        }
+    }
+
+    @Override public void init_loop() {
+        if (gamepad1.options) {
+            driveType = DriveType.FIELD_CENTRIC;
+        }
+
+        if (gamepad1.share) {
+            driveType = DriveType.ROBOT_CENTRIC;
         }
     }
 
@@ -188,11 +204,24 @@ public class TeleOpMain extends OpMode {
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
 
-        driveBase.driveManual(
-                gamepad1.left_stick_x,
-                gamepad1.left_stick_y,
-                gamepad1.right_stick_x
-        );
+        double drive = gamepad1.left_stick_x;
+        double strafe = -gamepad1.left_stick_y;
+        double turn   = gamepad1.right_stick_x;
+
+        switch (driveType) {
+            case ROBOT_CENTRIC:
+                driveBase.driveManualRobotCentric(
+                        drive,
+                        strafe,
+                        turn
+                );
+            case FIELD_CENTRIC:
+                driveBase.driveManualFieldCentric(
+                        drive,
+                        strafe,
+                        turn
+                );
+        }
 
         switch (gamePeriod) {
             case NORMAL:
