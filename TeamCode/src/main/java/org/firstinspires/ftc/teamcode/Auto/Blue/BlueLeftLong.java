@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.TrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -27,7 +27,7 @@ public class BlueLeftLong extends LinearOpMode {
 
     PropLocation location;
 
-    StandardTrackingWheelLocalizer localizer;
+    TrackingWheelLocalizer localizer;
 
     MecanumDriveBase drive;
 
@@ -55,7 +55,7 @@ public class BlueLeftLong extends LinearOpMode {
     @Override public void runOpMode() {
         drive = new MecanumDriveBase(hardwareMap);
 
-        localizer = new StandardTrackingWheelLocalizer(
+        localizer = new TrackingWheelLocalizer(
                 hardwareMap,
                 new ArrayList<>(),
                 new ArrayList<>());

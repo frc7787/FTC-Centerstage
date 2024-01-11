@@ -19,7 +19,7 @@ public class DriveConstants {
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     // Inches
-    public static double WHEEL_RADIUS = 1.85d;
+    public static double WHEEL_RADIUS = 1.88976d;
     public static double GEAR_RATIO   = 1.01d;
     public static double TRACK_WIDTH  = 15.84;
 

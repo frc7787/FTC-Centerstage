@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.TrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Blue Right Short", group = "Blue")
+@Autonomous(name = "Blue Left Short", group = "Blue")
 public class BlueRightShort extends LinearOpMode {
     PropDetector detector = new PropDetector(PropColor.BLUE);
     Pose2d START_POS      = new Pose2d(12, 59, Math.toRadians(270));
@@ -27,7 +27,7 @@ public class BlueRightShort extends LinearOpMode {
 
     PropLocation location;
 
-    StandardTrackingWheelLocalizer localizer;
+    TrackingWheelLocalizer localizer;
 
     MecanumDriveBase drive;
 
@@ -52,7 +52,7 @@ public class BlueRightShort extends LinearOpMode {
     @Override public void runOpMode() {
         drive = new MecanumDriveBase(hardwareMap);
 
-        localizer = new StandardTrackingWheelLocalizer(
+        localizer = new TrackingWheelLocalizer(
                 hardwareMap,
                 new ArrayList<>(),
                 new ArrayList<>()

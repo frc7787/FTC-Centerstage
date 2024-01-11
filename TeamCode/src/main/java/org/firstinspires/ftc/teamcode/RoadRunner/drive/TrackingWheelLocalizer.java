@@ -15,26 +15,28 @@ import java.util.Arrays;
 import java.util.List;
 
 @Config
-public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 2000;
-    public static double WHEEL_RADIUS  = 1.1811; // in
-    public static double GEAR_RATIO    = 1; // output (wheel) speed / input (encoder) speed
+public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
+    // --------------------------------------------------------------------------
+    // NOTE
+    // Any whole number of the double type should have a .0 added at the end to prevent integer division
+    // --------------------------------------------------------------------------
 
-    public static double LATERAL_DISTANCE = 9; // in; distance between the left and right wheels
+    public static double TICKS_PER_REV = 2000.0;
+    public static double WHEEL_RADIUS  = 0.944882; // in
+    public static double GEAR_RATIO    = 1.0; // output (wheel) speed / input (encoder) speed
+
+    public static double LATERAL_DISTANCE = 9.0; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET   = -7.25; // in; offset of the lateral wheel
 
     private final Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    public static double X_MULTIPLIER = 0.96; // Drive (Forwards Backwards) multiplier
-    public static double Y_MULTIPLIER = 1.0; // Strafe multiplier
-
     private final List<Integer> lastEncPositions, lastEncVels;
 
-    public StandardTrackingWheelLocalizer(@NonNull HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
+    public TrackingWheelLocalizer(@NonNull HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(Arrays.asList(
                 new Pose2d(0, LATERAL_DISTANCE / 2, 0),  // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90))    // front
+                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90))      // front
         ));
 
         lastEncPositions = lastTrackingEncPositions;
@@ -42,7 +44,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
         leftEncoder  = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontLeftDriveMotor"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontRightDriveMotor"));
-        //                                                                   This makes me upset
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "IntakeMotor"));
 
         rightEncoder.setDirection(REVERSE);
@@ -53,28 +54,25 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
-    @NonNull
-    @Override
-    public List<Double> getWheelPositions() {
+    @NonNull @Override public List<Double> getWheelPositions() {
         int leftPos  = leftEncoder.getCurrentPosition();
         int rightPos = rightEncoder.getCurrentPosition();
         int frontPos = frontEncoder.getCurrentPosition();
 
         lastEncPositions.clear();
+
         lastEncPositions.add(leftPos);
         lastEncPositions.add(rightPos);
         lastEncPositions.add(frontPos);
 
         return Arrays.asList(
-                encoderTicksToInches(leftPos)  * X_MULTIPLIER,
-                encoderTicksToInches(rightPos) * X_MULTIPLIER,
-                encoderTicksToInches(frontPos) * Y_MULTIPLIER
+                encoderTicksToInches(leftPos),
+                encoderTicksToInches(rightPos),
+                encoderTicksToInches(frontPos)
         );
     }
 
-    @NonNull
-    @Override
-    public List<Double> getWheelVelocities() {
+    @NonNull @Override public List<Double> getWheelVelocities() {
         int leftVel  = (int) leftEncoder.getCorrectedVelocity();
         int rightVel = (int) rightEncoder.getCorrectedVelocity();
         int frontVel = (int) frontEncoder.getCorrectedVelocity();
@@ -85,9 +83,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncVels.add(frontVel);
 
         return Arrays.asList(
-                encoderTicksToInches(leftVel)  * X_MULTIPLIER,
-                encoderTicksToInches(rightVel) * X_MULTIPLIER,
-                encoderTicksToInches(frontVel) * Y_MULTIPLIER
+                encoderTicksToInches(leftVel),
+                encoderTicksToInches(rightVel),
+                encoderTicksToInches(frontVel)
         );
     }
 }

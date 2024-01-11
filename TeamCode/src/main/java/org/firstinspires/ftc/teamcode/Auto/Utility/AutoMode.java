@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.TrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -19,8 +19,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 
 import java.util.ArrayList;
 
@@ -60,7 +58,7 @@ public abstract class AutoMode extends LinearOpMode {
     public final MecanumDriveBase driveBase = new MecanumDriveBase(hardwareMap);
     public final Arm arm                    = new Arm(hardwareMap);
 
-    StandardTrackingWheelLocalizer localizer = new StandardTrackingWheelLocalizer(
+    TrackingWheelLocalizer localizer = new TrackingWheelLocalizer(
             hardwareMap,
             new ArrayList<>(),
             new ArrayList<>()
