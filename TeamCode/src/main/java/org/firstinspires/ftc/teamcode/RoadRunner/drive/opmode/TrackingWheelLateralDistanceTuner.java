@@ -70,6 +70,8 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
+        drive.init();
+
         if (!(drive.getLocalizer() instanceof TrackingWheelLocalizer)) {
             RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "
                     + "drive class. Ensure that \"setLocalizer(new StandardTrackingWheelLocalizer"

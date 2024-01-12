@@ -48,6 +48,8 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
+        drive.init();
+
         NanoClock clock = NanoClock.system();
 
         telemetry.addLine("Press play to begin the feedforward tuning routine");

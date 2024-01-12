@@ -17,13 +17,22 @@ public class Launcher {
         launcherServo = hardwareMap.get(ServoImplEx.class, "LauncherServo");
     }
 
+    /**
+     * Disables the launcher Pwm so that it doesn't fire
+     */
     public void init() { launcherServo.setPwmDisable(); }
 
+    /**
+     * Releases the launcer servo
+     */
     public void release() {
         launcherServo.setPwmEnable();
         launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
     }
 
+    /**
+     * Displays debug information about the launcher servo
+     */
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Launcher Debug");
 

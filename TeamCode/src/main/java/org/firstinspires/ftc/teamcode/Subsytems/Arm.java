@@ -146,7 +146,18 @@ public class Arm {
         worm.debug(telemetry);
     }
 
+    /**
+     * Gets the current draw of the elevator and worm motor in amps
+     */
+    public double getArmCurrentAmps() { return getElevatorCurrentAmps() + getWormCurrentAmps(); }
+
+    /**
+     * Gets the current draw of the elevator motor in amps
+     */
     public double getElevatorCurrentAmps() { return elevator.getCurrentAmps(); }
 
+    /**
+     * Gets the current draw of the worm motor in amps
+     */
     public double getWormCurrentAmps() { return worm.getWormCurrent(); }
 }

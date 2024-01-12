@@ -51,11 +51,23 @@ public class DriveBase {
         MotorUtility.setZeroPowerBehaviour(BRAKE, motors);
     }
 
+    /**
+     * Returns the value if is outise of the range defined by the DEAD_ZONE_LOW and DEAD_ZONE_HIGH values.
+     * If the value is in range, returns 0.0d
+     * @param value: The value to check
+     */
     private double deadZone(double value) {
-        if (DEAD_ZONE_LOW < value && DEAD_ZONE_HIGH > value ) { return 0.0; }
+        if (DEAD_ZONE_LOW < value && DEAD_ZONE_HIGH > value ) { return 0.0d; }
         return value;
     }
 
+    /**
+     * Drives the robot relative to the field
+     * 
+     * @param drive: The forward translational value
+     * @param strafe: The side to side translational value
+     * @param turn: THe rotational value
+     */
     public void driveManualFieldCentric(double drive, double strafe, double turn) {
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -78,6 +90,13 @@ public class DriveBase {
         bR.setPower(bRPower);
     }
 
+    /**
+     * Drives the robot relative to itself
+     * 
+     * @param drive: The forward translational value
+     * @param strafe: The side to side translational value
+     * @param turn: The rotational value
+     */
     public void driveManualRobotCentric(double drive, double strafe, double turn) {
         drive  = deadZone(drive);
         strafe = deadZone(strafe) * STRAFE_OFFSET;

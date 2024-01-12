@@ -38,6 +38,8 @@ public class TrackWidthTuner extends LinearOpMode {
 
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
+        drive.init();
+
         telemetry.addLine("Press play to begin the track width tuner routine");
         telemetry.addLine("Make sure your robot has enough clearance to turn smoothly");
         telemetry.update();

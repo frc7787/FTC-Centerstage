@@ -21,6 +21,8 @@ public class TeleOpMain extends OpMode {
     Arm arm;
     Hanger hanger;
     Launcher launcher;
+    Intake intake;
+    DeliveryTray deliveryTray;
 
     // The following values should represent the robots starting configuration
     EndGameState endGameState = EndGameState.IDLE;
@@ -29,6 +31,8 @@ public class TeleOpMain extends OpMode {
     DriveType driveType       = DriveType.ROBOT_CENTRIC;
 
     boolean hangerHookReleased = false;
+    boolean intakeToggle       = false;
+    boolean doorToggle         = false;
 
     enum DriveType {
         ROBOT_CENTRIC,
@@ -66,6 +70,42 @@ public class TeleOpMain extends OpMode {
     void setGamepadLedColors(int r, int g, int b) {
         gamepad1.setLedColor(r, g, b, Gamepad.LED_DURATION_CONTINUOUS);
         gamepad2.setLedColor(r, g, b, Gamepad.LED_DURATION_CONTINUOUS);
+    }
+
+    /**
+     * Listens for gamepad input to move the tray
+     * 
+     * @param currentGamePad: The current state of the gamepad
+     * @param prevGamepad: The state of the gamepad during the previous loop iteration
+     */
+    void listenForDeliveryTrayCommand(@NonNull Gamepad currentGamePad, @NonNull Gamepad prevGamepad) {
+        if (currentGamePad.right_bumper && !prevGamepad.right_bumper) {
+            doorToggle = !doorToggle;
+        }
+
+        if (doorToggle) {
+            deliveryTray.openDoor();
+        } else {
+            deliveryTray.closeDoor();
+        }
+    }
+
+    /**
+     * Listens for gamepad input to toggle the intake
+     * 
+     * @param currentGamepad: The current state of the gamepad
+     * @param prevGamepad: The state of the gamepad during the previous loop iteration
+     */
+    void listenForIntakeCommand(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
+        if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
+            intakeToggle = !intakeToggle;
+        }
+        if (intakeToggle) {
+            intake.intake();
+        } else {
+            intake.stop();
+        }
+
     }
 
     /**
@@ -176,10 +216,12 @@ public class TeleOpMain extends OpMode {
         prevGamepad2    = new Gamepad();
         currentGamepad2 = new Gamepad();
 
-        driveBase = new DriveBase(hardwareMap);
-        hanger    = new Hanger(hardwareMap);
-        launcher  = new Launcher(hardwareMap);
-        arm       = new Arm(hardwareMap);
+        driveBase    = new DriveBase(hardwareMap);
+        hanger       = new Hanger(hardwareMap);
+        launcher     = new Launcher(hardwareMap);
+        arm          = new Arm(hardwareMap);
+        intake       = new Intake(hardwareMap);
+        deliveryTray = new DeliveryTray(hardwareMap);
 
         driveBase.init();
         arm.init();
@@ -191,6 +233,8 @@ public class TeleOpMain extends OpMode {
     }
 
     @Override public void init_loop() {
+        telemetry.addData("Drive Type", driveType);
+
         if (gamepad1.options) {
             driveType = DriveType.FIELD_CENTRIC;
         }
@@ -204,8 +248,11 @@ public class TeleOpMain extends OpMode {
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
 
-        double drive = gamepad1.left_stick_x;
-        double strafe = -gamepad1.left_stick_y;
+        listenForDeliveryTrayCommand(currentGamepad2, prevGamepad2);
+        listenForIntakeCommand(currentGamepad2, prevGamepad2);
+
+        double drive  = gamepad1.left_stick_x;
+        double strafe = gamepad1.left_stick_y * -1.0d;
         double turn   = gamepad1.right_stick_x;
 
         switch (driveType) {

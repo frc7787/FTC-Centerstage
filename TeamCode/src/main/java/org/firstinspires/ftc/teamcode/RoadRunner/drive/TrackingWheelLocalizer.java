@@ -21,12 +21,13 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     // Any whole number of the double type should have a .0 added at the end to prevent integer division
     // --------------------------------------------------------------------------
 
-    public static double TICKS_PER_REV = 2000.0;
-    public static double WHEEL_RADIUS  = 0.944882; // in
-    public static double GEAR_RATIO    = 1.0; // output (wheel) speed / input (encoder) speed
+    public static double TICKS_PER_REV = 2000.0d;
+    public static double WHEEL_RADIUS  = 0.944882d; // in
+    public static double GEAR_RATIO    = 1.0d;  // output (wheel) speed / input (encoder) speed
+    public static double SLIP_RATIO    = 1.01d; // Variable to account for the wheels slipping on the mat
 
-    public static double LATERAL_DISTANCE = 9.0; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET   = -7.25; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 9.0d; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET   = -7.25d; // in; offset of the lateral wheel
 
     private final Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -36,7 +37,7 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
         super(Arrays.asList(
                 new Pose2d(0, LATERAL_DISTANCE / 2, 0),  // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90))      // front
+                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
         lastEncPositions = lastTrackingEncPositions;
@@ -48,6 +49,11 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
 
         rightEncoder.setDirection(REVERSE);
         frontEncoder.setDirection(REVERSE);
+    }
+
+    public void init() {
+       leftEncoder.setDirection(REVERSE);
+       frontEncoder.setDirection(REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -66,9 +72,9 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
         lastEncPositions.add(frontPos);
 
         return Arrays.asList(
-                encoderTicksToInches(leftPos),
-                encoderTicksToInches(rightPos),
-                encoderTicksToInches(frontPos)
+                encoderTicksToInches(leftPos)  * SLIP_RATIO,
+                encoderTicksToInches(rightPos) * SLIP_RATIO,
+                encoderTicksToInches(frontPos) * SLIP_RATIO
         );
     }
 
@@ -83,9 +89,9 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
         lastEncVels.add(frontVel);
 
         return Arrays.asList(
-                encoderTicksToInches(leftVel),
-                encoderTicksToInches(rightVel),
-                encoderTicksToInches(frontVel)
+                encoderTicksToInches(leftVel)  * SLIP_RATIO,
+                encoderTicksToInches(rightVel) * SLIP_RATIO,
+                encoderTicksToInches(frontVel) * SLIP_RATIO
         );
     }
 }

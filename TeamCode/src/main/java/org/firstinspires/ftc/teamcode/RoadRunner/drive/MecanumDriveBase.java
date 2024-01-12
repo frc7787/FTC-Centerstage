@@ -69,29 +69,47 @@ public class MecanumDriveBase extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
+    private HardwareMap hardwareMap;
+
+    private TrackingWheelLocalizer localizer;
+
     public MecanumDriveBase(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
+
+        this.hardwareMap = hardwareMap;
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_DRIVE, TRANSLATIONAL_PID_STRAFE, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);// Modified to allow L/R tuning with another PID
 
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
 
         fL = hardwareMap.get(DcMotorEx.class, "FrontLeftDriveMotor");
         fR = hardwareMap.get(DcMotorEx.class, "FrontRightDriveMotor");
         bL = hardwareMap.get(DcMotorEx.class, "BackLeftDriveMotor");
         bR = hardwareMap.get(DcMotorEx.class, "BackRightDriveMotor");
 
+        List<Integer> lastTrackingEncPositions = new ArrayList<>();
+        List<Integer> lastTrackingEncVels      = new ArrayList<>();
+
+        localizer = new TrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
+
+        trajectorySequenceRunner = new TrajectorySequenceRunner(
+                follower, HEADING_PID, batteryVoltageSensor,
+                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
+        );
+    }
+
+    public void init() {
         fL.setDirection(DcMotorSimple.Direction.REVERSE);
         bL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motors = Arrays.asList(fL, bL, bR, fR);
+
+        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -107,15 +125,13 @@ public class MecanumDriveBase extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, DriveConstants.MOTOR_VELO_PID);
         }
 
-        List<Integer> lastTrackingEncPositions = new ArrayList<>();
-        List<Integer> lastTrackingEncVels = new ArrayList<>();
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
-        setLocalizer(new TrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+        localizer.init();
 
-        trajectorySequenceRunner = new TrajectorySequenceRunner(
-                follower, HEADING_PID, batteryVoltageSensor,
-                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
-        );
+        setLocalizer(localizer);
     }
 
     private double deadZone(double value) {

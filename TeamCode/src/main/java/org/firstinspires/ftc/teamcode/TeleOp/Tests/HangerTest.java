@@ -20,7 +20,6 @@ public class HangerTest extends OpMode {
         prevGamepad    = new Gamepad();
 
         hanger = new Hanger(hardwareMap);
-        hanger.init();
     }
 
     @Override public void loop() {

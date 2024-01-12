@@ -64,12 +64,15 @@ public abstract class AutoMode extends LinearOpMode {
             new ArrayList<>()
     );
 
+
     public void autoInit(@NonNull PropColor color, @NonNull AutoPath path, @NonNull AutoLocation location) {
         if (isInit) { return; }
 
         autoColor    = color;
         autoPath     = path;
         autoLocation = location;
+
+        localizer.init();
 
         initPropDetector(autoColor);
         initCamera();

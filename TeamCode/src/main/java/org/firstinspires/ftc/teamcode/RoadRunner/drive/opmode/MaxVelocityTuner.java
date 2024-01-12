@@ -40,6 +40,8 @@ public class MaxVelocityTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
+        drive.init();
+
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
