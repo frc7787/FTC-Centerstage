@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-
 @Config
 public class DriveConstants {
 
@@ -16,7 +15,7 @@ public class DriveConstants {
 
     public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+            getMotorVelocityF(MAX_RPM / 60.0 * TICKS_PER_REV));
 
     // Inches
     public static double WHEEL_RADIUS = 1.88976d;
@@ -47,7 +46,7 @@ public class DriveConstants {
      * @return The inches, converted from ticks
      */
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_RADIUS * 2.0 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
     /**
@@ -60,5 +59,5 @@ public class DriveConstants {
         return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
     }
 
-    public static double getMotorVelocityF(double ticksPerSecond) { return 32767 / ticksPerSecond; }
+    public static double getMotorVelocityF(double ticksPerSecond) { return 32767.0 / ticksPerSecond; }
 }
