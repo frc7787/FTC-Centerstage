@@ -40,12 +40,17 @@ public class BlueRightShort extends LinearOpMode {
             .build();
 
     TrajectorySequence to_pixel_stack_from_backdrop = drive.trajectorySequenceBuilder(new Pose2d(39, 34.8, Math.toRadians(0)))
-            .lineTo(new Vector2d(-59.5, 35.8))
+            .lineTo(new Vector2d(-59.5, 34.8))
             .build();
 
     TrajectorySequence to_backdrop_from_pixel_stack = drive.trajectorySequenceBuilder(new Pose2d(39, 34.8, Math.toRadians(0)))
-            .lineTo(new Vector2d(-59.5, 35.8))
+            .lineTo(new Vector2d(39, 34.8))
             .build();
+
+    TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(39, 36.5))
+            .lineTo(new Vector2d(49, 17))
+            .build();
+
 
     int cameraMonitorViewId;
 
@@ -129,6 +134,9 @@ public class BlueRightShort extends LinearOpMode {
             drive.followTrajectorySequence(to_backdrop_from_pixel_stack);
 
             // Place pixels on the backdrop
+
+            // Park
+            drive.followTrajectorySequence(park);
         }
 
     }

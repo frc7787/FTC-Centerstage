@@ -48,7 +48,7 @@ public class RedLeftShort extends LinearOpMode {
             .build();
 
     TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(39, 36.5))
-            .lineTo(new Vector2d(48, -18))
+            .lineTo(new Vector2d(49, -17))
             .build();
 
     int cameraMonitorViewId;

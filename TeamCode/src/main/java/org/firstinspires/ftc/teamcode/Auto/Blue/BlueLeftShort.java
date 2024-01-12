@@ -49,7 +49,7 @@ public class BlueLeftShort extends LinearOpMode  {
             .build();
 
     TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(39, 36.5))
-            .lineTo(new Vector2d(41, 62))
+            .lineTo(new Vector2d(49, 17))
             .build();
 
     int cameraMonitorViewId;
@@ -135,6 +135,7 @@ public class BlueLeftShort extends LinearOpMode  {
 
             // Place pixels on the backdrop
 
+            // Park
             drive.followTrajectorySequence(park);
         }
 

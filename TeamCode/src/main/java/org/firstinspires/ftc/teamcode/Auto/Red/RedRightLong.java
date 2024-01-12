@@ -49,6 +49,10 @@ public class RedRightLong extends LinearOpMode {
             .lineTo(new Vector2d(39, -34.8))
             .build();
 
+    TrajectorySequence park = drive.trajectorySequenceBuilder(new Pose2d(39, 36.5))
+            .lineTo(new Vector2d(49, -17))
+            .build();
+
     int cameraMonitorViewId;
 
     @Override public void runOpMode() {
@@ -123,7 +127,8 @@ public class RedRightLong extends LinearOpMode {
 
             // Place the pixels on the backdrop
 
-            // For the future maybe try and go for a second time
+            // Park
+            drive.followTrajectorySequence(park);
 
         }
 
