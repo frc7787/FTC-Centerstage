@@ -23,8 +23,8 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
 
     public static double TICKS_PER_REV = 2000.0d;
     public static double WHEEL_RADIUS  = 0.944882d; // in
-    public static double GEAR_RATIO    = 1.0d; // output (wheel) speed / input (encoder) speed
-    public static double SLIP_RATIO    = 1.01d // Variable to account for the wheels slipping on the mat
+    public static double GEAR_RATIO    = 1.0d;  // output (wheel) speed / input (encoder) speed
+    public static double SLIP_RATIO    = 1.01d; // Variable to account for the wheels slipping on the mat
 
     public static double LATERAL_DISTANCE = 9.0d; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET   = -7.25d; // in; offset of the lateral wheel
@@ -49,6 +49,11 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
 
         rightEncoder.setDirection(REVERSE);
         frontEncoder.setDirection(REVERSE);
+    }
+
+    public void init() {
+       leftEncoder.setDirection(REVERSE);
+       frontEncoder.setDirection(REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {

@@ -36,6 +36,8 @@ public class MaxAngularVeloTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
+        drive.init();
+
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());

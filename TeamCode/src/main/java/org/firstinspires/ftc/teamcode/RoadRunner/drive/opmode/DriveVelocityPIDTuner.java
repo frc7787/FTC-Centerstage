@@ -72,6 +72,8 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
 
+        drive.init();
+
         Mode mode = Mode.TUNING_MODE;
 
         double lastKp = DriveConstants.MOTOR_VELO_PID.p;

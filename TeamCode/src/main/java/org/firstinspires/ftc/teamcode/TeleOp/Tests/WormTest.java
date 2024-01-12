@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.Subsytems.Worm;
 @TeleOp(name = "Test - Worm", group = "Test")
 @Disabled
 public class WormTest extends OpMode {
-
     Worm worm;
 
     enum WormState {

@@ -76,7 +76,7 @@ public class TeleOpMain extends OpMode {
      * Listens for gamepad input to move the tray
      * 
      * @param currentGamePad: The current state of the gamepad
-     * @param prevGamePad: The state of the gamepad during the previous loop iteration
+     * @param prevGamepad: The state of the gamepad during the previous loop iteration
      */
     void listenForDeliveryTrayCommand(@NonNull Gamepad currentGamePad, @NonNull Gamepad prevGamepad) {
         if (currentGamePad.right_bumper && !prevGamepad.right_bumper) {
@@ -93,8 +93,8 @@ public class TeleOpMain extends OpMode {
     /**
      * Listens for gamepad input to toggle the intake
      * 
-     * @param currentGamePad: The current state of the gamepad
-     * @param prevGamePad: The state of the gamepad during the previous loop iteration
+     * @param currentGamepad: The current state of the gamepad
+     * @param prevGamepad: The state of the gamepad during the previous loop iteration
      */
     void listenForIntakeCommand(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
         if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
@@ -233,6 +233,8 @@ public class TeleOpMain extends OpMode {
     }
 
     @Override public void init_loop() {
+        telemetry.addData("Drive Type", driveType);
+
         if (gamepad1.options) {
             driveType = DriveType.FIELD_CENTRIC;
         }
@@ -249,8 +251,8 @@ public class TeleOpMain extends OpMode {
         listenForDeliveryTrayCommand(currentGamepad2, prevGamepad2);
         listenForIntakeCommand(currentGamepad2, prevGamepad2);
 
-        double drive = gamepad1.left_stick_x;
-        double strafe = -gamepad1.left_stick_y;
+        double drive  = gamepad1.left_stick_x;
+        double strafe = gamepad1.left_stick_y * -1.0d;
         double turn   = gamepad1.right_stick_x;
 
         switch (driveType) {

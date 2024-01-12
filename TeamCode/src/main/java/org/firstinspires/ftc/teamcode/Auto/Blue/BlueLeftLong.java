@@ -60,6 +60,9 @@ public class BlueLeftLong extends LinearOpMode {
                 new ArrayList<>(),
                 new ArrayList<>());
 
+        drive.init();
+        localizer.init();
+
         localizer.setPoseEstimate(START_POS);
 
         cameraMonitorViewId = hardwareMap
