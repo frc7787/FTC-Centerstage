@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Red Right Long", group = "Red")
+@Autonomous(name = "Red Left Long", group = "Red")
 public class RedLeftLong extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.RED);
     final Pose2d START_POS = new Pose2d(-36, -71.7, Math.toRadians(90));
@@ -32,7 +32,7 @@ public class RedLeftLong extends LinearOpMode {
     MecanumDriveBase drive;
 
     TrajectorySequence initial_path = drive.trajectorySequenceBuilder(START_POS)
-            .lineTo(new Vector2d(-36, 64.5))
+            .lineTo(new Vector2d(-36, -64.5))
             .build();
 
     TrajectorySequence to_pixel_stack = drive.trajectorySequenceBuilder(new Pose2d(-36, 64.5, Math.toRadians(0)))
@@ -41,12 +41,12 @@ public class RedLeftLong extends LinearOpMode {
             .build();
 
     TrajectorySequence to_backdrop_from_pixel_stack = drive.trajectorySequenceBuilder(new Pose2d(-59.5, 12.5, Math.toRadians(0)))
-            .lineTo(new Vector2d(49, -12))
-            .lineTo(new Vector2d(49, -37.5))
+            .lineTo(new Vector2d(40, -12.5))
+            .lineTo(new Vector2d(40, -37.5))
             .build();
 
     TrajectorySequence to_pixel_stack_from_backdrop = drive.trajectorySequenceBuilder(new Pose2d(49, 37.5, Math.toRadians(0)))
-            .lineTo(new Vector2d(39.84, -12.09))
+            .lineTo(new Vector2d(40, -12.5))
             .lineTo(new Vector2d(-59.5, -12.5))
             .build();
 

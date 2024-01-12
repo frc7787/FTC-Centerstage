@@ -46,7 +46,7 @@ public class BlueRightLong extends LinearOpMode {
 
     TrajectorySequence to_backdrop_from_pixel_stack = drive.trajectorySequenceBuilder(new Pose2d(-59.6, 10.83, Math.toRadians(0)))
             .lineTo(new Vector2d(38.79, 10.62))
-            .lineTo(new Vector2d(-59.60, 10.83))
+            .lineTo(new Vector2d(39.00, 34.8))
             .build();
 
     int cameraMonitorViewId;
@@ -109,25 +109,22 @@ public class BlueRightLong extends LinearOpMode {
                     drive.turn(0); // TODO Find value to turn away from the pixel stacks
             }
 
-            // Drive to the pixel stack
+            // Drive to the backdrop stack
             drive.followTrajectorySequence(to_backdrop_from_initial_position);
 
-            // Intake pixel from stack
-
-            // Drive to the backdrop
-            drive.followTrajectorySequence(to_backdrop_from_pixel_stack);
-
-            // Place the pixels on the backdrop
-
-            // Drive to the pixel stack from the back drop
+            // Drive to the pixel stack
             drive.followTrajectorySequence(to_pixel_stack_from_backdrop);
 
             // Intake pixel from stack
 
-            // Go back to the backdrop
+
+            // Drive to the back drop from pixel stack
             drive.followTrajectorySequence(to_backdrop_from_pixel_stack);
 
-            // Place pixels on the backdrop
+            // Place the pixels on the backdrop
+
+            // For the future maybe try and go for a second time
+
         }
 
     }

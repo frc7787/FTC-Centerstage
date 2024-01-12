@@ -13,6 +13,7 @@ public class Arm {
     public final Elevator elevator;
     public final Worm worm;
     public final Intake intake;
+    public final DeliveryTray delivery_tray;
 
     public boolean isHoming = false;
 
@@ -33,6 +34,7 @@ public class Arm {
         elevator = new Elevator(hardwareMap);
         worm     = new Worm(hardwareMap);
         intake   = new Intake(hardwareMap);
+        delivery_tray = new DeliveryTray(hardwareMap);
     }
 
     /**
@@ -50,7 +52,7 @@ public class Arm {
      */
     public void update() {
         if (isHoming) { home(); }
-
+        delivery_tray.raise_tray();
         elevator.update();
         worm.update();
     }
@@ -113,6 +115,8 @@ public class Arm {
 
         switch (homingState) {
             case START:
+
+
                 homingState = HomingState.HOMING_ELEVATOR;
                 break;
             case HOMING_ELEVATOR:
