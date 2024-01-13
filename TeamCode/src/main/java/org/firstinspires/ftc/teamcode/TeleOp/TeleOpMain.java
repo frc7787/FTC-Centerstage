@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RobotPropertyParser;
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
@@ -38,7 +37,6 @@ public class TeleOpMain extends OpMode {
         ROBOT_CENTRIC,
         FIELD_CENTRIC
     }
-
 
     enum EndGameState {
         IDLE,
@@ -100,6 +98,7 @@ public class TeleOpMain extends OpMode {
         if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
             intakeToggle = !intakeToggle;
         }
+        
         if (intakeToggle) {
             intake.intake();
         } else {

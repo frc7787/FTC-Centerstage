@@ -58,10 +58,14 @@ public class RedRightLong extends LinearOpMode {
     @Override public void runOpMode() {
         drive = new MecanumDriveBase(hardwareMap);
 
+        drive.init();
+
         localizer = new TrackingWheelLocalizer(
                 hardwareMap,
                 new ArrayList<>(),
                 new ArrayList<>());
+
+        localizer.init();
 
         localizer.setPoseEstimate(START_POS);
 
