@@ -18,9 +18,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import static org.firstinspires.ftc.teamcode.Properties.SHORT_PIXEL_STACK_POS;
-import static org.firstinspires.ftc.teamcode.Properties.LONG_PIXEL_STACK_POS;
-import static org.firstinspires.ftc.teamcode.Properties.BACKDROP_CENTER_POS;
+import static org.firstinspires.ftc.teamcode.Properties.SHORT_PIXEL_STACK_RED;
+import static org.firstinspires.ftc.teamcode.Properties.LONG_PIXEL_STACK_RED;
+import static org.firstinspires.ftc.teamcode.Properties.BACKDROP_CENTER_POS_RED;
 
 import java.util.ArrayList;
 
@@ -52,25 +52,25 @@ public class RedRight extends LinearOpMode {
             .build();
 
     TrajectorySequence to_backdrop_from_initial_path = drive.trajectorySequenceBuilder(inital_path.end())
-            .lineTo(BACKDROP_CENTER_POS)
+            .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
     TrajectorySequence to_pixel_stack_from_backdrop_short = drive.trajectorySequenceBuilder(to_backdrop_from_initial_path.end())
-            .lineTo(SHORT_PIXEL_STACK_POS)
+            .lineTo(SHORT_PIXEL_STACK_RED)
             .build();
 
     TrajectorySequence to_pixel_stack_from_backdrop_long = drive.trajectorySequenceBuilder(to_backdrop_from_initial_path.end())
             .lineTo(new Vector2d(39.40, -11.60))
-            .lineTo(LONG_PIXEL_STACK_POS)
+            .lineTo(LONG_PIXEL_STACK_RED)
             .build();
 
     TrajectorySequence to_backdrop_from_pixel_stack_short = drive.trajectorySequenceBuilder(to_pixel_stack_from_backdrop_long.end())
-            .lineTo(BACKDROP_CENTER_POS)
+            .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
     TrajectorySequence to_backdrop_from_pixel_stack_long = drive.trajectorySequenceBuilder(to_pixel_stack_from_backdrop_long.end())
             .lineTo(new Vector2d(39.40, -11.60))
-            .lineTo(BACKDROP_CENTER_POS)
+            .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
     TrajectorySequence park = drive.trajectorySequenceBuilder(to_backdrop_from_initial_path.end())

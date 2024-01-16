@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.opencv.core.Core;
@@ -95,7 +94,7 @@ public class Properties {
 
     // -------- Position Constants ----------- //
 
-    public static final Vector2d SHORT_PIXEL_STACK_POS = new Vector2d(-60.15, -36.20);
-    public static final Vector2d LONG_PIXEL_STACK_POS  = new Vector2d(-60.15, -11.60);
-    public static final Vector2d BACKDROP_CENTER_POS   = new Vector2d(39.40, -35.30);
+    public static final Vector2d SHORT_PIXEL_STACK_RED   = new Vector2d(-60.15, -36.20);
+    public static final Vector2d LONG_PIXEL_STACK_RED    = new Vector2d(-60.15, -11.60);
+    public static final Vector2d BACKDROP_CENTER_POS_RED = new Vector2d(39.40, -35.30);
 }
