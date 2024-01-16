@@ -24,6 +24,12 @@ import static org.firstinspires.ftc.teamcode.Properties.BACKDROP_CENTER_POS;
 
 import java.util.ArrayList;
 
+// TODO Figure out if the roadrunner turn function turns BY the given angle or TO the given angle
+// TODO if it is such that the turn function turns to the given angle the next two "todos" are not needed
+// TODO Figure out the angles that we need to turn to reach the spike marks at the beginning of auto
+// TODO Figure out the angles that we need to turn in order to face away from the backdrop
+// TODO Make the "place pixel on backdrop".
+
 @Autonomous(name = "Red Right", group = "Red")
 public class RedRight extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.RED);
