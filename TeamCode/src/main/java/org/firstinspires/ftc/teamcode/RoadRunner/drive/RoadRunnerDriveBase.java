@@ -5,7 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
-public class DriveConstants {
+public class RoadRunnerDriveBase {
 
     /*
      * These are motor constants that should be listed online for your motors.
