@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.opencv.core.Core;
 import org.opencv.core.Point;
@@ -91,4 +92,10 @@ public class Properties {
     public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
     public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
     public static volatile Rect CROP_RECT         = new Rect(0, 80, 320, 80);
+
+    // -------- Position Constants ----------- //
+
+    public static final Vector2d SHORT_PIXEL_STACK_POS = new Vector2d(-60.15, -36.20);
+    public static final Vector2d LONG_PIXEL_STACK_POS  = new Vector2d(-60.15, -11.60);
+    public static final Vector2d BACKDROP_CENTER_POS   = new Vector2d(39.40, -35.30);
 }
