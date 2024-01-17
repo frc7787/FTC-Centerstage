@@ -56,8 +56,8 @@ public class MecanumDriveBase extends MecanumDrive {
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(RoadRunnerDriveBase.MAX_VEL, RoadRunnerDriveBase.MAX_ANG_VEL, RoadRunnerDriveBase.TRACK_WIDTH);
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(RoadRunnerDriveBase.MAX_ACCEL);
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(RoadRunnerConstants.MAX_VEL, RoadRunnerConstants.MAX_ANG_VEL, RoadRunnerConstants.TRACK_WIDTH);
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(RoadRunnerConstants.MAX_ACCEL);
 
     private TrajectoryFollower follower;
 
@@ -74,7 +74,7 @@ public class MecanumDriveBase extends MecanumDrive {
     private TrackingWheelLocalizer localizer;
 
     public MecanumDriveBase(HardwareMap hardwareMap) {
-        super(RoadRunnerDriveBase.kV, RoadRunnerDriveBase.kA, RoadRunnerDriveBase.kStatic, RoadRunnerDriveBase.TRACK_WIDTH, RoadRunnerDriveBase.TRACK_WIDTH, LATERAL_MULTIPLIER);
+        super(RoadRunnerConstants.kV, RoadRunnerConstants.kA, RoadRunnerConstants.kStatic, RoadRunnerConstants.TRACK_WIDTH, RoadRunnerConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         this.hardwareMap = hardwareMap;
 
@@ -119,12 +119,12 @@ public class MecanumDriveBase extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        if (RoadRunnerDriveBase.RUN_USING_ENCODER) { setMode(DcMotor.RunMode.RUN_USING_ENCODER); }
+        if (RoadRunnerConstants.RUN_USING_ENCODER) { setMode(DcMotor.RunMode.RUN_USING_ENCODER); }
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (RoadRunnerDriveBase.RUN_USING_ENCODER && RoadRunnerDriveBase.MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, RoadRunnerDriveBase.MOTOR_VELO_PID);
+        if (RoadRunnerConstants.RUN_USING_ENCODER && RoadRunnerConstants.MOTOR_VELO_PID != null) {
+            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, RoadRunnerConstants.MOTOR_VELO_PID);
         }
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -175,7 +175,7 @@ public class MecanumDriveBase extends MecanumDrive {
         return new TrajectorySequenceBuilder(
                 startPose,
                 VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-                RoadRunnerDriveBase.MAX_ANG_VEL, RoadRunnerDriveBase.MAX_ANG_ACCEL
+                RoadRunnerConstants.MAX_ANG_VEL, RoadRunnerConstants.MAX_ANG_ACCEL
         );
     }
 
@@ -285,7 +285,7 @@ public class MecanumDriveBase extends MecanumDrive {
         for (DcMotorEx motor : motors) {
             int position = motor.getCurrentPosition();
             lastEncPositions.add(position);
-            wheelPositions.add(RoadRunnerDriveBase.encoderTicksToInches(position));
+            wheelPositions.add(RoadRunnerConstants.encoderTicksToInches(position));
         }
         return wheelPositions;
     }
@@ -298,7 +298,7 @@ public class MecanumDriveBase extends MecanumDrive {
         for (DcMotorEx motor : motors) {
             int vel = (int) motor.getVelocity();
             lastEncVels.add(vel);
-            wheelVelocities.add(RoadRunnerDriveBase.encoderTicksToInches(vel));
+            wheelVelocities.add(RoadRunnerConstants.encoderTicksToInches(vel));
         }
         return wheelVelocities;
     }

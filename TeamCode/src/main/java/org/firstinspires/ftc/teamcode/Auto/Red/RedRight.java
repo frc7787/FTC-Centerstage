@@ -29,11 +29,10 @@ import java.util.ArrayList;
 // TODO Figure out the angles that we need to turn to reach the spike marks at the beginning of auto
 // TODO Figure out the angles that we need to turn in order to face away from the backdrop
 // TODO Make the "place pixel on backdrop".
-
 @Autonomous(name = "Red Right", group = "Red")
 public class RedRight extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.RED);
-    final Pose2d START_POS = new Pose2d(8.20, -63.00, Math.toRadians(90));
+    final Pose2d START_POS = new Pose2d(7.7, -63.00, Math.toRadians(90));
 
     AutoPath autoPath;
 
@@ -47,34 +46,41 @@ public class RedRight extends LinearOpMode {
 
     Intake intake;
 
+    // Confirmed to be correct
     TrajectorySequence inital_path = drive.trajectorySequenceBuilder(START_POS)
-            .lineTo(new Vector2d(12.5, -56.7))
+            .lineTo(new Vector2d(12.00, -56.7))
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence to_backdrop_from_initial_path = drive.trajectorySequenceBuilder(inital_path.end())
             .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence to_pixel_stack_from_backdrop_short = drive.trajectorySequenceBuilder(to_backdrop_from_initial_path.end())
             .lineTo(SHORT_PIXEL_STACK_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence to_pixel_stack_from_backdrop_long = drive.trajectorySequenceBuilder(to_backdrop_from_initial_path.end())
-            .lineTo(new Vector2d(39.40, -11.60))
+            .lineTo(new Vector2d(30.00, -11.6))
             .lineTo(LONG_PIXEL_STACK_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence to_backdrop_from_pixel_stack_short = drive.trajectorySequenceBuilder(to_pixel_stack_from_backdrop_long.end())
             .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence to_backdrop_from_pixel_stack_long = drive.trajectorySequenceBuilder(to_pixel_stack_from_backdrop_long.end())
-            .lineTo(new Vector2d(39.40, -11.60))
+            .lineTo(new Vector2d(30.00, -11.6))
             .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence park = drive.trajectorySequenceBuilder(to_backdrop_from_initial_path.end())
-            .lineTo(new Vector2d(52, -35))
+            .lineTo(new Vector2d(50.00, -11.6))
             .build();
 
     int cameraMonitorViewId;

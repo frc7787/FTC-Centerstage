@@ -27,7 +27,7 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double SLIP_RATIO    = 1.01d; // Variable to account for the wheels slipping on the mat
 
     public static double LATERAL_DISTANCE = 9.0d; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET   = -7.25d; // in; offset of the lateral wheel
+    public static double FORWARD_OFFSET   = 7.25d; // in; offset of the lateral wheel
 
     private final Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -43,8 +43,8 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder  = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontLeftDriveMotor"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FrontRightDriveMotor"));
+        leftEncoder  = new Encoder(hardwareMap.get(DcMotorEx.class, "BackLeftDriveMotor"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightDriveMotor"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "IntakeMotor"));
     }
 

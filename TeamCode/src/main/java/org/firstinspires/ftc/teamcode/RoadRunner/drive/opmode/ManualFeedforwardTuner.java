@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.RoadRunner.drive.opmode;
 
-import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase.kA;
-import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase.kStatic;
-import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerDriveBase.kV;
+import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerConstants.kA;
+import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.RoadRunner.drive.RoadRunnerConstants.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,7 +17,6 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -44,7 +43,6 @@ import java.util.Objects;
  */
 @Config
 @Autonomous(name = "Manual FeedForward Tuner", group = "Roadrunner")
-@Disabled
 public class ManualFeedforwardTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 

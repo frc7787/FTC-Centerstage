@@ -48,40 +48,47 @@ public class RedLeft extends LinearOpMode {
 
     int cameraMonitorViewId;
 
-    TrajectorySequence initial_path = drive.trajectorySequenceBuilder(new Pose2d(-31.56, -63, Math.toRadians(90.00)))
-            .lineTo(new Vector2d(-36.00, -56.70))
+    // Confirmed to be correct
+    TrajectorySequence initial_path = drive.trajectorySequenceBuilder(START_POS)
+            .lineTo(new Vector2d(-36.50, -57.00))
             .build();
 
-    TrajectorySequence to_pixel_stack_short = drive.trajectorySequenceBuilder(initial_path.end())
-            .turn(0)
+    // Confirmed to be correct
+    TrajectorySequence to_pixel_stack_from_inital_pos_short = drive.trajectorySequenceBuilder(initial_path.end())
             .lineTo(SHORT_PIXEL_STACK_RED)
             .build();
 
-    TrajectorySequence to_pixel_stack_long = drive.trajectorySequenceBuilder(initial_path.end())
-            .lineTo(new Vector2d(-57.40, -34.20))
+    // Confirmed to be correct
+    TrajectorySequence to_pixel_stack_from_inital_pos_long = drive.trajectorySequenceBuilder(initial_path.end())
+            .lineTo(new Vector2d(-57.00, -36.00))
             .lineTo(LONG_PIXEL_STACK_RED)
             .build();
 
-    TrajectorySequence to_backdrop_from_pixel_stack_short = drive.trajectorySequenceBuilder(to_pixel_stack_short.end())
+    // Confirmed to be correct
+    TrajectorySequence to_backdrop_from_pixel_stack_short = drive.trajectorySequenceBuilder(to_pixel_stack_from_inital_pos_short.end())
             .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
-    TrajectorySequence to_backdrop_from_pixel_stack_long = drive.trajectorySequenceBuilder(to_pixel_stack_long.end())
-            .lineTo(new Vector2d(39.40, -11.60))
+    // Confirmed to be correct
+    TrajectorySequence to_backdrop_from_pixel_stack_long = drive.trajectorySequenceBuilder(to_pixel_stack_from_inital_pos_long.end())
+            .lineTo(new Vector2d(30.00, -11.60))
             .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence to_pixel_stack_from_backdrop_short = drive.trajectorySequenceBuilder(to_backdrop_from_pixel_stack_short.end())
             .lineTo(SHORT_PIXEL_STACK_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence to_pixel_stack_from_backdrop_long = drive.trajectorySequenceBuilder(to_backdrop_from_pixel_stack_long.end())
-            .lineTo(new Vector2d(39.40, -11.60))
+            .lineTo(new Vector2d(30.00, -11.60))
             .lineTo(LONG_PIXEL_STACK_RED)
             .build();
 
+    // Confirmed to be correct
     TrajectorySequence park = drive.trajectorySequenceBuilder(to_backdrop_from_pixel_stack_long.end())
-            .lineTo(new Vector2d(52, -35))
+            .lineTo(new Vector2d(50.00, -11.60))
             .build();
 
     @Override public void runOpMode() {
@@ -158,7 +165,7 @@ public class RedLeft extends LinearOpMode {
             switch (autoPath) {
                 case SHORT:
                     // Drive to pixel stacks
-                    drive.followTrajectorySequence(to_pixel_stack_short);
+                    drive.followTrajectorySequence(to_pixel_stack_from_inital_pos_short);
 
                     // Intake pixel
                     intake.intake(1000);
@@ -183,7 +190,7 @@ public class RedLeft extends LinearOpMode {
                     drive.followTrajectorySequence(park);
                 case LONG:
                     // Drive to pixel stack
-                    drive.followTrajectorySequence(to_pixel_stack_long);
+                    drive.followTrajectorySequence(to_pixel_stack_from_inital_pos_long);
 
                     // Intake pixel
                     intake.intake(1000);

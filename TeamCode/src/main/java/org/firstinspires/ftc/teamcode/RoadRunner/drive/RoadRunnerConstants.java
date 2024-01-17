@@ -5,7 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
-public class RoadRunnerDriveBase {
+public class RoadRunnerConstants {
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -23,8 +23,8 @@ public class RoadRunnerDriveBase {
     public static double TRACK_WIDTH  = 15.84;
 
     // Feedforward PID values
-    public static double kV      = 0.01375;
-    public static double kA      = 0.002;
+    public static double kV      = 0.0134d;
+    public static double kA      = 0.0d;
     public static double kStatic = 0.0d;
 
     // It is best if you don't exceed 80% of your robots abilities; All units are inches and Radians
