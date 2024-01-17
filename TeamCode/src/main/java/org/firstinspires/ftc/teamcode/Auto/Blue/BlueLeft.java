@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Auto.Utility.AutoPath;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 public class BlueLeft extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.BLUE);
     final Pose2d START_POS = new Pose2d(7.7, 63, Math.toRadians(270));
+
+    AutoPath path = AutoPath.SHORT;
 
     OpenCvCamera camera;
 
@@ -117,7 +120,62 @@ public class BlueLeft extends LinearOpMode {
         });
 
         while (opModeInInit() && !isStarted() && !isStopRequested()) {
+           if (gamepad1.circle) {
+               path = AutoPath.SHORT;
+           } else if (gamepad1.x) {
+               path = AutoPath.LONG;
+           }
 
+           telemetry.addData("Auto Path", path);
+           telemetry.update();
+        }
+
+        while (!opModeInInit() && !isStarted() && !isStopRequested()) {
+            location = detector.getLocation();
+
+            drive.followTrajectorySequence(initial_path);
+
+            // All of the cases follow the following steps
+            //
+            // 1. Turn to face the spike strip
+            // 2. Place the pixel on the spike strip
+            // 3. Turn to face away from the pixel stacks
+            switch (location) {
+                case LEFT:
+                    drive.turn(0);
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                case NONE:
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                case RIGHT:
+                    drive.turn(0);
+                    // Place pixel on spike strip
+                    drive.turn(0);
+            }
+
+            switch (path) {
+                case SHORT:
+                    // Drive to short pixel stack
+                    drive.followTrajectorySequence(to_pixel_stack_from_inital_pos_short);
+
+                    // Intake pixel
+                    intake.intake(1000);
+
+                    // Drive to backboard
+                    drive.followTrajectorySequence(to_backdrop_from_pixel_stack_short);
+
+                    // Place pixel on backdrop
+
+                    // Drive back to the pixel stacks
+                    drive.followTrajectorySequence(to_pixel_stack_from_backdrop_short);
+
+                    // Intake pixel
+                    intake.intake(2000);
+
+                    // Park
+                    drive.followTrajectorySequence(park);
+            }
         }
     }
 }
