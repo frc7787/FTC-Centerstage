@@ -63,7 +63,7 @@ public class RedRight extends LinearOpMode {
 
     // Confirmed to be correct
     TrajectorySequence to_pixel_stack_from_backdrop_long = drive.trajectorySequenceBuilder(to_backdrop_from_initial_path.end())
-            .lineTo(new Vector2d(30.00, -11.6))
+            .lineTo(new Vector2d(35.00, -11.6))
             .lineTo(LONG_PIXEL_STACK_RED)
             .build();
 
@@ -74,7 +74,7 @@ public class RedRight extends LinearOpMode {
 
     // Confirmed to be correct
     TrajectorySequence to_backdrop_from_pixel_stack_long = drive.trajectorySequenceBuilder(to_pixel_stack_from_backdrop_long.end())
-            .lineTo(new Vector2d(30.00, -11.6))
+            .lineTo(new Vector2d(35.00, -11.6))
             .lineTo(BACKDROP_CENTER_POS_RED)
             .build();
 

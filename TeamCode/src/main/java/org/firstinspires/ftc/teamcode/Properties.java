@@ -96,9 +96,9 @@ public class Properties {
 
     public static final Vector2d SHORT_PIXEL_STACK_RED   = new Vector2d(-60.00, -36.00);
     public static final Vector2d LONG_PIXEL_STACK_RED    = new Vector2d(-60.00, -11.60);
-    public static final Vector2d BACKDROP_CENTER_POS_RED = new Vector2d(29.00, -36.70);
+    public static final Vector2d BACKDROP_CENTER_POS_RED = new Vector2d(35, -36.70);
 
-    public static final Vector2d SHORT_PIXEL_STACK_BLUE = new Vector2d(-60.00, -36.00);
+    public static final Vector2d SHORT_PIXEL_STACK_BLUE = new Vector2d(-60.00, 36.00);
     public static final Vector2d LONG_PIXEL_STACK_BLUE  = new Vector2d(-60.00, 11.25);
-    public static final Vector2d BACKDROP_CENTER_POS_BLUE = new Vector2d(29.00, 36.70);
+    public static final Vector2d BACKDROP_CENTER_POS_BLUE = new Vector2d(35, 36.00);
 }

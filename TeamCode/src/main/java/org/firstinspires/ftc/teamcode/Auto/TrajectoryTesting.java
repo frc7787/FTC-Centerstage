@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto.Blue;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import static org.firstinspires.ftc.teamcode.Properties.BACKDROP_CENTER_POS_BLUE;
 import static org.firstinspires.ftc.teamcode.Properties.LONG_PIXEL_STACK_BLUE;
@@ -26,8 +26,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 // Name is reversed for the drivers perspective
-@Autonomous(name = "Blue Right", group = "Blue")
-public class BlueLeft extends LinearOpMode {
+@Autonomous(name = "Trajectory Testing", group = "Blue")
+public class TrajectoryTesting extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.BLUE);
     final Pose2d START_POS = new Pose2d(-31.7, 63.3, Math.toRadians(270));
 
@@ -80,87 +80,34 @@ public class BlueLeft extends LinearOpMode {
             .build();
 
     @Override public void runOpMode() {
-        drive  = new MecanumDriveBase(hardwareMap);
-        intake = new Intake(hardwareMap);
-
         localizer = new TrackingWheelLocalizer(
                 hardwareMap,
                 new ArrayList<>(),
                 new ArrayList<>());
 
-        drive.init();
-        localizer.init();
-
         localizer.setPoseEstimate(START_POS);
 
-        cameraMonitorViewId = hardwareMap
-                .appContext
-                .getResources()
-                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        location = detector.getLocation();
-
-        camera = OpenCvCameraFactory
-                .getInstance()
-                .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
-                );
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                camera.setPipeline(detector);
-            }
-
-            @Override
-            public void onError(int err_code) {
-                telemetry.addLine("Camera failed to open with error code: " + err_code);
-            }
-        });
 
         while (opModeInInit() && !isStarted() && !isStopRequested()) {
-           if (gamepad1.circle) {
-               path = AutoPath.SHORT;
-           } else if (gamepad1.x) {
-               path = AutoPath.LONG;
-           }
+            if (gamepad1.circle) {
+                path = AutoPath.SHORT;
+            } else if (gamepad1.x) {
+                path = AutoPath.LONG;
+            }
 
-           telemetry.addData("Auto Path", path);
-           telemetry.update();
+            telemetry.addData("Auto Path", path);
+            telemetry.update();
         }
 
         while (!opModeInInit() && !isStarted() && !isStopRequested()) {
-            location = detector.getLocation();
-
             drive.followTrajectorySequence(initial_path);
 
-            // All of the cases follow the following steps
-            //
-            // 1. Turn to face the spike strip
-            // 2. Place the pixel on the spike strip
-            // 3. Turn to face away from the pixel stacks
-            switch (location) {
-                case LEFT:
-                    drive.turn(0);
-                    // Place pixel on spike strip
-                    drive.turn(0);
-                case NONE:
-                    // Place pixel on spike strip
-                    drive.turn(0);
-                case RIGHT:
-                    drive.turn(0);
-                    // Place pixel on spike strip
-                    drive.turn(0);
-            }
 
             switch (path) {
                 case SHORT:
                     // Drive to short pixel stack
                     drive.followTrajectorySequence(to_pixel_stack_from_inital_pos_short);
-
-                    // Intake pixel
-                    intake.intake(1000);
 
                     // Drive to backboard
                     drive.followTrajectorySequence(to_backdrop_from_pixel_stack_short);
@@ -169,9 +116,6 @@ public class BlueLeft extends LinearOpMode {
 
                     // Drive back to the pixel stacks
                     drive.followTrajectorySequence(to_pixel_stack_from_backdrop_short);
-
-                    // Intake pixel
-                    intake.intake(2000);
 
                     // Park
                     drive.followTrajectorySequence(park);
