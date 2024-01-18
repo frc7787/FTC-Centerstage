@@ -76,7 +76,7 @@ public final class LogFiles {
 
         public double trackingTicksPerRev = TrackingWheelLocalizer.TICKS_PER_REV;
         public double trackingWheelRadius = TrackingWheelLocalizer.WHEEL_RADIUS;
-        public double trackingGearRatio = TrackingWheelLocalizer.GEAR_RATIO;
+        public double trackingGearRatio = TrackingWheelLocalizer.SLIP_RATIO;
         public double trackingLateralDistance = TrackingWheelLocalizer.LATERAL_DISTANCE;
         public double trackingForwardOffset = TrackingWheelLocalizer.FORWARD_OFFSET;
 

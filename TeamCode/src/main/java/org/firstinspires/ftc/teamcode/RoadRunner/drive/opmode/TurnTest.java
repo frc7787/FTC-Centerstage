@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 @Config
 @Autonomous(name = "Turn Test", group = "Roadrunner")
 public class TurnTest extends LinearOpMode {
-    public static double ANGLE = Math.PI; // deg
+    public static double ANGLE = Math.PI * 10.0d; // deg
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,6 +24,9 @@ public class TurnTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
+
+        drive.turn(0);
+        sleep(5000);
         drive.turn(ANGLE);
     }
 }

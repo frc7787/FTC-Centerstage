@@ -23,11 +23,11 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
 
     public static double TICKS_PER_REV = 2000.0d;
     public static double WHEEL_RADIUS  = 0.944882d; // in
-    public static double GEAR_RATIO    = 1.0d;  // output (wheel) speed / input (encoder) speed
-    public static double SLIP_RATIO    = 1.01d; // Variable to account for the wheels slipping on the mat
+    //public static double GEAR_RATIO = 1.0d;  // output (wheel) speed / input (encoder) speed
+    public static double SLIP_RATIO    = 1.0d; // Variable to account for the wheels slipping on the mat
 
-    public static double LATERAL_DISTANCE = 9.0d; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET   = 7.25d; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 9.147d; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET   = 7.32d; // in; offset of the lateral wheel
 
     private final Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -54,7 +54,7 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     }
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_RADIUS * 2 * Math.PI * SLIP_RATIO * ticks / TICKS_PER_REV;
     }
 
     @NonNull @Override public List<Double> getWheelPositions() {
@@ -69,9 +69,9 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
         lastEncPositions.add(frontPos);
 
         return Arrays.asList(
-                encoderTicksToInches(leftPos)  * SLIP_RATIO,
-                encoderTicksToInches(rightPos) * SLIP_RATIO,
-                encoderTicksToInches(frontPos) * SLIP_RATIO
+                encoderTicksToInches(leftPos),
+                encoderTicksToInches(rightPos),
+                encoderTicksToInches(frontPos)
         );
     }
 
@@ -86,9 +86,9 @@ public class TrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
         lastEncVels.add(frontVel);
 
         return Arrays.asList(
-                encoderTicksToInches(leftVel)  * SLIP_RATIO,
-                encoderTicksToInches(rightVel) * SLIP_RATIO,
-                encoderTicksToInches(frontVel) * SLIP_RATIO
+                encoderTicksToInches(leftVel),
+                encoderTicksToInches(rightVel),
+                encoderTicksToInches(frontVel)
         );
     }
 }
