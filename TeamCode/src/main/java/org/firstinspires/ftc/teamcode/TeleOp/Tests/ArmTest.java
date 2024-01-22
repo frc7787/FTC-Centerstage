@@ -1,83 +1,86 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import static org.firstinspires.ftc.teamcode.Properties.BOTTOM_EXT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.BOTTOM_ROT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.HIGH_EXT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.HIGH_ROT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.LOW_EXT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.LOW_ROT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.MED_EXT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.MED_ROT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.TOP_EXT_POS;
+import static org.firstinspires.ftc.teamcode.Properties.TOP_ROT_POS;
+
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import static org.firstinspires.ftc.teamcode.Properties.*;
-
-import androidx.annotation.NonNull;
-
 import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 
 @TeleOp(name = "Test - Arm", group = "Test")
-@Disabled
 public class ArmTest extends OpMode {
-
     Arm arm;
 
-    enum ArmState {
-        AT_POSITION,
-        TO_POSITION,
+    Gamepad currentGamepadOne, prevGamepadOne, currentGamepadTwo, prevGamepadTwo;
 
-    }
-
-    ArmState armState = ArmState.AT_POSITION;
-
-    Gamepad currentGamePad, prevGamePad;
-
-    void listenForArmCommand(@NonNull Gamepad currentGamePad, @NonNull Gamepad prevGamePad) {
-        if (currentGamePad.dpad_down && !prevGamePad.dpad_down) {
-            arm.isHoming = true;
-        } else if (currentGamePad.dpad_up && !prevGamePad.dpad_up) {
-            arm.moveToPosition(MED_EXT_POS, 0);
-        } else if (currentGamePad.cross && !prevGamePad.cross) {
+    /**
+     * Listens for arm commands. Note that this function calls arm.moveToPosition which updates the arm state.
+     * @param currentGamepadOne The current state of gamepad1
+     * @param prevGamepadOne The state of gamepad1 last loop iteration
+     * @param currentGamepadTwo The current state of gamepad2
+     * @param prevGamepadTwo The state of gamepad2 last loop iteration
+     */
+    void listenForNormalArmCommand(@NonNull Gamepad currentGamepadOne, @NonNull Gamepad prevGamepadOne, @NonNull Gamepad currentGamepadTwo, @NonNull Gamepad prevGamepadTwo) {
+        if (currentGamepadOne.dpad_down && !prevGamepadOne.dpad_down || currentGamepadTwo.dpad_down && !prevGamepadTwo.dpad_down) {
+            arm.setHoming();
+        } else if (currentGamepadOne.cross && !prevGamepadOne.cross || currentGamepadTwo.cross && !prevGamepadTwo.cross) {
             arm.moveToPosition(BOTTOM_EXT_POS, BOTTOM_ROT_POS);
-        } else if (currentGamePad.square && !prevGamePad.square) {
+        } else if (currentGamepadOne.square && !prevGamepadOne.square || currentGamepadTwo.square && !prevGamepadTwo.square) {
             arm.moveToPosition(LOW_EXT_POS, LOW_ROT_POS);
-        } else if (currentGamePad.circle && !prevGamePad.circle) {
+        } else if (currentGamepadOne.circle && !prevGamepadOne.circle || currentGamepadTwo.circle && !prevGamepadTwo.circle) {
             arm.moveToPosition(MED_EXT_POS, MED_ROT_POS);
-        } else if (currentGamePad.triangle && !prevGamePad.triangle) {
+        } else if (currentGamepadOne.triangle && !prevGamepadOne.triangle || currentGamepadTwo.triangle && !prevGamepadTwo.triangle) {
             arm.moveToPosition(HIGH_EXT_POS, HIGH_ROT_POS);
-        } else if (currentGamePad.options && !prevGamePad.options) {
+        } else if (currentGamepadOne.options && !prevGamepadOne.options || currentGamepadTwo.options && !prevGamepadTwo.options) {
             arm.moveToPosition(TOP_EXT_POS, TOP_ROT_POS);
         }
     }
 
+
     @Override public void init() {
-        currentGamePad = new Gamepad();
-        prevGamePad    = new Gamepad();
+        currentGamepadOne = new Gamepad();
+        prevGamepadOne    = new Gamepad();
+        currentGamepadTwo = new Gamepad();
+        prevGamepadTwo    = new Gamepad();
 
         arm = new Arm(hardwareMap);
+
+        arm.init();
     }
 
     @Override public void loop() {
-        prevGamePad.copy(currentGamePad);
-        currentGamePad.copy(gamepad2);
+        prevGamepadOne.copy(currentGamepadOne);
+        currentGamepadOne.copy(gamepad1);
 
-        telemetry.addLine("The light on the gamepad is dependent on the state of the arm.");
-        telemetry.addLine("To Position = Blue");
-        telemetry.addLine("At Position = Green");
+        prevGamepadTwo.copy(currentGamepadOne);
+        currentGamepadTwo.copy(gamepad2);
+
+        // Update the arm state every loop iteration. Note: The arm state is also updated in the moveToPosition function which is called from the listenForNormalArmCommand
+        arm.update();
 
         arm.debug(telemetry);
 
-        telemetry.addData("Arm State", armState);
+        // This function has an effect on the arm state
+        listenForNormalArmCommand(
+                currentGamepadOne,
+                prevGamepadOne,
+                currentGamepadTwo,
+                prevGamepadTwo);
 
-        if (gamepad1.left_bumper) { arm.intake(); }
-
-        switch (armState) {
-            case AT_POSITION:
-                listenForArmCommand(currentGamePad, prevGamePad);
-
-                if (arm.is_busy()) { armState = ArmState.TO_POSITION; }
-                break;
-            case TO_POSITION:
-                listenForArmCommand(currentGamePad, prevGamePad);
-
-                if (!arm.is_busy()) { armState = ArmState.AT_POSITION; }
-                break;
-        }
+        telemetry.addLine("Press X, Square, Circle, Triangle, or Options to go to different heights");
+        telemetry.addLine("Press Dpad Down to home");
         telemetry.update();
     }
 }

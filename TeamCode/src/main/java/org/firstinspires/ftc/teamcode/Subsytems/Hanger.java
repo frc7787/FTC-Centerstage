@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import static org.firstinspires.ftc.teamcode.Properties.HANGER_SERVO_POSITION;
 
-public class Hanger {
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-    private final Servo hangerServo;
+public class Hanger {
+    Servo hangerServo;
 
     /**
      * Hanger constructor
@@ -19,9 +20,25 @@ public class Hanger {
     }
 
     /**
+     * Initializes the hanger subsystem, this sets the hanger servo to the zero position
+     */
+    public void zero() {
+        hangerServo.setPosition(0.0);
+    }
+
+    /**
      * Moves the servo to the hanging position
      */
     public void release() {
         hangerServo.setPosition(HANGER_SERVO_POSITION);
+    }
+
+    /**
+     * Displays debug information about the hanger servo
+     * @param telemetry The telemetry to display the information on
+     */
+    public void debug(@NonNull Telemetry telemetry) {
+        telemetry.addData("Hanger Servo Last Commanded Position", hangerServo.getPosition());
+        telemetry.addData("Hanger Servo Direction", hangerServo.getDirection());
     }
 }

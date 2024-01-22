@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import static org.firstinspires.ftc.teamcode.Properties.*;
@@ -11,16 +11,23 @@ import static org.firstinspires.ftc.teamcode.Properties.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Launcher {
-    private final ServoImplEx launcherServo;
+    final ServoImplEx launcherServo;
 
     public Launcher(@NonNull HardwareMap hardwareMap) {
         launcherServo = hardwareMap.get(ServoImplEx.class, "LauncherServo");
     }
 
+    public void init() {
+        launcherServo.setDirection(REVERSE);
+        launcherServo.setPosition(LAUNCHER_ZERO_POSITION);
+    }
+
     /**
-     * Disables the launcher Pwm so that it doesn't fire
+     * Sets the launcher servo to the zero position
      */
-    public void init() { launcherServo.setPwmDisable(); }
+    public void zero() {
+        launcherServo.setPosition(LAUNCHER_ZERO_POSITION);
+    }
 
     /**
      * Releases the launcer servo
@@ -28,6 +35,7 @@ public class Launcher {
     public void release() {
         launcherServo.setPwmEnable();
         launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
+        launcherServo.setPwmEnable();
     }
 
     /**

@@ -8,18 +8,14 @@ import org.firstinspires.ftc.teamcode.Subsytems.Intake;
 @TeleOp(name = "Test - Intake with drive base", group = "Test")
 public class DriveBaseTest extends OpMode {
     DriveBase drive;
-    Intake intake;
 
     @Override public void init() {
-        intake    = new Intake(hardwareMap);
-        drive     = new DriveBase(hardwareMap);
-
+        drive = new DriveBase(hardwareMap);
         drive.init();
-        intake.init();
     }
 
     @Override public void loop() {
-        intake.outtake(gamepad1.left_trigger);
+        telemetry.addLine("Use the Joysticks to drive the robot around");
 
         drive.driveManualRobotCentric(
                 -gamepad1.left_stick_y,

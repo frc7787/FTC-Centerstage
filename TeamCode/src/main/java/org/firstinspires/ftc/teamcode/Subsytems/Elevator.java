@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_ELEVATOR_POWER;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -15,7 +16,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /**
- * Object to encapsulate elevator subsystem
+ * Object to encapsulate elevator (Extension) subsystem. Note that this subsystem does not control
+ * it's state. Rather, the state is controlled by the Arm subsystem which contains both the elevator,
+ * and worm subsystems.
  */
 public class Elevator {
 
@@ -23,9 +26,16 @@ public class Elevator {
     private final TouchSensor extLimitSwitch;
 
 
+    /**
+     * Elevator Subsystem constructor
+     * @param hardwareMap The hardware map you are using, likely "hardwareMap"
+     */
     public Elevator(@NonNull HardwareMap hardwareMap) {
         extend         = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
         extLimitSwitch = hardwareMap.get(TouchSensor.class, "ExtensionLimitSwitch");
+
+        extend.setMotorEnable();
+        extend.setTargetPositionTolerance(20);
     }
 
 
@@ -33,7 +43,10 @@ public class Elevator {
      * Initializes the elevator subsystem. <br>
      * This resets the elevator motor encoder
      */
-    public void init() { extend.setMode(STOP_AND_RESET_ENCODER); }
+    public void init() {
+        extend.setMode(STOP_AND_RESET_ENCODER);
+        extend.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
 
 
     /**
@@ -63,7 +76,6 @@ public class Elevator {
      */
     public void extend(int position) { extend(position, DEFAULT_ELEVATOR_POWER); }
 
-
     /**
      * Powers the elevator motors
      * @param power The power to supply the elevator motors
@@ -82,7 +94,6 @@ public class Elevator {
      */
     public boolean is_busy() { return extend.isBusy(); }
 
-
     /**
      * Displays debug information about the elevator
      * @param telemetry The telemetry object you are using to display the data
@@ -90,21 +101,28 @@ public class Elevator {
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Elevator Debug");
 
+        telemetry.addData("Elevator Direction", extend.getDirection());
         telemetry.addData("Elevator Current Position", extend.getCurrentPosition());
         telemetry.addData("Elevator Target Position", extend.getTargetPosition());
-
+        telemetry.addData("Elevator Current (AMPS)", extend.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Elevator Limit Switch Is Pressed", extLimitSwitch.isPressed());
     }
 
     /**
-     * Gets the position that the elevator motor is trying to get to
      * @return The position that the elevator motor is trying to get to.
      */
-    public int getTargetPosition() { return extend.getTargetPosition(); }
+    public int targetPos() { return extend.getTargetPosition(); }
+
+    /**
+     * Disables the motor
+     */
+    public void disable() {
+        extend.setMotorDisable();
+    }
 
     /**
      * @return The current draw of the motor in AMPS
      */
-    public double getCurrentAmps() { return extend.getCurrent(CurrentUnit.AMPS); }
+    public double currentAmps() { return extend.getCurrent(CurrentUnit.AMPS); }
 }
 

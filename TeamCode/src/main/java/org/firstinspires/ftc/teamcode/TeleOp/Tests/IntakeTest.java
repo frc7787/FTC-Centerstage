@@ -13,26 +13,35 @@ public class IntakeTest extends OpMode {
 
     Intake intake;
 
-    Gamepad currentGamepad, prevGamepad;
+    Gamepad currentGamepadOne, prevGamepadOne, currentGamepadTwo, prevGamepadTwo;
+
+    boolean intakeToggle = false;
 
     @Override public void init() {
-        currentGamepad = new Gamepad();
-        prevGamepad    = new Gamepad();
+        currentGamepadOne = new Gamepad();
+        prevGamepadOne    = new Gamepad();
+        currentGamepadTwo = new Gamepad();
+        prevGamepadTwo    = new Gamepad();
 
         intake = new Intake(hardwareMap);
-
     }
 
     @Override
     public void loop() {
-        prevGamepad.copy(currentGamepad);
+        prevGamepadOne.copy(currentGamepadOne);
 
-        currentGamepad.copy(gamepad1);
+        currentGamepadOne.copy(gamepad1);
 
        intake.debug(telemetry);
 
-        if (currentGamepad.left_bumper && prevGamepad.right_bumper) {
+        if (currentGamepadOne.left_bumper && !prevGamepadOne.left_bumper || currentGamepadTwo.left_bumper && !prevGamepadTwo.left_bumper) {
+            intakeToggle = !intakeToggle;
+        }
+
+        if (intakeToggle) {
             intake.intake();
+        } else {
+            intake.stop();
         }
 
         telemetry.update();

@@ -32,8 +32,8 @@ public class Properties {
     public static volatile int HANG_POS   = 2326;
     public static volatile int HUNG_POS   = 420;
 
-    public static volatile double DEFAULT_WORM_POWER     = 1;
-    public static volatile double DEFAULT_ELEVATOR_POWER = 1;
+    public static volatile double DEFAULT_WORM_POWER     = 1.0;
+    public static volatile double DEFAULT_ELEVATOR_POWER = 0.7;
     public static volatile double HOMING_POWER           = 0.7;
 
     // ----------- DRIVE CONSTANTS ---------- //
@@ -56,7 +56,8 @@ public class Properties {
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 
-    public static volatile double LAUNCHER_SERVO_POSITION = 1.0;
+    public static volatile double LAUNCHER_ZERO_POSITION  = 0.00;
+    public static volatile double LAUNCHER_SERVO_POSITION = 0.60;
 
     // ---------- HANGER CONSTANTS ---------- //
 

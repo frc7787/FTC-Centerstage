@@ -27,5 +27,6 @@ public class DeadWheelTest extends OpMode {
         telemetry.addData("Left Encoder Position", left.getCurrentPosition());
         telemetry.addData("Right Encoder Position", right.getCurrentPosition());
         telemetry.addData("Front Encoder Position", front.getCurrentPosition());
+        telemetry.update();
     }
 }

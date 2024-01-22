@@ -41,7 +41,7 @@ public class DeliveryTray {
     }
 
     /**
-     * Raises the tray so that it is in paralell to the tray
+     * Raises the tray so that it is in parallel to the elevator
      */
     public void raise_tray() {
         wrist.setPosition(TRAY_UP_WRIST_POS);
