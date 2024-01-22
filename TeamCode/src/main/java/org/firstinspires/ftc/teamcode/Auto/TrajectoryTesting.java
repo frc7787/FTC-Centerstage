@@ -100,7 +100,9 @@ public class TrajectoryTesting extends LinearOpMode {
             telemetry.update();
         }
 
-        while (!opModeInInit() && !isStarted() && !isStopRequested()) {
+        waitForStart();
+
+        while (!opModeInInit() && isStarted() && !isStopRequested()) {
             drive.followTrajectorySequence(initial_path);
 
 
