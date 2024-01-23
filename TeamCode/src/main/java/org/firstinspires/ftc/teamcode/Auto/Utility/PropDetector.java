@@ -56,10 +56,6 @@ public class PropDetector extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-
-        // If something goes wrong, we assume there is no prop
-        if (mat.empty() || mat1.empty()) { return input; }
-
         // Crop
         input = input.submat(CROP_RECT);
 
@@ -125,11 +121,10 @@ public class PropDetector extends OpenCvPipeline {
             }
         }
 
-        // I think the logic may be reversed
         if (biggestBoundingBox.x < LEFT_X) {
-            location = RIGHT;
-        } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X) {
             location = LEFT;
+        } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X) {
+            location = RIGHT;
         }
 
         Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);

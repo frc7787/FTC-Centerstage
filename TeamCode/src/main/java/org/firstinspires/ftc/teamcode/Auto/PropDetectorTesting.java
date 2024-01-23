@@ -73,20 +73,12 @@ public class PropDetectorTesting extends LinearOpMode {
             }
         });
 
-        // Trajectories
-
-        TrajectorySequence initial_path = drive.trajectorySequenceBuilder(START_POS)
-                .lineTo(new Vector2d(-36.50, 57.00))
-                .build();
-
 
         waitForStart();
 
 
         while (opModeIsActive()) {
             location = propDetector.getLocation();
-
-            drive.followTrajectorySequence(initial_path);
 
             switch (location) {
                 case LEFT:
@@ -98,12 +90,14 @@ public class PropDetectorTesting extends LinearOpMode {
                 case RIGHT:
                     // drive.turn(0);
                     // Place pixel on spike strip
-
             }
+
+            drive.turn(90);
 
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
+            sleep(99999999);
         }
     }
 }
