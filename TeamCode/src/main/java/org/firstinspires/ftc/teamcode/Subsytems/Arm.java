@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
+import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_WORM_POWER;
 import static org.firstinspires.ftc.teamcode.Properties.HANG_POS;
 import static org.firstinspires.ftc.teamcode.Properties.HOMING_POWER;
 import static org.firstinspires.ftc.teamcode.Properties.HUNG_POS;
@@ -26,6 +27,7 @@ public class Arm {
 
     NormalArmState normalArmState = NormalArmState.HOME;
     EndGameState endGameArmState  = EndGameState.IDLE;
+    MoveState moveState           = MoveState.IDLE;
 
     enum HomingState {
         START,
@@ -47,10 +49,17 @@ public class Arm {
         TO_IDLE,
         TO_HANGING_POS,
         HANGING_POS,
-        HANGING,
+        TO_HUNG_POS,
         HUNG,
         TO_LAUNCHING_POS,
         LAUNCHING_POS,
+    }
+
+    enum MoveState {
+        IDLE,
+        ROTATING,
+        EXTENDING,
+        COMPLETE
     }
 
     /**
@@ -92,7 +101,7 @@ public class Arm {
             } else if (worm.targetPos() == HANG_POS) {
                 endGameArmState = EndGameState.TO_HANGING_POS;
             } else if (worm.targetPos() == HUNG_POS) {
-                endGameArmState = EndGameState.HANGING;
+                endGameArmState = EndGameState.TO_HUNG_POS;
             }
         } else {
             switch (endGameArmState) {
@@ -100,12 +109,12 @@ public class Arm {
                     endGameArmState = EndGameState.IDLE;
                     break;
                 case TO_HANGING_POS:
-                    endGameArmState = EndGameState.HANGING;
+                    endGameArmState = EndGameState.HANGING_POS;
                     break;
                 case TO_LAUNCHING_POS:
                     endGameArmState = EndGameState.LAUNCHING_POS;
                     break;
-                case HANGING:
+                case TO_HUNG_POS:
                     endGameArmState = EndGameState.HUNG;
                     break;
             }
@@ -122,7 +131,7 @@ public class Arm {
 
         if (normalArmState == NormalArmState.HOMING) {
             home();
-            return; // We want to leave the function after we exit home without executing anything else
+            return;
         }
 
         if (is_busy()) {
@@ -169,18 +178,31 @@ public class Arm {
     public void moveToPosition(int extPos, int rotPos) {
         update();
 
-        long start = System.currentTimeMillis();
-
         if (normalArmState == NormalArmState.FROM_HOME) {
-            worm.rotate(rotPos);
-
-            while (true) {
-                if (start + 2500 < System.currentTimeMillis()) {
+            switch (moveState) {
+                case IDLE:
+                    moveState = MoveState.ROTATING;
                     break;
-                }
-            }
+                case ROTATING:
+                    worm.power(DEFAULT_WORM_POWER);
 
-            elevator.extend(extPos);
+                    if (worm.pos() >= 500) {
+                        moveState = MoveState.EXTENDING;
+                        break;
+                    }
+                case EXTENDING:
+                    worm.rotate(rotPos);
+                    elevator.extend(extPos);
+
+                    if (worm.pos() == worm.targetPos() && elevator.pos() == elevator.targetPos()) {
+                        moveState = MoveState.COMPLETE;
+                        break;
+                    }
+                case COMPLETE:
+                    moveState = MoveState.IDLE;
+                    break;
+
+            }
         } else {
             worm.rotate(rotPos);
             elevator.extend(extPos);
@@ -228,6 +250,7 @@ public class Arm {
 
         telemetry.addData("Arm Normal State", normalArmState);
         telemetry.addData("Arm EndGame State", endGameArmState);
+        telemetry.addData("Current Arm Move Position", moveState);
 
         telemetry.addData("Current Arm Amps", getArmCurrentAmps());
     }

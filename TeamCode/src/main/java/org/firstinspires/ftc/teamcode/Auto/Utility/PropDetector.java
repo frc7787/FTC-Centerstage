@@ -57,9 +57,6 @@ public class PropDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        // If something goes wrong, we assume there is no prop
-        if (mat.empty() || mat1.empty()) { return input; }
-
         // Crop
         input = input.submat(CROP_RECT);
 
@@ -125,11 +122,10 @@ public class PropDetector extends OpenCvPipeline {
             }
         }
 
-        // I think the logic may be reversed
         if (biggestBoundingBox.x < LEFT_X) {
-            location = RIGHT;
-        } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X) {
             location = LEFT;
+        } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X) {
+            location = RIGHT;
         }
 
         Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
@@ -137,36 +133,6 @@ public class PropDetector extends OpenCvPipeline {
         // ------------------------------------------------------------------
         // New Logic End
         // ------------------------------------------------------------------
-
-        // ------------------------------------------------------------------
-        // Old Logic Start
-        // ------------------------------------------------------------------
-
-//        boolean left = false; // true if regular stone found on the left side
-//        boolean right = false; // "" "" on the right side
-//        for (int i = 0; i != boundRect.length; i++) {
-//            if (boundRect[i].x < LEFT_X) {
-//                left = true;
-//            }
-//
-//            if (boundRect[i].x + boundRect[i].width > RIGHT_X) {
-//                right = true;
-//            }
-//
-//            // draw red bounding rectangles on mat
-//            // the mat has been converted to HSV so we need to use HSV as well
-//            Imgproc.rectangle(mat, boundRect[i], new Scalar(0.5, 76.9, 89.8));
-//        }
-//
-//        if (!left) {
-//            location = PropLocation.LEFT;
-//        } else if (!right){
-//            location = PropLocation.RIGHT;
-//        }
-
-        // -----------------------------------------------------------------------
-        // Old Logic End
-        // -----------------------------------------------------------------------
 
         // Resizes the code so it can be viewed on the driver station
         // Comment this code out for competition

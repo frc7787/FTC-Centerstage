@@ -30,12 +30,10 @@ public class Launcher {
     }
 
     /**
-     * Releases the launcer servo
+     * Releases the launcher servo
      */
     public void release() {
-        launcherServo.setPwmEnable();
         launcherServo.setPosition(LAUNCHER_SERVO_POSITION);
-        launcherServo.setPwmEnable();
     }
 
     /**

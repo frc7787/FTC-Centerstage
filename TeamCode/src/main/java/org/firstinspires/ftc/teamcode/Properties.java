@@ -28,9 +28,9 @@ public class Properties {
     public static volatile int TOP_EXT_POS = 3045;
     public static volatile int TOP_ROT_POS = 1107;
 
-    public static volatile int LAUNCH_POS = 1630;
-    public static volatile int HANG_POS   = 2326;
-    public static volatile int HUNG_POS   = 420;
+    public static volatile int LAUNCH_POS = 2000;
+    public static volatile int HANG_POS   = 2768;
+    public static volatile int HUNG_POS   = 0;
 
     public static volatile double DEFAULT_WORM_POWER     = 1.0;
     public static volatile double DEFAULT_ELEVATOR_POWER = 0.7;
@@ -91,7 +91,7 @@ public class Properties {
     public static volatile Point CV_ANCHOR        = new Point(-1, -1);
     public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
     public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
-    public static volatile Rect CROP_RECT         = new Rect(0, 80, 320, 80);
+    public static volatile Rect CROP_RECT         = new Rect(160, 80, 160, 80);
 
     // -------- Position Constants ----------- //
 

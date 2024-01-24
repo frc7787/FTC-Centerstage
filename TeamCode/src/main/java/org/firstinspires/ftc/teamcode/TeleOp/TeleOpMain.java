@@ -22,22 +22,12 @@ public class TeleOpMain extends OpMode {
     Intake intake;
     DeliveryTray deliveryTray;
 
-    // The following values should represent the robots starting configuration
-    EndGameState endGameState = EndGameState.IDLE;
     GamePeriod gamePeriod     = GamePeriod.NORMAL;
 
     boolean hangerHookReleased = false;
     boolean intakeToggle       = false;
     boolean doorToggle         = false;
 
-    enum EndGameState {
-        IDLE,
-        TO_HANGING_POSITION,
-        HANGING_POSITION,
-        HUNG,
-        TO_LAUNCH_POSITION,
-        LAUNCH_POSITION
-    }
 
     enum GamePeriod {
         NORMAL,
@@ -122,6 +112,8 @@ public class TeleOpMain extends OpMode {
             arm.moveToPosEndgame(HANG_POS);
         } else if (currentGamepad.dpad_down && !prevGamepad.dpad_down) {
             arm.moveToPosEndgame(0);
+        } else if (currentGamepad.dpad_up) {
+            arm.moveToPosEndgame(HUNG_POS);
         }
     }
 
@@ -133,19 +125,9 @@ public class TeleOpMain extends OpMode {
     void normalPeriodLoop(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
         arm.update();
 
-        switch (arm.getNormalArmState()) {
-            case HOME:
-                listenForIntakeCommand(currentGamepad, prevGamepad);
-                listenForNormalArmCommand(currentGamepad, prevGamepad);
-                break;
-            case AT_POS:
-                listenForDeliveryTrayCommand(currentGamepad, prevGamepad);
-                listenForDeliveryTrayCommand(currentGamepad, prevGamepad);
-                break;
-            default:
-                listenForNormalArmCommand(currentGamepad, prevGamepad);
-                break;
-        }
+        listenForIntakeCommand(currentGamepad, prevGamepad);
+        listenForDeliveryTrayCommand(currentGamepad, prevGamepad);
+        listenForNormalArmCommand(currentGamepad, prevGamepad);
     }
 
     /**
@@ -154,7 +136,7 @@ public class TeleOpMain extends OpMode {
      * @param prevGamepad The state of the gamepad during the previous loop iteration
      */
     void endGameLoop(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
-        arm.update();
+        arm.updateEndgame();
 
         switch (arm.endGameState()) {
             case HUNG:
@@ -169,8 +151,7 @@ public class TeleOpMain extends OpMode {
                 break;
             case LAUNCHING_POS:
                 listenForEndgameArmCommand(currentGamepad, prevGamepad);
-                if (currentGamepad.left_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY && !(prevGamepad.left_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY) &&
-                        currentGamepad.right_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY && !(prevGamepad.right_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY)) {
+                if (currentGamepad.cross && !prevGamepad.cross) {
                     launcher.release();
                 }
                 break;
@@ -178,53 +159,6 @@ public class TeleOpMain extends OpMode {
                 listenForEndgameArmCommand(currentGamepad, prevGamepad);
                 break;
         }
-
-//        switch (endGameState) {
-//            case IDLE:
-//                if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
-//                    arm.moveToPosition(0, HANG_POS);
-//                    endGameState = EndGameState.TO_HANGING_POSITION;
-//                } else if (currentGamepad.right_bumper && !prevGamepad.right_bumper) {
-//                    arm.moveToPosition(0, LAUNCH_POS);
-//                    endGameState = EndGameState.TO_LAUNCH_POSITION;
-//                }
-//                break;
-//            case TO_HANGING_POSITION:
-//                if (!arm.is_busy()) { endGameState = EndGameState.HANGING_POSITION; }
-//                if (currentGamepad.right_bumper && !prevGamepad.right_bumper) {
-//                    arm.moveToPosition(0, LAUNCH_POS);
-//                    endGameState = EndGameState.TO_LAUNCH_POSITION;
-//                }
-//                break;
-//            case TO_LAUNCH_POSITION:
-//                if (!arm.is_busy()) { endGameState = EndGameState.LAUNCH_POSITION; }
-//                if (currentGamepad.left_bumper && !prevGamepad.right_bumper) {
-//                    arm.moveToPosition(0, HANG_POS);
-//                    endGameState = EndGameState.TO_HANGING_POSITION;
-//                }
-//                break;
-//            case LAUNCH_POSITION:
-//                if (gamepad2.left_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY && gamepad2.right_trigger > PLANE_LAUNCH_TRIGGER_SENSITIVITY ) {
-//                    launcher.release();
-//                } else if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
-//                    arm.moveToPosition(0, HANG_POS);
-//                    endGameState = EndGameState.TO_HANGING_POSITION;
-//                }
-//                break;
-//            case HANGING_POSITION:
-//                if (currentGamepad.right_bumper && !prevGamepad.right_bumper) {
-//                    arm.moveToPosition(0, LAUNCH_POS);
-//                    endGameState = EndGameState.TO_LAUNCH_POSITION;
-//                } else if (currentGamepad.cross && !prevGamepad.cross) {
-//                    hanger.release();
-//                    hangerHookReleased = true;
-//                } else if (currentGamepad.dpad_down && hangerHookReleased) {
-//                    arm.moveToPosition(0, HUNG_POS);
-//                }
-//                break;
-//            case HUNG:
-//                break;
-//        }
     }
     
     @Override public void init() {
@@ -243,6 +177,8 @@ public class TeleOpMain extends OpMode {
         driveBase.init();
         arm.init();
         launcher.init();
+        hanger.init();
+        intake.init();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(AUTO);
@@ -254,8 +190,8 @@ public class TeleOpMain extends OpMode {
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
 
-        double drive  = gamepad1.left_stick_x;
-        double strafe = gamepad1.left_stick_y * -1.0d;
+        double drive  = gamepad1.left_stick_y * -1.0;
+        double strafe = gamepad1.left_stick_x;
         double turn   = gamepad1.right_stick_x;
 
        driveBase.driveManualRobotCentric(
@@ -270,7 +206,7 @@ public class TeleOpMain extends OpMode {
 
                normalPeriodLoop(currentGamepad2, prevGamepad2);
 
-               if (currentGamepad2.left_trigger > 0.9 && !(prevGamepad2.left_trigger > 0.9) && currentGamepad2.right_trigger > 0.9 && !(prevGamepad2.left_trigger > 0.9)) {
+               if (currentGamepad2.left_trigger > 0.9 && currentGamepad2.right_trigger > 0.9) {
                    gamePeriod = GamePeriod.ENDGAME;
                }
                break;
@@ -278,7 +214,7 @@ public class TeleOpMain extends OpMode {
                telemetry.addLine("Endgame Period");
                endGameLoop(currentGamepad2, prevGamepad2);
 
-               if (currentGamepad2.left_trigger > 0.9 && !(prevGamepad2.left_trigger > 0.9) && currentGamepad2.right_trigger > 0.9 && !(prevGamepad2.left_trigger > 0.9)) {
+               if (currentGamepad2.left_trigger > 0.9 && currentGamepad2.right_trigger > 0.9) {
                    gamePeriod = GamePeriod.NORMAL;
                }
                break;

@@ -21,10 +21,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
  * and worm subsystems.
  */
 public class Elevator {
+    final DcMotorImplEx extend;
+    final TouchSensor extLimitSwitch;
 
-    private final DcMotorImplEx extend;
-    private final TouchSensor extLimitSwitch;
-
+    boolean extensionLimitSwitchWasPressed;
 
     /**
      * Elevator Subsystem constructor
@@ -54,9 +54,11 @@ public class Elevator {
      * Checks to see if we should stop and reset encoders
      */
     public void update() {
-        if (extend.getCurrentPosition() == 0 && extLimitSwitch.isPressed()) {
+        if (extLimitSwitch.isPressed() && !extensionLimitSwitchWasPressed && extend.getTargetPosition() == 0) {
             extend.setMode(STOP_AND_RESET_ENCODER);
         }
+
+        extensionLimitSwitchWasPressed = extLimitSwitch.isPressed();
     }
 
     /**
@@ -112,6 +114,8 @@ public class Elevator {
      * @return The position that the elevator motor is trying to get to.
      */
     public int targetPos() { return extend.getTargetPosition(); }
+
+    public int pos() { return extend.getCurrentPosition(); }
 
     /**
      * Disables the motor

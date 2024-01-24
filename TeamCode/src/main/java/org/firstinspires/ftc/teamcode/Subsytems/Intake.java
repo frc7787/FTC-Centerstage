@@ -26,6 +26,7 @@ public class Intake {
      * This sets the zero power behavior of the intake motor to float
      */
     public void init() {
+        intake.setDirection(REVERSE);
         intake.setZeroPowerBehavior(FLOAT);
     }
 
@@ -33,7 +34,6 @@ public class Intake {
      * Spins the intake
      */
     public void intake() {
-       intake.setDirection(FORWARD);
        intake.setPower(INTAKE_POWER);
     }
 

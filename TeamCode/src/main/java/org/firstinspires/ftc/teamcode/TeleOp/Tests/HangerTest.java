@@ -21,7 +21,7 @@ public class HangerTest extends OpMode {
 
         hanger = new Hanger(hardwareMap);
 
-        hanger.zero();
+        hanger.init();
     }
 
     @Override public void loop() {
@@ -38,7 +38,7 @@ public class HangerTest extends OpMode {
         if (currentGamepadOne.left_bumper && !prevGamepadOne.left_bumper || currentGamepadTwo.left_bumper && !prevGamepadTwo.left_bumper) {
             hanger.release();
         } else if (currentGamepadOne.right_bumper && !prevGamepadOne.right_bumper || currentGamepadTwo.right_bumper && !prevGamepadTwo.right_bumper) {
-            hanger.zero();
+            hanger.init();
         }
 
         telemetry.update();

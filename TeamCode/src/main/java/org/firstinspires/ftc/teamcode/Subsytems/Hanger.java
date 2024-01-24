@@ -22,7 +22,8 @@ public class Hanger {
     /**
      * Initializes the hanger subsystem, this sets the hanger servo to the zero position
      */
-    public void zero() {
+    public void init() {
+        hangerServo.setDirection(Servo.Direction.REVERSE);
         hangerServo.setPosition(0.0);
     }
 
