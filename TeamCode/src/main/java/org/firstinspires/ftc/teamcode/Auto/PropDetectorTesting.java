@@ -71,6 +71,7 @@ public class PropDetectorTesting extends LinearOpMode {
         while (opModeIsActive()) {
             location = propDetector.getLocation();
 
+
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
 
