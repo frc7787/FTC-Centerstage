@@ -31,6 +31,10 @@ public class Worm {
 
         worm.setMotorEnable();
         worm.setTargetPositionTolerance(20);
+
+        worm.setTargetPosition(0);
+        worm.setMode(RUN_TO_POSITION);
+        worm.setPower(0.0);
     }
 
     /**

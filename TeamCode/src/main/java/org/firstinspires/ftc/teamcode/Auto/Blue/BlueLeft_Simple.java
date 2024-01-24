@@ -26,64 +26,28 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 // Name is reversed for the drivers perspective
-@Autonomous(name = "Blue Right", group = "Blue")
-public class BlueLeft extends LinearOpMode {
+@Autonomous(name = "Blue right Simple", group = "Blue")
+public class BlueLeft_Simple extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.BLUE);
     final Pose2d START_POS = new Pose2d(-31.7, 63.3, Math.toRadians(270));
-
     AutoPath path = AutoPath.SHORT;
 
     OpenCvCamera camera;
 
     PropLocation location;
 
-    MecanumDriveBase drive;
-
-    Intake intake;
-
     int cameraMonitorViewId;
 
-    TrajectorySequence initial_path = drive.trajectorySequenceBuilder(START_POS)
-            .lineTo(new Vector2d(-36.50, 57.00))
-            .build();
 
-    TrajectorySequence to_pixel_stack_from_inital_pos_short = drive.trajectorySequenceBuilder(initial_path.end())
-            .lineTo(SHORT_PIXEL_STACK_BLUE)
-            .build();
 
-    TrajectorySequence to_pixel_stack_from_inital_pos_long = drive.trajectorySequenceBuilder(initial_path.end())
-            .lineTo(new Vector2d(-57.00, 36.00))
-            .lineTo(LONG_PIXEL_STACK_BLUE)
-            .build();
-
-    TrajectorySequence to_backdrop_from_pixel_stack_short = drive.trajectorySequenceBuilder(to_pixel_stack_from_inital_pos_short.end())
-            .lineTo(BACKDROP_CENTER_POS_BLUE)
-            .build();
-
-    TrajectorySequence to_backdrop_from_pixel_stack_long = drive.trajectorySequenceBuilder(to_pixel_stack_from_inital_pos_long.end())
-            .lineTo(new Vector2d(30.00, 11.60))
-            .build();
-
-    TrajectorySequence to_pixel_stack_from_backdrop_short = drive.trajectorySequenceBuilder(to_backdrop_from_pixel_stack_short.end())
-            .lineTo(SHORT_PIXEL_STACK_BLUE)
-            .build();
-
-    TrajectorySequence to_pixel_stack_from_backdrop_long = drive.trajectorySequenceBuilder(to_backdrop_from_pixel_stack_long.end())
-            .lineTo(new Vector2d(30.00, 11.60))
-            .lineTo(LONG_PIXEL_STACK_BLUE)
-            .build();
-
-    TrajectorySequence park = drive.trajectorySequenceBuilder(to_backdrop_from_pixel_stack_long.end())
-            .lineTo(new Vector2d(50.00, 36.70))
-            .build();
-
-    @Override public void runOpMode() {
-        drive  = new MecanumDriveBase(hardwareMap);
-        intake = new Intake(hardwareMap);
+    @Override
+    public void runOpMode() throws InterruptedException {
+        MecanumDriveBase drive = new MecanumDriveBase(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
 
         drive.init();
-        drive.setPoseEstimate(START_POS);
 
+        drive.setPoseEstimate(START_POS);
         cameraMonitorViewId = hardwareMap
                 .appContext
                 .getResources()
@@ -110,18 +74,12 @@ public class BlueLeft extends LinearOpMode {
             }
         });
 
-        while (opModeInInit() && !isStarted() && !isStopRequested()) {
-           if (gamepad1.circle) {
-               path = AutoPath.SHORT;
-           } else if (gamepad1.x) {
-               path = AutoPath.LONG;
-           }
+        waitForStart();
 
-           telemetry.addData("Auto Path", path);
-           telemetry.update();
-        }
-
-        while (!opModeInInit() && !isStarted() && !isStopRequested()) {
+        if (!isStopRequested()) {
+            TrajectorySequence initial_path = drive.trajectorySequenceBuilder(START_POS)
+                    .lineToConstantHeading(new Vector2d(-36.50, 57.00))
+                    .build();
             location = detector.getLocation();
 
             drive.followTrajectorySequence(initial_path);
@@ -131,42 +89,68 @@ public class BlueLeft extends LinearOpMode {
             // 1. Turn to face the spike strip
             // 2. Place the pixel on the spike strip
             // 3. Turn to face away from the pixel stacks
-            switch (location) {
+            switch (location) {// drop purple pixel in correct spot
                 case LEFT:
-                    drive.turn(0);
+                    TrajectorySequence purple_left = drive.trajectorySequenceBuilder(START_POS)
+                            .lineTo(new Vector2d(-36.50, 57.00))
+                            .build();
+                    drive.turn(Math.toRadians(20));
                     // Place pixel on spike strip
                     drive.turn(0);
+                    break;
+
                 case NONE:
                     // Place pixel on spike strip
                     drive.turn(0);
+                    break;
+
                 case RIGHT:
-                    drive.turn(0);
+                    drive.turn(Math.toRadians(-20));
                     // Place pixel on spike strip
                     drive.turn(0);
+                    break;
+
+            }
+            switch (location) {// drop yellow pixel in correct spot
+                case LEFT:
+                    drive.turn(Math.toRadians(20));
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                    break;
+
+                case NONE:
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                    break;
+
+                case RIGHT:
+                    drive.turn(Math.toRadians(-20));
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                    break;
+
+            }
+            switch (location) {//park
+                case LEFT:
+                    drive.turn(Math.toRadians(20));
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                    break;
+
+                case NONE:
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                    break;
+
+                case RIGHT:
+                    drive.turn(Math.toRadians(-20));
+                    // Place pixel on spike strip
+                    drive.turn(0);
+                    break;
+
             }
 
-            switch (path) {
-                case SHORT:
-                    // Drive to short pixel stack
-                    drive.followTrajectorySequence(to_pixel_stack_from_inital_pos_short);
 
-                    // Intake pixel
-                    intake.intake(1000);
-
-                    // Drive to backboard
-                    drive.followTrajectorySequence(to_backdrop_from_pixel_stack_short);
-
-                    // Place pixel on backdrop
-
-                    // Drive back to the pixel stacks
-                    drive.followTrajectorySequence(to_pixel_stack_from_backdrop_short);
-
-                    // Intake pixel
-                    intake.intake(2000);
-
-                    // Park
-                    drive.followTrajectorySequence(park);
-            }
         }
     }
 }

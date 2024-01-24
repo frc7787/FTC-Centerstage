@@ -13,20 +13,20 @@ public class Properties {
 
     // ---------- ELEVATOR CONSTANTS ---------- //
 
-    public static volatile int BOTTOM_EXT_POS = 1890;
-    public static volatile int BOTTOM_ROT_POS = 528;
+    public static volatile int BOTTOM_EXT_POS = 2787;
+    public static volatile int BOTTOM_ROT_POS = 753;
 
-    public static volatile int LOW_EXT_POS = 2041;
-    public static volatile int LOW_ROT_POS = 2633;
+    public static volatile int LOW_EXT_POS = 3050;
+    public static volatile int LOW_ROT_POS = 926;
 
-    public static volatile int MED_EXT_POS = 2421;
-    public static volatile int MED_ROT_POS = 804;
+    public static volatile int MED_EXT_POS = 3003;
+    public static volatile int MED_ROT_POS = 1365;
 
-    public static volatile int HIGH_EXT_POS = 2983;
-    public static volatile int HIGH_ROT_POS = 947;
+    public static volatile int HIGH_EXT_POS = 3111;
+    public static volatile int HIGH_ROT_POS = 1684;
 
-    public static volatile int TOP_EXT_POS = 3045;
-    public static volatile int TOP_ROT_POS = 1107;
+    public static volatile int TOP_EXT_POS = 3002;
+    public static volatile int TOP_ROT_POS = 1980;
 
     public static volatile int LAUNCH_POS = 2000;
     public static volatile int HANG_POS   = 2768;
@@ -91,7 +91,7 @@ public class Properties {
     public static volatile Point CV_ANCHOR        = new Point(-1, -1);
     public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
     public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
-    public static volatile Rect CROP_RECT         = new Rect(160, 80, 160, 80);
+    public static volatile Rect CROP_RECT         = new Rect(160, 120, 160, 120);
 
     // -------- Position Constants ----------- //
 

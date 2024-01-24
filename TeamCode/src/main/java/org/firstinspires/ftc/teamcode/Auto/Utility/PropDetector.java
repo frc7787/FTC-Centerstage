@@ -121,11 +121,13 @@ public class PropDetector extends OpenCvPipeline {
             }
         }
 
-        if (biggestBoundingBox.x < LEFT_X) {
+        if (biggestBoundingBox.x < LEFT_X && biggestBoundingBox.x != 0) {
             location = LEFT;
-        } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X) {
+        } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X / 2.0) {
             location = RIGHT;
         }
+
+
 
         Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
 

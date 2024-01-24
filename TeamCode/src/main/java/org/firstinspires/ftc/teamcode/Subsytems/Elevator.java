@@ -36,6 +36,10 @@ public class Elevator {
 
         extend.setMotorEnable();
         extend.setTargetPositionTolerance(20);
+
+        extend.setTargetPosition(0);
+        extend.setMode(RUN_TO_POSITION);
+        extend.setPower(0.0);
     }
 
 

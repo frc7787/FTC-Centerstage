@@ -235,7 +235,6 @@ public class Arm {
                 worm.power(HOMING_POWER);
                 break;
             case COMPLETE:
-                normalArmState = NormalArmState.HOME;
                 break;
         }
     }
@@ -251,6 +250,7 @@ public class Arm {
         telemetry.addData("Arm Normal State", normalArmState);
         telemetry.addData("Arm EndGame State", endGameArmState);
         telemetry.addData("Current Arm Move Position", moveState);
+        telemetry.addData("Current homing state", homingState);
 
         telemetry.addData("Current Arm Amps", getArmCurrentAmps());
     }
