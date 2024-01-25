@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "Dead Wheel Test", group = "Test")
+@Disabled
 public class DeadWheelTest extends OpMode {
 
     private DcMotorImplEx left, right, front;

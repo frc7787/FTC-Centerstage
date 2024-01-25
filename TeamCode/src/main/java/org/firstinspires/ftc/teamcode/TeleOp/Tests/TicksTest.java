@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import dalvik.bytecode.Opcodes;
 
 @TeleOp(name = "Test - Elevator Ticks")
+@Disabled
 public class TicksTest extends OpMode {
 
     DcMotorImplEx motor;

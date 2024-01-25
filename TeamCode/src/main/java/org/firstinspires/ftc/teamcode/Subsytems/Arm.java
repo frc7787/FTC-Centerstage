@@ -165,6 +165,7 @@ public class Arm {
             case AT_POS:
                 if (extTargetPos>0 && worm.pos()<safetyLimit){
                     worm.rotate(safetyLimit);
+                    rotTargetPos=Math.max(safetyLimit,rotTargetPos);
                 }
                 else{
                     worm.rotate(rotTargetPos);

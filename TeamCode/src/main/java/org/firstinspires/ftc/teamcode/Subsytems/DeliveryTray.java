@@ -22,6 +22,7 @@ public class DeliveryTray {
     }
 
     public void init() {
+        wrist.setPosition(0);
     }
 
     /**

@@ -29,7 +29,7 @@ public class Properties {
     public static volatile int TOP_ROT_POS = 1980;
 
     public static volatile int LAUNCH_POS = 2000;
-    public static volatile int HANG_POS   = 2768;
+    public static volatile int HANG_POS   = 2850;
     public static volatile int HUNG_POS   = 0;
 
     public static volatile double DEFAULT_WORM_POWER     = 1.0;
@@ -49,7 +49,7 @@ public class Properties {
 
     // --------- DELIVERY TRAY CONSTANTS ---------- //
 
-    public static volatile double TRAY_DOOR_OPEN_POS = 1.0;
+    public static volatile double TRAY_DOOR_OPEN_POS = 0.1;
     public static volatile double TRAY_DOOR_CLOSED_POS = 0.0;
     public static volatile double TRAY_UP_WRIST_POS = 1.0;
     public static volatile double TRAY_DOWN_WRIST_POS = 1.0;

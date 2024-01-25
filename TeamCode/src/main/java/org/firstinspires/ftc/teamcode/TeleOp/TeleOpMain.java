@@ -90,17 +90,17 @@ public class TeleOpMain extends OpMode {
      * @param prevGamePad The copy of the gamepad state from the previous loop iteration
      */
     void listenForNormalArmCommand(@NonNull Gamepad currentGamePad, @NonNull Gamepad prevGamePad) {
-        if (currentGamePad.dpad_down && !prevGamePad.dpad_down) {
+        if (currentGamePad.dpad_down) {
             arm.setHoming();
-        } else if (currentGamePad.cross && !prevGamePad.cross) {
+        } else if (currentGamePad.cross) {
             arm.moveToPosition(BOTTOM_EXT_POS, BOTTOM_ROT_POS);
-        } else if (currentGamePad.square && !prevGamePad.square) {
+        } else if (currentGamePad.square) {
             arm.moveToPosition(LOW_EXT_POS, LOW_ROT_POS);
-        } else if (currentGamePad.circle && !prevGamePad.circle) {
+        } else if (currentGamePad.circle) {
             arm.moveToPosition(MED_EXT_POS, MED_ROT_POS);
-        } else if (currentGamePad.triangle && !prevGamePad.triangle) {
+        } else if (currentGamePad.triangle) {
             arm.moveToPosition(HIGH_EXT_POS, HIGH_ROT_POS);
-        } else if (currentGamePad.options && !prevGamePad.options) {
+        } else if (currentGamePad.options) {
             arm.moveToPosition(TOP_EXT_POS, TOP_ROT_POS);
         }
     }

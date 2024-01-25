@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 
 @TeleOp(name = "Test - Arm Current", group = "Test")
+@Disabled
 public class ArmCurrentTest extends OpMode {
     Arm arm;
 
