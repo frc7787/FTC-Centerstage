@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
 import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_ELEVATOR_POWER;
@@ -33,14 +34,8 @@ public class Elevator {
     public Elevator(@NonNull HardwareMap hardwareMap) {
         extend         = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
         extLimitSwitch = hardwareMap.get(TouchSensor.class, "ExtensionLimitSwitch");
-
-        extend.setMotorEnable();
-        extend.setTargetPositionTolerance(20);
-
-        extend.setTargetPosition(0);
-        extend.setMode(RUN_TO_POSITION);
-        extend.setPower(0.0);
     }
+
 
 
     /**
@@ -48,6 +43,7 @@ public class Elevator {
      * This resets the elevator motor encoder
      */
     public void init() {
+        extend.setMotorEnable();
         extend.setMode(STOP_AND_RESET_ENCODER);
         extend.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -58,7 +54,7 @@ public class Elevator {
      * Checks to see if we should stop and reset encoders
      */
     public void update() {
-        if (extLimitSwitch.isPressed() && !extensionLimitSwitchWasPressed && extend.getTargetPosition() == 0) {
+        if (extLimitSwitch.isPressed() && !extensionLimitSwitchWasPressed) {
             extend.setMode(STOP_AND_RESET_ENCODER);
         }
 
@@ -81,12 +77,6 @@ public class Elevator {
      * @param position The position to extend to.
      */
     public void extend(int position) { extend(position, DEFAULT_ELEVATOR_POWER); }
-
-    /**
-     * Powers the elevator motors
-     * @param power The power to supply the elevator motors
-     */
-    public void power(double power) { extend.setPower(power); }
 
     /**
      * Checks to see if the limit switch is pressed

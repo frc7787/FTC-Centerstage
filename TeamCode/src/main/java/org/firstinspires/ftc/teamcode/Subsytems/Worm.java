@@ -28,13 +28,6 @@ public class Worm {
     public Worm(@NonNull HardwareMap hardwareMap) {
         worm        = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
         limitSwitch = hardwareMap.get(TouchSensor.class, "WormLimitSwitch");
-
-        worm.setMotorEnable();
-        worm.setTargetPositionTolerance(20);
-
-        worm.setTargetPosition(0);
-        worm.setMode(RUN_TO_POSITION);
-        worm.setPower(0.0);
     }
 
     /**
@@ -51,7 +44,7 @@ public class Worm {
      * Checks to see if we should stop and reset encoders.
      */
     public void update() {
-        if (limitSwitch.isPressed() && !limitSwitchWasPressed && worm.getTargetPosition() == 0) {
+        if (limitSwitch.isPressed() && !limitSwitchWasPressed) {
             worm.setMode(STOP_AND_RESET_ENCODER);
         }
 

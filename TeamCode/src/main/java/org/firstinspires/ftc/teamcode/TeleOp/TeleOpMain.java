@@ -206,7 +206,7 @@ public class TeleOpMain extends OpMode {
 
                normalPeriodLoop(currentGamepad2, prevGamepad2);
 
-               if (currentGamepad2.left_trigger > 0.9 && currentGamepad2.right_trigger > 0.9) {
+               if (currentGamepad2.left_trigger > 0.5 && currentGamepad2.right_trigger > 0.5) {
                    gamePeriod = GamePeriod.ENDGAME;
                }
                break;

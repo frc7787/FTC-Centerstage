@@ -22,10 +22,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Arm {
     final Elevator elevator;
     final Worm worm;
+    private int safetyLimit= 2150;// worm safety limit 550 is a guess
+    private int rotTargetPos=0;
+    private int extTargetPos=0;
 
     HomingState homingState = HomingState.START;
-
-    NormalArmState normalArmState = NormalArmState.HOME;
+    NormalArmState normalArmState = NormalArmState.UNKNOWN;
     EndGameState endGameArmState  = EndGameState.IDLE;
     MoveState moveState           = MoveState.IDLE;
 
@@ -39,9 +41,8 @@ public class Arm {
     public enum NormalArmState {
         AT_POS,
         TO_POS,
-        FROM_HOME,
         HOMING,
-        HOME,
+        UNKNOWN,
     }
 
     public enum EndGameState {
@@ -59,7 +60,6 @@ public class Arm {
         IDLE,
         ROTATING,
         EXTENDING,
-        COMPLETE
     }
 
     /**
@@ -84,6 +84,7 @@ public class Arm {
      */
     public void setHoming() {
         normalArmState = NormalArmState.HOMING;
+        homingState=HomingState.START;
     }
 
     /**
@@ -128,42 +129,18 @@ public class Arm {
     public void update() {
         elevator.update();
         worm.update();
+        moveArmToTarget();
 
         if (normalArmState == NormalArmState.HOMING) {
             home();
             return;
         }
 
-        if (is_busy()) {
-            if (normalArmState == NormalArmState.HOME || normalArmState == NormalArmState.FROM_HOME) {
-                normalArmState = NormalArmState.FROM_HOME;
-            } else {
-                normalArmState = NormalArmState.TO_POS;
-            }
-        } else {
-           if (normalArmState != NormalArmState.HOME) {
-                normalArmState = NormalArmState.AT_POS;
-           }
-        }
+
     }
 
-    /**
-     * @return The current state of the arm.
-     */
-    public NormalArmState getNormalArmState() {
-        return normalArmState;
-    }
 
-    public EndGameState endGameState() {
-        return endGameArmState;
-    }
-
-    /**
-     * @return worm_is_busy || elevator_is_busy
-     */
-    public boolean is_busy() { return worm.is_busy() || elevator.is_busy(); }
-
-    public void moveToPosEndgame(int rotPos) {
+    public void moveToPosEndgame(int rotPos) { //to fix
         updateEndgame();
 
         worm.rotate(rotPos);
@@ -176,43 +153,46 @@ public class Arm {
      * @param rotPos The position to rotate the worm to
      */
     public void moveToPosition(int extPos, int rotPos) {
-        update();
+        extTargetPos=extPos;
+        rotTargetPos=rotPos;
+    }
+    private void moveArmToTarget() {
 
-        if (normalArmState == NormalArmState.FROM_HOME) {
-            switch (moveState) {
-                case IDLE:
-                    moveState = MoveState.ROTATING;
-                    break;
-                case ROTATING:
-                    worm.power(DEFAULT_WORM_POWER);
-
-                    if (worm.pos() >= 500) {
-                        moveState = MoveState.EXTENDING;
-                        break;
+        switch (normalArmState){
+            case UNKNOWN:
+                setHoming();
+                break;
+            case AT_POS:
+                if (extTargetPos>0 && worm.pos()<safetyLimit){
+                    worm.rotate(safetyLimit);
+                }
+                else{
+                    worm.rotate(rotTargetPos);
+                    elevator.extend(extTargetPos);
+                    if (elevator.is_busy()||worm.is_busy()){
+                        normalArmState=NormalArmState.TO_POS;
                     }
-                case EXTENDING:
-                    worm.rotate(rotPos);
-                    elevator.extend(extPos);
 
-                    if (worm.pos() == worm.targetPos() && elevator.pos() == elevator.targetPos()) {
-                        moveState = MoveState.COMPLETE;
-                        break;
-                    }
-                case COMPLETE:
-                    moveState = MoveState.IDLE;
+                }
+                break;
+            case TO_POS:
+                if (elevator.is_busy()||worm.is_busy()){
                     break;
-
-            }
-        } else {
-            worm.rotate(rotPos);
-            elevator.extend(extPos);
+                }
+                else {
+                    normalArmState=NormalArmState.AT_POS;
+                }
+                break;
+            case HOMING:
+                break;
         }
+
     }
 
     /**
      * Runs the arm homing sequence
      */
-    public void home() {
+    private void home() {
         // Cancel homing if we start moving anywhere else
         if (elevator.targetPos() != 0 || worm.targetPos() != 0) {
             homingState = HomingState.COMPLETE;
@@ -221,20 +201,28 @@ public class Arm {
         switch (homingState) {
             case START:
                 homingState = HomingState.HOMING_ELEVATOR;
+                normalArmState=NormalArmState.HOMING;
+                extTargetPos=0;
+                rotTargetPos=0;
                 break;
-            case HOMING_ELEVATOR:
+            case HOMING_ELEVATOR:// never do this until
+                elevator.extend(-5000,HOMING_POWER);
                 if (elevator.limitSwitchIsPressed()) {
                     homingState = HomingState.HOMING_WORM;
+                    elevator.extend(0,0);
                 }
-                elevator.power(HOMING_POWER);
+
                 break;
             case HOMING_WORM:
+                worm.rotate(-5000,HOMING_POWER);
                 if (worm.limitSwitchIsPressed()) {
                     homingState = HomingState.COMPLETE;
+                    worm.rotate(0,0);
                 }
-                worm.power(HOMING_POWER);
+
                 break;
             case COMPLETE:
+                normalArmState=NormalArmState.AT_POS;
                 break;
         }
     }
@@ -260,6 +248,12 @@ public class Arm {
         elevator.disable();
     }
 
+// Status update methods
+
+    public boolean elevatorLimitSwitchIsPressed() { return elevator.limitSwitchIsPressed(); }
+
+    public boolean wormLimitSwitchIsPressed() { return worm.limitSwitchIsPressed(); }
+
     /**
      * Gets the current draw of the elevator and worm motor in amps
      */
@@ -274,4 +268,26 @@ public class Arm {
      * Gets the current draw of the worm motor in amps
      */
     public double getWormCurrentAmps() { return worm.getCurrent(); }
+    public int getWormPos() {
+        return worm.pos();
+    }
+
+    /**
+     * @return The current state of the arm.
+     */
+    public NormalArmState getNormalArmState() {
+        return normalArmState;
+    }
+
+    public void powerWorm(double power) { worm.power(power); }
+
+    public EndGameState endGameState() {
+        return endGameArmState;
+    }
+
+    /**
+     * @return worm_is_busy || elevator_is_busy
+     */
+    public boolean is_busy() { return worm.is_busy() || elevator.is_busy(); }
+
 }
