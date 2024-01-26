@@ -115,6 +115,7 @@ public class TeleOpSimple extends OpMode {
                     } else {
                         intake.stop();
                         deliveryTray.closeDoor();
+                        elevatorMotor.setPower(0); // kk After intaking, we want to stop the backdrive on the elevator, so it doesn't burn
                     }
                 } else {
                     intake.stop();
@@ -123,7 +124,7 @@ public class TeleOpSimple extends OpMode {
                 if (elevatorMotor.getCurrentPosition() < 1300) {
                     deliveryTray.move_tray(0.0);
                 } else {
-                    deliveryTray.move_tray(0.4);
+                    deliveryTray.move_tray(0.6);
                 }
 
                 if (gamepad2.right_bumper) {
