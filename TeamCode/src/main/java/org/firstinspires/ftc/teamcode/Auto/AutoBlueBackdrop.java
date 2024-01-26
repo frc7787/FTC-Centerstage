@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
@@ -15,9 +14,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Auto Blue - Backdrop")
-@Config
+@TeleOp(name = "Auto Blue - Backdrop", group = "Blue")
 public class AutoBlueBackdrop extends LinearOpMode {
+
     PropDetector propDetector;
     PropLocation location;
     public static OpenCvCamera camera;
@@ -29,14 +28,15 @@ public class AutoBlueBackdrop extends LinearOpMode {
     public static int CENTER_FORWARD_SLEEP = 1170;
     public static int LEFT_FORWARD_SLEEP   = 500;
     public static int RIGHT_FORWARD_SLEEP  = 500;
-    public static int LEFT_TURN_SLEEP  = 600;
-    public static int RIGHT_TURN_SLEEP = 450;
+    public static int LEFT_TURN_SLEEP      = 600;
+    public static int RIGHT_TURN_SLEEP     = 450;
+
     public static double RIGHT_ANGLE = -0.514;
     public static double LEFT_ANGLE  = 0.714;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Rect cropRectangle = new Rect(130, 120, 190, 120);
+        Rect cropRectangle = new Rect(0, 120, 190, 120);
 
         propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);
@@ -82,16 +82,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
             switch (location) {
                 case LEFT:
-                    // THIS IS ACTUALLY CENTER LINE
-
-                    // Drive forward until you hit the line
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(CENTER_FORWARD_SLEEP);
-                    drive.setMotorPowers(0, 0, 0, 0);
-
-                    break;
-                case NONE:
-                    // THIS IS ACTUALLY LEFT LINE
+                    // THIS IS ACTUALLY LEFT
 
                     // Drive off the wall
                     drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
@@ -103,8 +94,8 @@ public class AutoBlueBackdrop extends LinearOpMode {
                     drive.setMotorPowers(0, 0, 0, 0);
 
                     break;
-                case RIGHT:
-                    // ACTUALLY RIGHT LINE
+                case NONE:
+                    // THIS IS ACTUALLY RIGHT
 
                     // Drive off the wall
                     drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
@@ -113,6 +104,14 @@ public class AutoBlueBackdrop extends LinearOpMode {
                     drive.turn(RIGHT_ANGLE);
                     drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
                     sleep(RIGHT_TURN_SLEEP);
+                    drive.setMotorPowers(0, 0, 0, 0);
+
+                    break;
+                case RIGHT:
+                    // ACTUALLY CENTER
+                    // Drive forward until you hit the line
+                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    sleep(CENTER_FORWARD_SLEEP);
                     drive.setMotorPowers(0, 0, 0, 0);
 
                     break;
