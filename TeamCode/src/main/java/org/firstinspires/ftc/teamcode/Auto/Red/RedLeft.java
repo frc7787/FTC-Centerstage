@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto.Red;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 // TODO Figure out the angles that we need to turn in order to face away from the backdrop
 // TODO Make the "place pixel on backdrop".
 @Autonomous(name = "Red Left", group = "Red")
+@Disabled
 public class RedLeft extends LinearOpMode {
     final PropDetector detector = new PropDetector(PropColor.RED);
     final Pose2d START_POS = new Pose2d(-31.50, -63, Math.toRadians(90));

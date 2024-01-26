@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -14,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.Properties.*;
 import androidx.annotation.NonNull;
 
 @TeleOp(name = "TeleOp 2023/2024 - Robot Centric", group = "Production")
+@Disabled
 public class TeleOpMain extends OpMode {
     DriveBase driveBase;
     Arm arm;
@@ -59,7 +61,7 @@ public class TeleOpMain extends OpMode {
         }
 
         if (doorToggle) {
-            deliveryTray.openDoor();
+            deliveryTray.openDoorToReleasePosition();
         } else {
             deliveryTray.closeDoor();
         }

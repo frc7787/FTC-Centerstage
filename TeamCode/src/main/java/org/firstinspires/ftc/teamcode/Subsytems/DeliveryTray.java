@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 
 import static org.firstinspires.ftc.teamcode.Properties.TRAY_DOOR_CLOSED_POS;
 import static org.firstinspires.ftc.teamcode.Properties.TRAY_DOOR_OPEN_POS;
-import static org.firstinspires.ftc.teamcode.Properties.TRAY_DOWN_WRIST_POS;
 import static org.firstinspires.ftc.teamcode.Properties.TRAY_UP_WRIST_POS;
 
 import androidx.annotation.NonNull;
@@ -28,9 +27,14 @@ public class DeliveryTray {
     /**
      * Opens the door of the tray
      */
-    public void openDoor() {
+    public void openDoorToReleasePosition() {
         leftDoor.setPosition(TRAY_DOOR_OPEN_POS);
         rightDoor.setPosition(TRAY_DOOR_OPEN_POS);
+    }
+
+    public void openDoorToIntakePos() {
+        leftDoor.setPosition(0.26);
+        rightDoor.setPosition(0.26);
     }
 
     /**

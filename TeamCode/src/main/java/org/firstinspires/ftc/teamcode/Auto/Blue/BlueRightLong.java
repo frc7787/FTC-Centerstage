@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto.Blue;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,6 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous(name = "Blue Left Long", group = "Blue")
+@Disabled
 public class BlueRightLong extends LinearOpMode {
     PropDetector detector = new PropDetector(PropColor.BLUE);
     Pose2d START_POS      = new Pose2d(12, 59, Math.toRadians(270));

@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Properties.HANG_POS;
-import static org.firstinspires.ftc.teamcode.Properties.HUNG_POS;
 import static org.firstinspires.ftc.teamcode.Properties.LAUNCH_POS;
 
-import androidx.annotation.NonNull;
-
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,6 +18,9 @@ import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
 import org.firstinspires.ftc.teamcode.Subsytems.Hanger;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
 import org.firstinspires.ftc.teamcode.Subsytems.Launcher;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @TeleOp(name = "TeleOp Simple", group = "Production")
 public class TeleOpSimple extends OpMode {
@@ -48,20 +49,18 @@ public class TeleOpSimple extends OpMode {
     boolean intakeToggle   = false;
 
     double wormPower         = 1.0;
-    double elevatorHoldPower = -0.1;
+    double elevatorHoldPower = -0.05;
 
     @Override public void init() {
         currentGamepad = new Gamepad();
         prevGamepad    = new Gamepad();
 
-        intake = new Intake(hardwareMap);
-        driveBase = new DriveBase(hardwareMap);
+        intake       = new Intake(hardwareMap);
+        driveBase    = new DriveBase(hardwareMap);
         deliveryTray = new DeliveryTray(hardwareMap);
         arm          = new Arm(hardwareMap);
         launcher     = new Launcher(hardwareMap);
         hanger       = new Hanger(hardwareMap);
-
-
 
         wormMotor     = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
         elevatorMotor = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
@@ -82,10 +81,19 @@ public class TeleOpSimple extends OpMode {
         hanger.init();
 
         deliveryTray.closeDoor();
+
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
     }
 
 
     @Override public void loop() {
+        telemetry.addData("Elevator Pos", elevatorMotor.getCurrentPosition());
+        telemetry.addData("Worm Pos", wormMotor.getCurrentPosition());
+
         prevGamepad.copy(currentGamepad);
         currentGamepad.copy(gamepad2);
 
@@ -97,89 +105,66 @@ public class TeleOpSimple extends OpMode {
 
         switch (period) {
             case NORMAL:
-                if (wormLimitSwitch.isPressed()) {
-                    if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
-                        intakeToggle = !intakeToggle;
-                    }
+                telemetry.addLine("Period: Normal");
+                if (currentGamepad.share && !prevGamepad.share) {
+                    period = Period.ENDGAME;
+                }
 
-                    if (intakeToggle) {
-                        deliveryTray.openDoor();
+                if (wormLimitSwitch.isPressed()) {
+                    if (currentGamepad.left_bumper) {
+                        elevatorMotor.setPower(elevatorHoldPower);
+                        deliveryTray.openDoorToIntakePos();
                         intake.intake();
                     } else {
-                        deliveryTray.closeDoor();
                         intake.stop();
+                        deliveryTray.closeDoor();
                     }
+                } else {
+                    intake.stop();
                 }
 
                 if (elevatorMotor.getCurrentPosition() < 1000) {
-                    deliveryTray.move_tray(0.0);
+                    deliveryTray.move_tray(0.2);
                 } else {
-                    deliveryTray.move_tray(0.1);
+                    deliveryTray.move_tray(0.0);
                 }
 
                 if (gamepad2.right_bumper) {
-                    deliveryTray.openDoor();
-                } else {
-                    deliveryTray.closeDoor();
+                    deliveryTray.openDoorToReleasePosition();
                 }
 
-                telemetry.addData("Worm Current Position", wormMotor.getCurrentPosition());
-                telemetry.addData("Elevator Current Position", elevatorMotor.getCurrentPosition());
-
                 if (gamepad2.dpad_up) {
-                    telemetry.addLine("We made it DPAD UP!");
                     if (elevatorLimitSwitch.isPressed() && wormMotor.getCurrentPosition() < 1500) {
                         deliveryTray.closeDoor();
-                        telemetry.addLine("We are trying to power the worm");
                         wormMotor.setPower(wormPower);
                         elevatorMotor.setPower(elevatorHoldPower);
                     } else {
-                        telemetry.addLine("We are trying to power the elevator");
                         wormMotor.setPower(0);
                         elevatorMotor.setPower(elevatorHoldPower);
                     }
                 } else if (gamepad2.dpad_down && elevatorLimitSwitch.isPressed() && !wormLimitSwitch.isPressed()) {
-                    telemetry.addLine("We made it to Dpad Down; bring the arm down");
                     wormMotor.setPower(-wormPower);
                     deliveryTray.closeDoor();
                     trayDoorIsOpen = false;
                 } else if (gamepad2.dpad_down && !elevatorLimitSwitch.isPressed() && !wormLimitSwitch.isPressed()) {
-                    telemetry.addLine("We made it to Dpad Down; trying to zero elevator");
                     elevatorMotor.setPower(elevatorHoldPower);
                     wormMotor.setPower(0);
                 } else {
-                    telemetry.addLine("Nothing happening. Set worm power to ZERO");
                     wormMotor.setPower(0);
+                    if (wormMotor.getCurrentPosition() > 1000) {
+                        elevatorMotor.setPower(gamepad2.right_stick_y * -1.0);
+
+                    }
                 }
 
-                if (wormMotor.getCurrentPosition() > 1400 ) {
-                    if (elevatorMotor.getCurrentPosition() > 2700) {
-                        elevatorMotor.setPower(Math.min(0, (gamepad2.left_stick_y * -1)));
-                    }
-                    else {
-                        elevatorMotor.setPower(gamepad2.left_stick_y * -1);
-                    }
-
-                }
-                if (gamepad2.options && gamepad2.options) {
-                    period = Period.ENDGAME;
-                }
 
                 break;
             case ENDGAME:
                 telemetry.addLine("Endgame");
+                if (currentGamepad.share && !prevGamepad.share) {
+                    period = Period.NORMAL;
+                }
 
-//    void listenForEndgameArmCommand(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
-//        if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
-//            arm.moveToPosEndgame(LAUNCH_POS);
-//        } else if (currentGamepad.right_bumper && !prevGamepad.right_bumper) {
-//            arm.moveToPosEndgame(HANG_POS);
-//        } else if (currentGamepad.dpad_down && !prevGamepad.dpad_down) {
-//            arm.moveToPosEndgame(0);
-//        } else if (currentGamepad.dpad_up) {
-//            arm.moveToPosEndgame(HUNG_POS);
-//        }
-//    }
                 if (gamepad2.left_bumper) {
                     wormMotor.setTargetPosition(LAUNCH_POS);
                     wormMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -188,24 +173,22 @@ public class TeleOpSimple extends OpMode {
                     wormMotor.setTargetPosition(HANG_POS);
                     wormMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     wormMotor.setPower(1);
-                }else if (gamepad2.dpad_down||gamepad2.dpad_up) {
+                } else if (gamepad2.dpad_down||gamepad2.dpad_up) {
                     wormMotor.setTargetPosition(0);
                     wormMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     wormMotor.setPower(1);
                 }
-
                 if (wormMotor.getTargetPosition()==LAUNCH_POS &&!wormMotor.isBusy() && gamepad2.cross) {
                     launcher.release();
                 }
-
                 if (wormMotor.getTargetPosition()==HANG_POS &&!wormMotor.isBusy() && gamepad2.cross) {
                     hanger.release();
                 }
                 if (gamepad2.options && gamepad2.options) {
                     period = Period.NORMAL;
                 }
+                break;
         }
-
         telemetry.update();
     }
 }

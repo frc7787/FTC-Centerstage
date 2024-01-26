@@ -33,7 +33,7 @@ public class DeliveryTrayTest extends OpMode {
         tray.debug(telemetry);
 
         if (currentGamepadOne.cross && !prevGamepadOne.cross || currentGamepadTwo.cross && !prevGamepadTwo.cross) {
-            tray.openDoor();
+            tray.openDoorToReleasePosition();
         } else if (currentGamepadOne.circle && !prevGamepadOne.circle || currentGamepadTwo.circle && !prevGamepadTwo.circle) {
             tray.closeDoor();
         }
