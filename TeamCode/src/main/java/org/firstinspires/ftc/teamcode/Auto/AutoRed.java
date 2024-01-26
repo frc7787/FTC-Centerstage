@@ -1,27 +1,20 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.AutoPath;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.TrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.ArrayList;
-
-@Autonomous(name = "PROP DETECTOR TESTING")
-public class PropDetectorTesting extends LinearOpMode {
+@Autonomous(name = "Auto Mode RED - USE THIS!")
+public class AutoRed extends LinearOpMode {
     PropDetector propDetector;
     PropLocation location;
     public static OpenCvCamera camera;
@@ -33,7 +26,7 @@ public class PropDetectorTesting extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        propDetector = new PropDetector(PropColor.BLUE);
+        propDetector = new PropDetector(PropColor.RED);
         drive  = new MecanumDriveBase(hardwareMap);
         intake = new Intake(hardwareMap);
 
@@ -47,7 +40,7 @@ public class PropDetectorTesting extends LinearOpMode {
         camera = OpenCvCameraFactory
                 .getInstance()
                 .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
+                        hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
                 );
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -74,22 +67,53 @@ public class PropDetectorTesting extends LinearOpMode {
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
-
+/*
             switch (location) {
                 case LEFT:
-                    // THIS IS ACTUALLY NONE
+                    // THIS IS ACTUALLY CENTER LINE
+
+                    // Drive forward until you hit the line
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+                    sleep(2500);
+
+                    // Outtake the pixel
+                    intake.outtake(0.4);
+                    sleep(1000);
+
                     break;
                 case NONE:
-                    // THIS IS ACTUALLY LEFT
+                    // THIS IS ACTUALLY LEFT LINE
+
+                    // Drive off the wall
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+                    sleep(500);
+                    // Turn slightly and drive forward to the line
                     drive.turn(3.14 * 0.10);
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+                    sleep(1500);
+                    // Outtake the pixel
+                    intake.outtake(0.4);
+                    sleep(1000);
+
                     break;
                 case RIGHT:
-                    // ACTUALLY RIGHT
+                    // ACTUALLY RIGHT LINE
+
+                    // Drive off the wall
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+                    sleep(500);
+                    // Turn to the right and drive to the line
                     drive.turn(-3.14 * 0.10);
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+                    sleep(1500);
+                    // Outtake the pixel
+                    intake.outtake(0.4);
+                    sleep(1000);
+
                     break;
             }
 
-            sleep(99999999);
+            sleep(99999999);*/
         }
     }
 }

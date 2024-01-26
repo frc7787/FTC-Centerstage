@@ -70,7 +70,7 @@ public class Properties {
 
     // ----------- Camera Constants ------------ //
 
-    public static volatile int CAMERA_WIDTH       = 340;
+    public static volatile int CAMERA_WIDTH       = 320;
     public static volatile int ERODE_ITERATIONS   = 7;
     public static volatile int DIALATE_ITERATIONS = 11;
 
@@ -91,7 +91,7 @@ public class Properties {
     public static volatile Point CV_ANCHOR        = new Point(-1, -1);
     public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
     public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
-    public static volatile Rect CROP_RECT         = new Rect(160, 120, 160, 120);
+    public static volatile Rect CROP_RECT         = new Rect(130, 120, 190, 120);
 
     // -------- Position Constants ----------- //
 
