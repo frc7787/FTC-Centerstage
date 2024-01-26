@@ -36,6 +36,7 @@ import java.util.List;
 public class PropDetector extends OpenCvPipeline {
 
     public PropColor propColor;
+    Rect cropRectangle;
 
     PropLocation location = NONE;
 
@@ -50,14 +51,15 @@ public class PropDetector extends OpenCvPipeline {
                 output         = new Mat();
 
 
-    public PropDetector(@NonNull PropColor color) {
+    public PropDetector(@NonNull PropColor color, @NonNull Rect cropRectangle) {
+        this.cropRectangle = cropRectangle;
         propColor = color;
     }
 
     @Override
     public Mat processFrame(Mat input) {
         // Crop
-        input = input.submat(CROP_RECT);
+        input = input.submat(cropRectangle);
 
         // Convert color to HSV
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);

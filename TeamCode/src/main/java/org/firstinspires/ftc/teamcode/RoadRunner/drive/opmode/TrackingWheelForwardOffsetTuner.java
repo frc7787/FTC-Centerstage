@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.drive.TrackingWheelLocalizer;
  */
 @Config
 @Autonomous(name = "Tracking Wheel Forward Offset Tuner", group="Roadrunner")
+@Disabled
 public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
     public static double ANGLE = 180; // deg
     public static int NUM_TRIALS = 5;

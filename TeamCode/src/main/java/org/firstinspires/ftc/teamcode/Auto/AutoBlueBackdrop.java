@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -9,12 +10,14 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
+import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Auto Mode RED - USE THIS!")
-public class AutoRed extends LinearOpMode {
+@Autonomous(name = "Auto Blue - Backdrop")
+@Config
+public class AutoBlueBackdrop extends LinearOpMode {
     PropDetector propDetector;
     PropLocation location;
     public static OpenCvCamera camera;
@@ -23,12 +26,21 @@ public class AutoRed extends LinearOpMode {
 
     Intake intake;
 
+    public static int CENTER_FORWARD_SLEEP = 1170;
+    public static int LEFT_FORWARD_SLEEP   = 500;
+    public static int RIGHT_FORWARD_SLEEP  = 500;
+    public static int LEFT_TURN_SLEEP  = 600;
+    public static int RIGHT_TURN_SLEEP = 450;
+    public static double RIGHT_ANGLE = -0.514;
+    public static double LEFT_ANGLE  = 0.714;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        propDetector = new PropDetector(PropColor.RED);
-        drive  = new MecanumDriveBase(hardwareMap);
-        intake = new Intake(hardwareMap);
+        Rect cropRectangle = new Rect(130, 120, 190, 120);
+
+        propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
+        drive        = new MecanumDriveBase(hardwareMap);
+        intake       = new Intake(hardwareMap);
 
         drive.init();
 
@@ -40,7 +52,7 @@ public class AutoRed extends LinearOpMode {
         camera = OpenCvCameraFactory
                 .getInstance()
                 .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
+                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
                 );
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -55,7 +67,6 @@ public class AutoRed extends LinearOpMode {
             }
         });
 
-
         waitForStart();
 
         // Pls do not delete this
@@ -64,56 +75,50 @@ public class AutoRed extends LinearOpMode {
         while (opModeIsActive()) {
             location = propDetector.getLocation();
 
-
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
-/*
+
+            sleep(5000);
+
             switch (location) {
                 case LEFT:
                     // THIS IS ACTUALLY CENTER LINE
 
                     // Drive forward until you hit the line
-                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-                    sleep(2500);
-
-                    // Outtake the pixel
-                    intake.outtake(0.4);
-                    sleep(1000);
+                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    sleep(CENTER_FORWARD_SLEEP);
+                    drive.setMotorPowers(0, 0, 0, 0);
 
                     break;
                 case NONE:
                     // THIS IS ACTUALLY LEFT LINE
 
                     // Drive off the wall
-                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-                    sleep(500);
+                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    sleep(LEFT_FORWARD_SLEEP);
                     // Turn slightly and drive forward to the line
-                    drive.turn(3.14 * 0.10);
-                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-                    sleep(1500);
-                    // Outtake the pixel
-                    intake.outtake(0.4);
-                    sleep(1000);
+                    drive.turn(LEFT_ANGLE);
+                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    sleep(LEFT_TURN_SLEEP);
+                    drive.setMotorPowers(0, 0, 0, 0);
 
                     break;
                 case RIGHT:
                     // ACTUALLY RIGHT LINE
 
                     // Drive off the wall
-                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-                    sleep(500);
+                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    sleep(RIGHT_FORWARD_SLEEP);
                     // Turn to the right and drive to the line
-                    drive.turn(-3.14 * 0.10);
-                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-                    sleep(1500);
-                    // Outtake the pixel
-                    intake.outtake(0.4);
-                    sleep(1000);
+                    drive.turn(RIGHT_ANGLE);
+                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    sleep(RIGHT_TURN_SLEEP);
+                    drive.setMotorPowers(0, 0, 0, 0);
 
                     break;
             }
 
-            sleep(99999999);*/
+            sleep(99999999);
         }
     }
 }

@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Subsytems.Launcher;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "TeleOp Simple", group = "Production")
+@TeleOp(name = "TeleOp - Qualifiers", group = "Production")
 public class TeleOpSimple extends OpMode {
 
     Period period = Period.NORMAL;
@@ -44,9 +44,6 @@ public class TeleOpSimple extends OpMode {
     TouchSensor elevatorLimitSwitch, wormLimitSwitch;
 
     Gamepad currentGamepad, prevGamepad;
-
-    boolean trayDoorIsOpen = false;
-    boolean intakeToggle   = false;
 
     double wormPower         = 1.0;
     double elevatorHoldPower = -0.05;
@@ -123,10 +120,10 @@ public class TeleOpSimple extends OpMode {
                     intake.stop();
                 }
 
-                if (elevatorMotor.getCurrentPosition() < 1000) {
-                    deliveryTray.move_tray(0.2);
-                } else {
+                if (elevatorMotor.getCurrentPosition() < 1300) {
                     deliveryTray.move_tray(0.0);
+                } else {
+                    deliveryTray.move_tray(0.4);
                 }
 
                 if (gamepad2.right_bumper) {
@@ -145,7 +142,7 @@ public class TeleOpSimple extends OpMode {
                 } else if (gamepad2.dpad_down && elevatorLimitSwitch.isPressed() && !wormLimitSwitch.isPressed()) {
                     wormMotor.setPower(-wormPower);
                     deliveryTray.closeDoor();
-                    trayDoorIsOpen = false;
+
                 } else if (gamepad2.dpad_down && !elevatorLimitSwitch.isPressed() && !wormLimitSwitch.isPressed()) {
                     elevatorMotor.setPower(elevatorHoldPower);
                     wormMotor.setPower(0);

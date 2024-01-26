@@ -304,11 +304,11 @@ public class MecanumDriveBase extends MecanumDrive {
     }
 
     @Override
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        fL.setPower(v);
-        bL.setPower(v1);
-        bR.setPower(v2);
-        fR.setPower(v3);
+    public void setMotorPowers(double frontLeft, double backLeft, double backRight, double frontRight) {
+        fL.setPower(frontLeft);
+        bL.setPower(backLeft);
+        bR.setPower(backRight);
+        fR.setPower(frontRight);
     }
 
     @Override

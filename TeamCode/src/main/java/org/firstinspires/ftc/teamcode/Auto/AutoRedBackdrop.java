@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
@@ -10,12 +9,13 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
+import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Auto Mode Blue - USE THIS!")
-public class AutoBlue extends LinearOpMode {
+@Autonomous(name = "Auto Red - Backdrop")
+public class AutoRedBackdrop extends LinearOpMode {
     PropDetector propDetector;
     PropLocation location;
     public static OpenCvCamera camera;
@@ -25,10 +25,11 @@ public class AutoBlue extends LinearOpMode {
     Intake intake;
 
 
-
     @Override
     public void runOpMode() throws InterruptedException {
-        propDetector = new PropDetector(PropColor.BLUE);
+        Rect cropRectangle = new Rect(130, 120, 190, 120);
+
+        propDetector = new PropDetector(PropColor.RED, cropRectangle);
         drive  = new MecanumDriveBase(hardwareMap);
         intake = new Intake(hardwareMap);
 
@@ -42,7 +43,7 @@ public class AutoBlue extends LinearOpMode {
         camera = OpenCvCameraFactory
                 .getInstance()
                 .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
+                        hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
                 );
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -69,44 +70,47 @@ public class AutoBlue extends LinearOpMode {
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
-
-            sleep(5000);
-
             switch (location) {
                 case LEFT:
                     // THIS IS ACTUALLY CENTER LINE
 
                     // Drive forward until you hit the line
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(500);
-                    drive.setMotorPowers(0, 0, 0, 0);
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+                    sleep(2500);
+
+                    // Outtake the pixel
+                    intake.outtake(0.4);
+                    sleep(1000);
 
                     break;
                 case NONE:
                     // THIS IS ACTUALLY LEFT LINE
 
                     // Drive off the wall
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
                     sleep(500);
                     // Turn slightly and drive forward to the line
                     drive.turn(3.14 * 0.10);
-                    drive.setMotorPowers(-0.5, -0.5,
-                            -0.5, -0.5);
-                    sleep(500);
-                    drive.setMotorPowers(0, 0, 0, 0);
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+                    sleep(1500);
+                    // Outtake the pixel
+                    intake.outtake(0.4);
+                    sleep(1000);
 
                     break;
                 case RIGHT:
                     // ACTUALLY RIGHT LINE
 
                     // Drive off the wall
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
                     sleep(500);
                     // Turn to the right and drive to the line
                     drive.turn(-3.14 * 0.10);
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
+                    drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
                     sleep(1500);
-                    drive.setMotorPowers(0, 0, 0, 0);
+                    // Outtake the pixel
+                    intake.outtake(0.4);
+                    sleep(1000);
 
                     break;
             }
