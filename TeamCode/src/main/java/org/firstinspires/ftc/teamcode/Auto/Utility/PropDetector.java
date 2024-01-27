@@ -127,7 +127,7 @@ public class PropDetector extends OpenCvPipeline {
             }
         }
 
-        if (biggestBoundingBox.x < LEFT_X && biggestBoundingBox.x != 0) {
+        if (biggestBoundingBox.x < LEFT_X && biggestBoundingBox.area() != 0) {
             location = LEFT;
         } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X / 2.0) {
             location = RIGHT;
