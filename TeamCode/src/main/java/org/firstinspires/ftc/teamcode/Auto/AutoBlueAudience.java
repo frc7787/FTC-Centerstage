@@ -38,7 +38,7 @@ public class AutoBlueAudience extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Rect cropRectangle = new Rect(130, 120, 190, 120);
+        Rect cropRectangle = new Rect(110, 120, 190, 120);
 
         propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);
@@ -75,6 +75,8 @@ public class AutoBlueAudience extends LinearOpMode {
         location = propDetector.getLocation();
 
         while (opModeIsActive()) {
+            sleep(4000);
+
             int leftCount  = 0;
             int rightCount = 0;
             int noneCount  = 0;

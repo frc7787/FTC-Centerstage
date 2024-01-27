@@ -58,6 +58,8 @@ public class PropDetector extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+
+
         // Crop
         input = input.submat(cropRectangle);
 

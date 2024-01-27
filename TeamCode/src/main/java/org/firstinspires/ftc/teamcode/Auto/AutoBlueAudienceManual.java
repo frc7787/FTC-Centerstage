@@ -78,13 +78,37 @@ public class AutoBlueAudienceManual extends LinearOpMode {
         location = propDetector.getLocation();
 
         while (opModeIsActive()) {
-            location = propDetector.getLocation();
+            int leftCount  = 0;
+            int rightCount = 0;
+            int noneCount  = 0;
+
+            for (int i = 0; i <= 20;  i++) {
+                switch (propDetector.getLocation()) {
+                    case LEFT:
+                        leftCount += 1;
+                        break;
+                    case RIGHT:
+                        rightCount += 1;
+                        break;
+                    case NONE:
+                        noneCount += 1;
+                        break;
+                }
+            }
+
+            if (leftCount >= rightCount && leftCount >= noneCount) {
+                location = PropLocation.LEFT;
+            } else if (rightCount >= leftCount && rightCount >= noneCount) {
+                location = PropLocation.RIGHT;
+            } else {
+                location = PropLocation.NONE;
+            }
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
 
-            //sleep(500);
-/*
+            // sleep(5000);
+
             switch (location) {
                 case LEFT:
                     // THIS IS ACTUALLY CENTER LINE
@@ -121,9 +145,14 @@ public class AutoBlueAudienceManual extends LinearOpMode {
                     drive.setMotorPowers(0, 0, 0, 0);
 
                     break;
-            }*/
+            }
 
-            sleep(500);
+            sleep(50);
+            drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+            sleep(400);
+            drive.setMotorPowers(0, 0, 0, 0);
+
+            sleep(99999999);
         }
     }
 
