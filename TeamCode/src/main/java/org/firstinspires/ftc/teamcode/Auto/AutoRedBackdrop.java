@@ -18,6 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name = "Auto Red - Backdrop", group = "Red")
 @Config
 public class AutoRedBackdrop extends LinearOpMode {
+    Rect cropRectangle = new Rect(130, 120, 190, 120);
+
     PropDetector propDetector;
     PropLocation location;
     public static OpenCvCamera camera;
@@ -37,7 +39,6 @@ public class AutoRedBackdrop extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Rect cropRectangle = new Rect(130, 120, 190, 120);
 
         propDetector = new PropDetector(PropColor.RED, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);

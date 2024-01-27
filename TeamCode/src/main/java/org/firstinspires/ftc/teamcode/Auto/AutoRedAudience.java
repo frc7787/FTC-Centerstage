@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name = "Auto Red - Audience", group = "Red")
 @Config
 public class AutoRedAudience extends LinearOpMode {
+    Rect cropRectangle = new Rect(0, 120, 240, 120);
 
     PropDetector propDetector;
     PropLocation location;
@@ -38,8 +39,6 @@ public class AutoRedAudience extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Rect cropRectangle = new Rect(0, 120, 210, 120);
-
         propDetector = new PropDetector(PropColor.RED, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);
         intake       = new Intake(hardwareMap);
@@ -106,7 +105,7 @@ public class AutoRedAudience extends LinearOpMode {
                 location = PropLocation.NONE;
             }
 
-            sleep(5000);
+            //sleep(5000);
 
             switch (location) {
                 case LEFT:

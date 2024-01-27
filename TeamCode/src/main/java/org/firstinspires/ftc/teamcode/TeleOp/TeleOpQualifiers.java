@@ -45,7 +45,7 @@ public class TeleOpQualifiers extends OpMode {
     Gamepad currentGamepad, prevGamepad;
 
     double wormPower         = 1.0;
-    double elevatorHoldPower = -0.05;
+    double elevatorHoldPower = -0.1;
 
     @Override public void init() {
         currentGamepad = new Gamepad();
@@ -134,13 +134,12 @@ public class TeleOpQualifiers extends OpMode {
                 }
 
                 if (gamepad2.dpad_up) {
+                    elevatorMotor.setPower(elevatorHoldPower);
                     if (elevatorLimitSwitch.isPressed() && wormMotor.getCurrentPosition() < 1500) {
                         deliveryTray.closeDoor();
                         wormMotor.setPower(wormPower);
-                        elevatorMotor.setPower(elevatorHoldPower);
                     } else {
                         wormMotor.setPower(0);
-                        elevatorMotor.setPower(elevatorHoldPower);
                     }
                 } else if (gamepad2.dpad_down && elevatorLimitSwitch.isPressed() && !wormLimitSwitch.isPressed()) {
                     wormMotor.setPower(-wormPower);

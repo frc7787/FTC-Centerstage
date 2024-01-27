@@ -19,6 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name = "Auto Blue - Backdrop", group = "Blue")
 @Config
 public class AutoBlueBackdrop extends LinearOpMode {
+    Rect cropRectangle = new Rect(0, 120, 240, 120);
 
     PropDetector propDetector;
     PropLocation location;
@@ -28,7 +29,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
     Intake intake;
 
-    public static int CENTER_FORWARD_SLEEP = 1200;
+    public static int CENTER_FORWARD_SLEEP = 1170;
     public static int LEFT_FORWARD_SLEEP   = 550;
     public static int RIGHT_FORWARD_SLEEP  = 500;
     public static int LEFT_TURN_SLEEP      = 400;
@@ -39,7 +40,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Rect cropRectangle = new Rect(0, 120, 210, 120);
+
 
         propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);
@@ -105,7 +106,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
 
-            sleep(5000);
+            //sleep(5000);
 
             switch (location) {
                 case LEFT:
