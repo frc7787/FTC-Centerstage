@@ -71,9 +71,13 @@ public class PropDetector extends OpenCvPipeline {
                 Core.inRange(mat, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, thresh0);
                 Core.inRange(mat1, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, thresh1);
                 Core.add(thresh0, thresh1, output);
+
+                break;
             case BLUE:
                 // Checks if the image is in range
                 Core.inRange(mat, LOW_HSV_RANGE_BLUE, HIGH_HSV_RANGE_BLUE, output);
+
+                break;
         }
 
         // Erode to remove noise

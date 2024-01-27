@@ -82,10 +82,10 @@ public class Properties {
     public static volatile Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 100);
     public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(115, 255, 255);
 
-    public static volatile Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 150, 0);
+    public static volatile Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 100, 0);
     public static volatile Scalar HIGH_HSV_RANGE_RED_ONE = new Scalar(180, 255, 255);
 
-    public static volatile Scalar LOW_HSV_RANGE_RED_TWO  = new Scalar(0, 160, 0);
+    public static volatile Scalar LOW_HSV_RANGE_RED_TWO  = new Scalar(0, 100, 0);
     public static volatile Scalar HIGH_HSV_RANGE_RED_TWO = new Scalar(10, 255, 255);
 
     public static volatile Point CV_ANCHOR        = new Point(-1, -1);

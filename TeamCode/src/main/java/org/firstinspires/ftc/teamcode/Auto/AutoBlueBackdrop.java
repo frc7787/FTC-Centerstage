@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,7 +16,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp(name = "Auto Blue - Backdrop", group = "Blue")
+@Autonomous(name = "Auto Blue - Backdrop", group = "Blue")
+@Config
 public class AutoBlueBackdrop extends LinearOpMode {
 
     PropDetector propDetector;
@@ -25,18 +28,18 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
     Intake intake;
 
-    public static int CENTER_FORWARD_SLEEP = 1170;
-    public static int LEFT_FORWARD_SLEEP   = 500;
+    public static int CENTER_FORWARD_SLEEP = 1200;
+    public static int LEFT_FORWARD_SLEEP   = 550;
     public static int RIGHT_FORWARD_SLEEP  = 500;
-    public static int LEFT_TURN_SLEEP      = 600;
-    public static int RIGHT_TURN_SLEEP     = 450;
+    public static int LEFT_TURN_SLEEP      = 400;
+    public static int RIGHT_TURN_SLEEP     = 720;
 
-    public static double RIGHT_ANGLE = -0.514;
-    public static double LEFT_ANGLE  = 0.714;
+    public static double RIGHT_ANGLE = -0.714;
+    public static double LEFT_ANGLE  = 0.45;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Rect cropRectangle = new Rect(0, 120, 190, 120);
+        Rect cropRectangle = new Rect(0, 120, 210, 120);
 
         propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);
@@ -73,7 +76,31 @@ public class AutoBlueBackdrop extends LinearOpMode {
         location = propDetector.getLocation();
 
         while (opModeIsActive()) {
-            location = propDetector.getLocation();
+            int leftCount  = 0;
+            int rightCount = 0;
+            int noneCount  = 0;
+
+            for (int i = 0; i <= 20;  i++) {
+                switch (propDetector.getLocation()) {
+                    case LEFT:
+                        leftCount += 1;
+                        break;
+                    case RIGHT:
+                        rightCount += 1;
+                        break;
+                    case NONE:
+                        noneCount += 1;
+                        break;
+                }
+            }
+
+            if (leftCount >= rightCount && leftCount >= noneCount) {
+                location = PropLocation.LEFT;
+            } else if (rightCount >= leftCount && rightCount >= noneCount) {
+                location = PropLocation.RIGHT;
+            } else {
+                location = PropLocation.NONE;
+            }
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
@@ -116,6 +143,11 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
                     break;
             }
+
+            sleep(50);
+            drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+            sleep(400);
+            drive.setMotorPowers(0, 0, 0, 0);
 
             sleep(99999999);
         }

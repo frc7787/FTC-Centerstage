@@ -19,11 +19,10 @@ import org.firstinspires.ftc.teamcode.Subsytems.Hanger;
 import org.firstinspires.ftc.teamcode.Subsytems.Intake;
 import org.firstinspires.ftc.teamcode.Subsytems.Launcher;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "TeleOp - Qualifiers", group = "Production")
-public class TeleOpSimple extends OpMode {
+@TeleOp(name = "Judging")
+public class Judging extends OpMode {
 
     Period period = Period.NORMAL;
 
@@ -94,11 +93,11 @@ public class TeleOpSimple extends OpMode {
         prevGamepad.copy(currentGamepad);
         currentGamepad.copy(gamepad2);
 
-        driveBase.driveManualRobotCentric(
-                gamepad1.left_stick_y * -1.0,
-                gamepad1.left_stick_x,
-                gamepad1.right_stick_x
-        );
+//        driveBase.driveManualRobotCentric(
+//                gamepad1.left_stick_y * -1.0,
+//                gamepad1.left_stick_x,
+//                gamepad1.right_stick_x
+//        );
 
         switch (period) {
             case NORMAL:

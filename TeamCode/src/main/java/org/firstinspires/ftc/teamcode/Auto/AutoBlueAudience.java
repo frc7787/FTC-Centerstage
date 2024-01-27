@@ -15,6 +15,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+// ---------------------------------- WORKING ------------------------------------ //
 @Autonomous(name = "Auto Blue - Audience", group = "Blue")
 @Config
 public class AutoBlueAudience extends LinearOpMode {
@@ -29,10 +30,10 @@ public class AutoBlueAudience extends LinearOpMode {
     public static int CENTER_FORWARD_SLEEP = 1170;
     public static int LEFT_FORWARD_SLEEP   = 500;
     public static int RIGHT_FORWARD_SLEEP  = 500;
-    public static int LEFT_TURN_SLEEP      = 600;
-    public static int RIGHT_TURN_SLEEP     = 450;
+    public static int LEFT_TURN_SLEEP      = 550;
+    public static int RIGHT_TURN_SLEEP     = 400;
 
-    public static double RIGHT_ANGLE = -0.514;
+    public static double RIGHT_ANGLE = -0.568;
     public static double LEFT_ANGLE  = 0.714;
 
     @Override
@@ -74,12 +75,36 @@ public class AutoBlueAudience extends LinearOpMode {
         location = propDetector.getLocation();
 
         while (opModeIsActive()) {
-            location = propDetector.getLocation();
+            int leftCount  = 0;
+            int rightCount = 0;
+            int noneCount  = 0;
+
+            for (int i = 0; i <= 20;  i++) {
+                switch (propDetector.getLocation()) {
+                    case LEFT:
+                        leftCount += 1;
+                        break;
+                    case RIGHT:
+                        rightCount += 1;
+                        break;
+                    case NONE:
+                        noneCount += 1;
+                        break;
+                }
+            }
+
+            if (leftCount >= rightCount && leftCount >= noneCount) {
+                location = PropLocation.LEFT;
+            } else if (rightCount >= leftCount && rightCount >= noneCount) {
+                location = PropLocation.RIGHT;
+            } else {
+                location = PropLocation.NONE;
+            }
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
 
-            sleep(5000);
+            // sleep(5000);
 
             switch (location) {
                 case LEFT:
@@ -118,6 +143,11 @@ public class AutoBlueAudience extends LinearOpMode {
 
                     break;
             }
+
+            sleep(50);
+            drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+            sleep(400);
+            drive.setMotorPowers(0, 0, 0, 0);
 
             sleep(99999999);
         }
