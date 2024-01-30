@@ -72,7 +72,7 @@ public class AutoRedBackdrop extends LinearOpMode {
         waitForStart();
 
         // Pls do not delete this
-        location = propDetector.getLocation();
+        location = propDetector.getPropLocation();
 
         while (opModeIsActive()) {
             int leftCount  = 0;
@@ -80,7 +80,7 @@ public class AutoRedBackdrop extends LinearOpMode {
             int noneCount  = 0;
 
             for (int i = 0; i <= 20;  i++) {
-                switch (propDetector.getLocation()) {
+                switch (propDetector.getPropLocation()) {
                     case LEFT:
                         leftCount += 1;
                         break;

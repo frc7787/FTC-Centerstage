@@ -115,7 +115,7 @@ public class TeleOpQualifiers extends OpMode {
                     } else {
                         intake.stop();
                         deliveryTray.closeDoor();
-                        elevatorMotor.setPower(0);
+                        //elevatorMotor.setPower(0);
                         wormMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     }
                 } else {

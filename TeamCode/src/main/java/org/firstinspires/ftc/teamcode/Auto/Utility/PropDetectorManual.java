@@ -56,18 +56,18 @@ public class PropDetectorManual implements VisionProcessor, CameraStreamSource {
     PropLocation location = NONE;
 
     private Mat mat            = new Mat(),
-            mat1           = new Mat(),
-            thresh0        = new Mat(),
-            thresh1        = new Mat(),
-            edges          = new Mat(),
-            hierarchy      = new Mat(),
-            cvDilateKernel = new Mat(),
-            cvErodeKernel  = new Mat(),
-            output         = new Mat();
+                mat1           = new Mat(),
+                thresh0        = new Mat(),
+                thresh1        = new Mat(),
+                edges          = new Mat(),
+                hierarchy      = new Mat(),
+                cvDilateKernel = new Mat(),
+                cvErodeKernel  = new Mat(),
+                output         = new Mat();
 
 
-    public PropDetectorManual(@NonNull PropColor color, @NonNull Rect cropRectangle) {
-        this.cropRectangle = cropRectangle;
+    public PropDetectorManual(@NonNull PropColor color) {
+        //this.cropRectangle = cropRectangle;
         propColor = color;
     }
 
@@ -79,7 +79,7 @@ public class PropDetectorManual implements VisionProcessor, CameraStreamSource {
     @Override
     public Object processFrame(Mat input, long captureTimeNanos) {
         // Crop
-        input = input.submat(cropRectangle);
+        //input = input.submat(cropRectangle);
 
         // Convert color to HSV
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);

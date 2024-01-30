@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
@@ -74,7 +73,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
         waitForStart();
 
         // Pls do not delete this
-        location = propDetector.getLocation();
+        location = propDetector.getPropLocation();
 
         while (opModeIsActive()) {
             int leftCount  = 0;
@@ -82,7 +81,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
             int noneCount  = 0;
 
             for (int i = 0; i <= 20;  i++) {
-                switch (propDetector.getLocation()) {
+                switch (propDetector.getPropLocation()) {
                     case LEFT:
                         leftCount += 1;
                         break;

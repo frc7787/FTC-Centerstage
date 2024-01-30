@@ -27,13 +27,13 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "Auto Blue Manual - Audience", group = "Blue")
 @Config
 public class AutoBlueAudienceManual extends LinearOpMode {
-    Rect cropRectangle = new Rect(0, 120, 320, 120);
+//    Rect cropRectangle = new Rect(0, 120, 320, 120);
 
     PropDetectorManual propDetector;
     //PropDetector propDetector;
     private VisionPortal visionPortal;
     public static int     myExposure  = 3;
-    public static int     myGain = 255     ;
+    public static int     myGain = 255;
     public static int     myWhiteBalance = 2000;
 
     PropLocation location;
@@ -55,7 +55,7 @@ public class AutoBlueAudienceManual extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        propDetector = new PropDetectorManual(PropColor.BLUE, cropRectangle);
+        propDetector = new PropDetectorManual(PropColor.BLUE);
         //propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
         //drive        = new MecanumDriveBase(hardwareMap);
         //intake       = new Intake(hardwareMap);
