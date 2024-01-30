@@ -8,8 +8,13 @@ import static org.firstinspires.ftc.teamcode.Properties.HANGER_SERVO_POSITION;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * Class to contain the hanger subsystem
+ */
 public class Hanger {
     Servo hangerServo;
+
+    double hangerServoCommandedInitPos;
 
     /**
      * Hanger constructor
@@ -21,10 +26,12 @@ public class Hanger {
 
     /**
      * Initializes the hanger subsystem, this sets the hanger servo to the zero position
+     * and reverses the hanger servo
      */
     public void init() {
         hangerServo.setDirection(Servo.Direction.REVERSE);
         hangerServo.setPosition(0.0);
+        hangerServoCommandedInitPos = hangerServo.getPosition();
     }
 
     /**
@@ -35,11 +42,21 @@ public class Hanger {
     }
 
     /**
-     * Displays debug information about the hanger servo
+     * Displays debug information about the hanger servo. Note to improve loop times this function
+     * DOES NOT call telemetry.update()
      * @param telemetry The telemetry to display the information on
      */
     public void debug(@NonNull Telemetry telemetry) {
-        telemetry.addData("Hanger Servo Last Commanded Position", hangerServo.getPosition());
-        telemetry.addData("Hanger Servo Direction", hangerServo.getDirection());
+        telemetry.addLine("Hanger Debug");
+
+        telemetry.addData(
+                "Hanger Servo Commanded Initialization Position",
+                hangerServoCommandedInitPos);
+        telemetry.addData(
+                "Hanger Servo Last Commanded Position",
+                hangerServo.getPosition());
+        telemetry.addData(
+                "Hanger Servo Direction",
+                hangerServo.getDirection());
     }
 }

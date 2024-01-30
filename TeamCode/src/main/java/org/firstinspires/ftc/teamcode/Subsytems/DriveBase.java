@@ -16,28 +16,30 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
 
+/**
+ * Class to contain the drive subsystem
+ */
 public class DriveBase {
-
     IMU imu;
 
-    DcMotorImplEx fL, fR, bL, bR;
+    DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
 
-    DcMotorImplEx[] motors;
+    DcMotorImplEx[] driveMotors;
 
     public DriveBase(@NonNull HardwareMap hardwareMap) {
-        fL = hardwareMap.get(DcMotorImplEx.class, "FrontLeftDriveMotor");
-        fR = hardwareMap.get(DcMotorImplEx.class, "FrontRightDriveMotor");
-        bL = hardwareMap.get(DcMotorImplEx.class, "BackLeftDriveMotor");
-        bR = hardwareMap.get(DcMotorImplEx.class, "BackRightDriveMotor");
+        frontLeft = hardwareMap.get(DcMotorImplEx.class, "FrontLeftDriveMotor");
+        frontRight = hardwareMap.get(DcMotorImplEx.class, "FrontRightDriveMotor");
+        backLeft = hardwareMap.get(DcMotorImplEx.class, "BackLeftDriveMotor");
+        backRight = hardwareMap.get(DcMotorImplEx.class, "BackRightDriveMotor");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        motors = new DcMotorImplEx[]{fL, fR, bL, bR};
+        driveMotors = new DcMotorImplEx[]{frontLeft, frontRight, backLeft, backRight};
     }
 
     /**
      * Initializes the DriveBase Class.
-     * Reverses the left motors (fL, BL) and sets all motor zero power behaviours to brake
+     * Reverses the left motors (Front Left & Back Left) and sets all motor zero power behaviours to brake
      */
     public void init() {
         IMU.Parameters parameters = new IMU.Parameters(
@@ -47,8 +49,8 @@ public class DriveBase {
 
         imu.initialize(parameters);
 
-        MotorUtility.setDirection(REVERSE, fL, bL);
-        MotorUtility.setZeroPowerBehaviour(BRAKE, motors);
+        MotorUtility.setDirection(REVERSE, frontLeft, backLeft);
+        MotorUtility.setZeroPowerBehaviour(BRAKE, driveMotors);
     }
 
     /**
@@ -84,10 +86,10 @@ public class DriveBase {
         double bLPower = (drive - strafe + turn) / motorPowerRatio;
         double bRPower = (drive + strafe - turn) / motorPowerRatio;
 
-        fL.setPower(fLPower);
-        fR.setPower(fRPower);
-        bL.setPower(bLPower);
-        bR.setPower(bRPower);
+        frontLeft.setPower(fLPower);
+        frontRight.setPower(fRPower);
+        backLeft.setPower(bLPower);
+        backRight.setPower(bRPower);
     }
 
     /**
@@ -109,9 +111,9 @@ public class DriveBase {
         double bLPower = (drive - strafe + turn) / motorPowerRatio;
         double bRPower = (drive + strafe - turn) / motorPowerRatio;
 
-        fL.setPower(fLPower);
-        fR.setPower(fRPower);
-        bL.setPower(bLPower);
-        bR.setPower(bRPower);
+        frontLeft.setPower(fLPower);
+        frontRight.setPower(fRPower);
+        backLeft.setPower(bLPower);
+        backRight.setPower(bRPower);
     }
 }

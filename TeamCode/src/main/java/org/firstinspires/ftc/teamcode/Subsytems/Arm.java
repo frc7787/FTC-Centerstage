@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_WORM_POWER;
 import static org.firstinspires.ftc.teamcode.Properties.HANG_POS;
 import static org.firstinspires.ftc.teamcode.Properties.HOMING_POWER;
 import static org.firstinspires.ftc.teamcode.Properties.HUNG_POS;
@@ -20,11 +19,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * a getState method is available.
  */
 public class Arm {
-    final Elevator elevator;
-    final Worm worm;
-    private int safetyLimit= 2150;// worm safety limit 550 is a guess
-    private int rotTargetPos=0;
-    private int extTargetPos=0;
+    private final Elevator elevator;
+    private final Worm worm;
+
+    private int safetyLimit  = 2150;// worm safety limit 550 is a guess
+    private int rotTargetPos = 0;
+    private int extTargetPos = 0;
 
     HomingState homingState = HomingState.START;
     NormalArmState normalArmState = NormalArmState.UNKNOWN;
@@ -133,10 +133,7 @@ public class Arm {
 
         if (normalArmState == NormalArmState.HOMING) {
             home();
-            return;
         }
-
-
     }
 
 
@@ -163,7 +160,7 @@ public class Arm {
                 setHoming();
                 break;
             case AT_POS:
-                if (extTargetPos>0 && worm.pos()<safetyLimit){
+                if (extTargetPos>0 && worm.currentPos()<safetyLimit){
                     worm.rotate(safetyLimit);
                     rotTargetPos=Math.max(safetyLimit,rotTargetPos);
                 }
@@ -268,9 +265,9 @@ public class Arm {
     /**
      * Gets the current draw of the worm motor in amps
      */
-    public double getWormCurrentAmps() { return worm.getCurrent(); }
+    public double getWormCurrentAmps() { return worm.currentAmps(); }
     public int getWormPos() {
-        return worm.pos();
+        return worm.currentPos();
     }
 
     /**
