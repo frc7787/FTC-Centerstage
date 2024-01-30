@@ -10,8 +10,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Prop Detector - Blue")
-public class NewPropDetector extends OpMode {
+@Autonomous(name = "Test - Prop Detector Red")
+public class PropDetectorTest extends OpMode {
 
     PropDetector detector;
 

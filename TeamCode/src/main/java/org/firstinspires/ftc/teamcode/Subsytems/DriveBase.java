@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_HIGH;
@@ -20,17 +22,21 @@ import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
  * Class to contain the drive subsystem
  */
 public class DriveBase {
-    IMU imu;
 
-    DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
+    // --------- Hardware Declaration --------- //
+    final IMU imu;
+    final DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
+    final DcMotorImplEx[] driveMotors;
 
-    DcMotorImplEx[] driveMotors;
+    // --------- IMU Constants ---------- //
+    final RevHubOrientationOnRobot controlHubOrientation = new RevHubOrientationOnRobot(LEFT, UP);
+    final IMU.Parameters imuParameters                   = new IMU.Parameters(controlHubOrientation);
 
     public DriveBase(@NonNull HardwareMap hardwareMap) {
-        frontLeft = hardwareMap.get(DcMotorImplEx.class, "FrontLeftDriveMotor");
+        frontLeft  = hardwareMap.get(DcMotorImplEx.class, "FrontLeftDriveMotor");
         frontRight = hardwareMap.get(DcMotorImplEx.class, "FrontRightDriveMotor");
-        backLeft = hardwareMap.get(DcMotorImplEx.class, "BackLeftDriveMotor");
-        backRight = hardwareMap.get(DcMotorImplEx.class, "BackRightDriveMotor");
+        backLeft   = hardwareMap.get(DcMotorImplEx.class, "BackLeftDriveMotor");
+        backRight  = hardwareMap.get(DcMotorImplEx.class, "BackRightDriveMotor");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -42,10 +48,7 @@ public class DriveBase {
      * Reverses the left motors (Front Left & Back Left) and sets all motor zero power behaviours to brake
      */
     public void init() {
-        IMU.Parameters parameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        IMU.Parameters parameters = new IMU.Parameters(controlHubOrientation);
 
         imu.initialize(parameters);
 
@@ -73,11 +76,14 @@ public class DriveBase {
     public void driveManualFieldCentric(double drive, double strafe, double turn) {
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
+        // Our controller has a slight drift so we artificially increase the dead zone
         drive  = deadZone(drive);
         strafe = deadZone(strafe);
 
         drive  = drive * Math.cos(-botHeading) - strafe * Math.sin(-botHeading);
         strafe = drive  * Math.sin(-botHeading) + strafe * Math.cos(-botHeading);
+
+        strafe *= STRAFE_OFFSET; // Mecanum strafing is not perfect so we slightly correct
 
         double motorPowerRatio = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);
 
@@ -95,13 +101,14 @@ public class DriveBase {
     /**
      * Drives the robot relative to itself
      * 
-     * @param drive: The forward translational value
-     * @param strafe: The side to side translational value
-     * @param turn: The rotational value
+     * @param drive The forward translational value
+     * @param strafe The side to side translational value
+     * @param turn The rotational value
      */
     public void driveManualRobotCentric(double drive, double strafe, double turn) {
+        // Our controller has slight drift so we artificially increase the dead zone
         drive  = deadZone(drive);
-        strafe = deadZone(strafe) * STRAFE_OFFSET;
+        strafe = deadZone(strafe) * STRAFE_OFFSET; // Mecanum strafing is not perfect so we slightly correct
         turn   = deadZone(turn);
 
         double motorPowerRatio = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);

@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState;
 
 /**
  * Class to represent worm (rotation) subsystem.
@@ -21,17 +22,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
  * subsystem which uses both this subsystem, and the elevator subsystem.
  */
 public class Worm {
+
+    // ---------- Hardware Declaration --------- //
     final DcMotorImplEx wormMotor;
     final TouchSensor limitSwitch;
 
-    boolean limitSwitchWasPressed = false;
 
     HomingState homingState = HomingState.IDLE;
-
-    private enum HomingState {
-        IDLE,
-        HOMING
-    }
 
     public Worm(@NonNull HardwareMap hardwareMap) {
         wormMotor   = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
@@ -87,6 +84,9 @@ public class Worm {
         }
     }
 
+    /**
+     * Sets the worm to the homing state
+     */
     public void setHoming() {
         homingState = HomingState.HOMING;
     }
@@ -134,11 +134,21 @@ public class Worm {
     public void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Worm Debug");
 
-        telemetry.addData("Worm Direction", wormMotor.getDirection());
-        telemetry.addData("Worm Current Position", wormMotor.getCurrentPosition());
-        telemetry.addData("Worm Target Position", wormMotor.getTargetPosition());
-        telemetry.addData("Worm Current (AMPS)", wormMotor.getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("Worm Limit Switch is pressed", limitSwitch.isPressed());
+        telemetry.addData(
+                "Worm Direction",
+                wormMotor.getDirection());
+        telemetry.addData(
+                "Worm Current Position",
+                wormMotor.getCurrentPosition());
+        telemetry.addData(
+                "Worm Target Position",
+                wormMotor.getTargetPosition());
+        telemetry.addData(
+                "Worm Current (AMPS)",
+                wormMotor.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData(
+                "Worm Limit Switch is pressed",
+                limitSwitch.isPressed());
     }
 
     /**

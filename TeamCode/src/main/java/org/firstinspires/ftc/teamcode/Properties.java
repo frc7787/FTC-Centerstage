@@ -45,8 +45,10 @@ public class Properties {
 
     // ----------- INTAKE CONSTANTS ---------- //
 
-    public static volatile double DEFAULT_INTAKE_POWER = 1.0;
-    public static volatile double DEFAULT_OUTTAKE_POWER = 1.0;
+    public static volatile double DEFAULT_INTAKE_POWER       = 1.0;
+    public static volatile double DEFAULT_OUTTAKE_POWER      = 1.0;
+    public static volatile double DEFAULT_INTAKE_BELT_POWER  = 1.0;
+    public static volatile double DEFAULT_OUTTAKE_BELT_POWER = 1.0;
 
     // --------- DELIVERY TRAY CONSTANTS ---------- //
 
@@ -54,7 +56,6 @@ public class Properties {
     public static volatile double TRAY_DOOR_INTAKE_POS = 0.26;
     public static volatile double TRAY_DOOR_CLOSED_POS = 0.0;
     public static volatile double TRAY_UP_WRIST_POS = 1.0;
-    public static volatile double TRAY_DOWN_WRIST_POS = 1.0;
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 

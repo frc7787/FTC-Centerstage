@@ -6,30 +6,32 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
+import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_INTAKE_BELT_POWER;
 import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_OUTTAKE_BELT_POWER;
 import static org.firstinspires.ftc.teamcode.Properties.DEFAULT_OUTTAKE_POWER;
 
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-
-import java.sql.SQLSyntaxErrorException;
 
 /**
  * Class to contain intake subsystem. Not to be confused
  * with the DeliveryTray subsystem.
  */
 public class Intake {
-    final DcMotorImplEx intake;
+    final DcMotorImplEx intakeMotor;
+    final CRServoImplEx beltServo;
 
     /**
      * Creates a new instance of the intake subsystem
      * @param hardwareMap The hardware map, likely "hardwareMap"
      */
     public Intake(@NonNull HardwareMap hardwareMap) {
-       intake = hardwareMap.get(DcMotorImplEx.class, "IntakeMotor");
+        intakeMotor = hardwareMap.get(DcMotorImplEx.class, "IntakeMotor");
+        beltServo   = hardwareMap.get(CRServoImplEx.class, "IntakeBeltServo");
     }
 
     /**
@@ -37,92 +39,110 @@ public class Intake {
      * This sets the zero power behavior of the intake motor to float
      */
     public void init() {
-        intake.setDirection(REVERSE);
-        intake.setZeroPowerBehavior(FLOAT);
-    }
-
-    /**
-     * Spins the intake in the intake direction (FORWARD) by the power defined by DEFAULT_INTAKE_POWER
-     */
-    public void intake() {
-        intake(DEFAULT_INTAKE_POWER);
+        intakeMotor.setZeroPowerBehavior(FLOAT);
     }
 
     /**
      * Spins the intake in the intake direction (FORWARD) at the supplied power
-     * @param power The power to give the intake motor
+     *
+     * @param intakePower The power to give the intake motor
      */
-    public void intake(double power) {
-        intake.setDirection(FORWARD);
-        intake.setPower(power);
+    public void intake(double intakePower, double beltPower) {
+        intakeMotor.setDirection(FORWARD);
+        intakeMotor.setPower(intakePower);
+
+        beltServo.setDirection(REVERSE);
+        beltServo.setPower(beltPower);
+    }
+
+    /**
+     * Spins the intake in the intake direction (FORWARD) by the powers defined by DEFAULT_INTAKE_POWER
+     * and DEFAULT_BELT_POWER
+     */
+    public void intake() {
+        intake(DEFAULT_INTAKE_POWER, DEFAULT_INTAKE_BELT_POWER);
     }
 
     /**
      * Spins the intake in the intake direction (FORWARD) for the specified amount of time
+     *
      * @param durationMills The time to spin the intake for in milliseconds
-     * @param power The power to spin the intake at
+     * @param intakePower The power to spin the intake at
+     * @param beltPower The power to spin the belt at
      */
-    public void intakeForDuration(long durationMills, double power) {
+    public void intakeForDuration(long durationMills, double intakePower, double beltPower) {
         long start = System.currentTimeMillis();
 
         while (start + durationMills < System.currentTimeMillis()) {
-            intake(power);
+            intake(intakePower, beltPower);
         }
     }
 
     /**
-     * Spins the intake in the intake direction (FORWARD) for the specified amount of time
+     * Spins the intake in the intake direction (FORWARD) for the specified amount of time at the
+     * power specified by DEFAULT_INTAKE_POWER and DEFAULT_INTAKE_BELT_POWER
+     *
      * @param durationMills The time to spin the intake for in milliseconds
      */
     public void intakeForDuration(long durationMills) {
-       intakeForDuration(durationMills, DEFAULT_INTAKE_POWER);
+       intakeForDuration(durationMills, DEFAULT_INTAKE_POWER, DEFAULT_INTAKE_BELT_POWER);
     }
 
     /**
      * Spins the intake in the outtake direction (REVERSE) at the specified power
      *
-     * @param power The power to spin the intake at
+     * @param intakePower The power to spin the intake at
+     * @param beltPower The power to spin the belt at
      */
-    public void outtake(double power) {
-        intake.setDirection(REVERSE);
-        intake.setPower(power);
+    public void outtake(double intakePower, double beltPower) {
+        intakeMotor.setDirection(REVERSE);
+        intakeMotor.setPower(intakePower);
+
+        beltServo.setDirection(FORWARD);
+        beltServo.setPower(beltPower);
     }
 
     /**
-     * Spins the intake in the outtake direction (REVERSE) at the speed specified by
-     * DEFAULT_OUTTAKE_POWER.
+     * Spins the intake in the outtake direction (REVERSE) at the power specified by
+     * DEFAULT_OUTTAKE_POWER and DEFAULT_OUTTAKE_BELT_POWER
      */
     public void outtake() {
-        outtake(DEFAULT_OUTTAKE_POWER);
+        outtake(DEFAULT_OUTTAKE_POWER, DEFAULT_OUTTAKE_BELT_POWER);
     }
 
     /**
      * Spins the intake in the outtake direction (REVERSE) for the specified amount of time.
-     * @param power The power to spin the intake at
+     *
      * @param durationMills The duration to spin the intake
+     * @param outtakePower The power to spin the intake at
+     * @param beltPower The power to spin the belt at
      */
-    public void outtakeForDuration(double power, long durationMills) {
+    public void outtakeForDuration(long durationMills, double outtakePower, double beltPower) {
         long start = System.currentTimeMillis();
 
         while (start + durationMills < System.currentTimeMillis()) {
-            outtake(power);
+            outtake(outtakePower, beltPower);
         }
+
+        beltServo.getPwmRange();
     }
 
     /**
      * Spins the intake in the outtake direction (REVERSE) for the specified amount of time
-     * at the power defined by DEFAULT_OUTTAKE_POWER
+     * at the power defined by DEFAULT_OUTTAKE_POWER and DEFAULT_OUTTAKE_BELT_POWER
+     *
      * @param durationMills The duration to spin the intake
      */
     public void outtakeForDuration(long durationMills) {
-        outtakeForDuration(DEFAULT_OUTTAKE_POWER, durationMills);
+        outtakeForDuration(durationMills, DEFAULT_OUTTAKE_POWER, DEFAULT_OUTTAKE_BELT_POWER);
     }
 
     /**
      * Stops the intake by setting the power to 0
      */
     public void stop() {
-        intake.setPower(0);
+        intakeMotor.setPower(0);
+        beltServo.setPower(0);
     }
 
     /**
@@ -134,12 +154,19 @@ public class Intake {
 
         telemetry.addData(
                 "Intake direction",
-                intake.getDirection());
+                intakeMotor.getDirection());
         telemetry.addData(
                 "Intake power",
-                intake.getPower());
+                intakeMotor.getPower());
         telemetry.addData(
                 "Intake current Amps",
-                intake.getCurrent(AMPS));
+                intakeMotor.getCurrent(AMPS));
+
+        telemetry.addData(
+                "Belt Direction",
+                beltServo.getDirection());
+        telemetry.addData(
+                "Belt Power",
+                beltServo.getPower());
     }
 }

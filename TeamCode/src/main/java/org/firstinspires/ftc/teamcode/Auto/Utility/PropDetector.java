@@ -33,9 +33,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * OpenCV pipeline to detect the prop in FTC 2023 - 2024 Centerstage
+ */
 public class PropDetector extends OpenCvPipeline {
-
-    public PropColor propColor;
+    PropColor propColor;
     Rect cropRectangle;
 
     PropLocation propLocation = NONE;
@@ -59,8 +61,8 @@ public class PropDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        if (cropRectangle != null) {
-            // Crop
+        if (cropRectangle != null) { // Check to see if we should crop
+            // Crop the image
             input = input.submat(cropRectangle);
         }
 
@@ -93,7 +95,7 @@ public class PropDetector extends OpenCvPipeline {
                 CV_BORDER_TYPE,
                 CV_BORDER_VALUE);
 
-        // Dilate the image to get more of what is left
+        // Dilate the image to increase the size of what is left
         Imgproc.dilate(
                 output,
                 output,
@@ -110,6 +112,7 @@ public class PropDetector extends OpenCvPipeline {
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        // Creates bounding rectangles along all of the detected contours
         MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
         Rect[] boundRect = new Rect[contours.size()];
         for (int i = 0; i < contours.size(); i++) {
@@ -118,41 +121,37 @@ public class PropDetector extends OpenCvPipeline {
             boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
         }
 
-        // -------------------------------------------------------------------
-        // New Logic Start
-        // -------------------------------------------------------------------
-
         Rect biggestBoundingBox = new Rect(0,0,0,0);
 
+        // Gets the biggest bounding box
         for (Rect rect : boundRect) {
             if (rect.area() > biggestBoundingBox.area()) {
                 biggestBoundingBox = rect;
             }
         }
 
+        // TODO: Maybe we should adjust the range just slightly from 25% to around 23% to increase accuracy?
         if (biggestBoundingBox.area() != 0) { // If we detect the prop
-            if (biggestBoundingBox.x < LEFT_X) {
+            if (biggestBoundingBox.x < LEFT_X) { // Check to see if the bounding box is on the left 25% of the screen
                 propLocation = LEFT;
-            } else if (biggestBoundingBox.x > RIGHT_X) {
+            } else if (biggestBoundingBox.x > RIGHT_X) { // Check to see if the bounding box is on the right 25% of the screen
                 propLocation = RIGHT;
-            } else {
+            } else { // If it isn't either, and the prop is detected it must be in the center
                 propLocation = CENTER;
             }
-        } else { // If we don't detect anything
+        } else { // If we don't detect anything we assume there is no prop
             propLocation = NONE;
         }
 
+        // All code below this line (Except for the return statement) should be commented out for competition to save processing
+
+        // Draw a rectangle over the biggest bounding box
         Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
 
-        // ------------------------------------------------------------------
-        // New Logic End
-        // ------------------------------------------------------------------
-
         // Resizes the code so it can be viewed on the driver station
-        // Comment this code out for competition
         Imgproc.resize(mat, mat, new Size(320, 240));
 
-        return mat; // return the mat with rectangles drawn
+        return mat; // return the mat
     }
 
     public PropLocation getPropLocation() { return this.propLocation; }
