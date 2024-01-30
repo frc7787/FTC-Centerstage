@@ -27,13 +27,13 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "Auto Blue Manual - Audience", group = "Blue")
 @Config
 public class AutoBlueAudienceManual extends LinearOpMode {
-    Rect cropRectangle = new Rect(0, 120, 320, 120);
+//    Rect cropRectangle = new Rect(0, 120, 320, 120);
 
     PropDetectorManual propDetector;
     //PropDetector propDetector;
     private VisionPortal visionPortal;
     public static int     myExposure  = 3;
-    public static int     myGain = 255     ;
+    public static int     myGain = 255;
     public static int     myWhiteBalance = 2000;
 
     PropLocation location;
@@ -55,7 +55,7 @@ public class AutoBlueAudienceManual extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        propDetector = new PropDetectorManual(PropColor.BLUE, cropRectangle);
+        propDetector = new PropDetectorManual(PropColor.BLUE);
         //propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
         //drive        = new MecanumDriveBase(hardwareMap);
         //intake       = new Intake(hardwareMap);
@@ -78,13 +78,37 @@ public class AutoBlueAudienceManual extends LinearOpMode {
         location = propDetector.getLocation();
 
         while (opModeIsActive()) {
-            location = propDetector.getLocation();
+            int leftCount  = 0;
+            int rightCount = 0;
+            int noneCount  = 0;
+
+            for (int i = 0; i <= 20;  i++) {
+                switch (propDetector.getLocation()) {
+                    case LEFT:
+                        leftCount += 1;
+                        break;
+                    case RIGHT:
+                        rightCount += 1;
+                        break;
+                    case NONE:
+                        noneCount += 1;
+                        break;
+                }
+            }
+
+            if (leftCount >= rightCount && leftCount >= noneCount) {
+                location = PropLocation.LEFT;
+            } else if (rightCount >= leftCount && rightCount >= noneCount) {
+                location = PropLocation.RIGHT;
+            } else {
+                location = PropLocation.NONE;
+            }
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
 
-            //sleep(500);
-/*
+            // sleep(5000);
+
             switch (location) {
                 case LEFT:
                     // THIS IS ACTUALLY CENTER LINE
@@ -121,9 +145,14 @@ public class AutoBlueAudienceManual extends LinearOpMode {
                     drive.setMotorPowers(0, 0, 0, 0);
 
                     break;
-            }*/
+            }
 
-            sleep(500);
+            sleep(50);
+            drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
+            sleep(400);
+            drive.setMotorPowers(0, 0, 0, 0);
+
+            sleep(99999999);
         }
     }
 

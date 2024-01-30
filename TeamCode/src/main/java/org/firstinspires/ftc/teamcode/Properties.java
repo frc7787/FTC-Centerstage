@@ -79,10 +79,15 @@ public class Properties {
     public static volatile double LEFT_X  = 0.25 * (double) CAMERA_WIDTH;
     public static volatile double RIGHT_X = 0.75 * (double) CAMERA_WIDTH;
 
-    public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(0.5, 76.9, 89.8);
+    public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(255, 0, 0);
 
+    // lighter prop
     public static volatile Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 100);
     public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(115, 255, 255);
+
+    // Darker prop
+    //public static volatile Scalar LOW_HSV_RANGE_BLUE = new Scalar(101, 185, 37);
+    //public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(127, 255, 110);
 
     public static volatile Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 100, 0);
     public static volatile Scalar HIGH_HSV_RANGE_RED_ONE = new Scalar(180, 255, 255);

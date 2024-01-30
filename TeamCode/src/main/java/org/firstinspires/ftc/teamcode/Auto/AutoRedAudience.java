@@ -28,7 +28,7 @@ public class AutoRedAudience extends LinearOpMode {
 
     Intake intake;
 
-    public static int CENTER_FORWARD_SLEEP = 1200;
+    public static int CENTER_FORWARD_SLEEP = 1100;
     public static int LEFT_FORWARD_SLEEP   = 550;
     public static int RIGHT_FORWARD_SLEEP  = 500;
     public static int LEFT_TURN_SLEEP      = 400;
@@ -71,10 +71,10 @@ public class AutoRedAudience extends LinearOpMode {
         waitForStart();
 
         // Pls do not delete this
-        location = propDetector.getLocation();
+        location = propDetector.getPropLocation();
 
         while (opModeIsActive()) {
-            location = propDetector.getLocation();
+            location = propDetector.getPropLocation();
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
@@ -84,7 +84,7 @@ public class AutoRedAudience extends LinearOpMode {
             int noneCount  = 0;
 
             for (int i = 0; i <= 20;  i++) {
-                switch (propDetector.getLocation()) {
+                switch (propDetector.getPropLocation()) {
                     case LEFT:
                         leftCount += 1;
                         break;

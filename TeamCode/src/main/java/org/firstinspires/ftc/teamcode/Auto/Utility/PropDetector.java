@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.Auto.Utility;
 
+import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.CENTER;
 import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.LEFT;
 import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.NONE;
 import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.RIGHT;
 import static org.firstinspires.ftc.teamcode.Properties.BOUNDING_RECTANGLE_COLOR;
-import static org.firstinspires.ftc.teamcode.Properties.CROP_RECT;
 import static org.firstinspires.ftc.teamcode.Properties.CV_ANCHOR;
 import static org.firstinspires.ftc.teamcode.Properties.CV_BORDER_TYPE;
 import static org.firstinspires.ftc.teamcode.Properties.CV_BORDER_VALUE;
@@ -38,7 +38,7 @@ public class PropDetector extends OpenCvPipeline {
     public PropColor propColor;
     Rect cropRectangle;
 
-    PropLocation location = NONE;
+    PropLocation propLocation = NONE;
 
     private Mat mat            = new Mat(),
                 mat1           = new Mat(),
@@ -51,15 +51,18 @@ public class PropDetector extends OpenCvPipeline {
                 output         = new Mat();
 
 
-    public PropDetector(@NonNull PropColor color, @NonNull Rect cropRectangle) {
+    public PropDetector(@NonNull PropColor color, Rect cropRectangle) {
         this.cropRectangle = cropRectangle;
         propColor = color;
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        // Crop
-        input = input.submat(cropRectangle);
+
+        if (cropRectangle != null) {
+            // Crop
+            input = input.submat(cropRectangle);
+        }
 
         // Convert color to HSV
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
@@ -127,13 +130,17 @@ public class PropDetector extends OpenCvPipeline {
             }
         }
 
-        if (biggestBoundingBox.x < LEFT_X && biggestBoundingBox.area() != 0) {
-            location = LEFT;
-        } else if (biggestBoundingBox.x + biggestBoundingBox.width > RIGHT_X / 2.0) {
-            location = RIGHT;
+        if (biggestBoundingBox.area() != 0) { // If we detect the prop
+            if (biggestBoundingBox.x < LEFT_X) {
+                propLocation = LEFT;
+            } else if (biggestBoundingBox.x > RIGHT_X) {
+                propLocation = RIGHT;
+            } else {
+                propLocation = CENTER;
+            }
+        } else { // If we don't detect anything
+            propLocation = NONE;
         }
-
-
 
         Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
 
@@ -148,5 +155,5 @@ public class PropDetector extends OpenCvPipeline {
         return mat; // return the mat with rectangles drawn
     }
 
-    public PropLocation getLocation() { return this.location; }
+    public PropLocation getPropLocation() { return this.propLocation; }
 }
