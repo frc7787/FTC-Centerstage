@@ -1,191 +1,159 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.Properties.HANG_POS;
-import static org.firstinspires.ftc.teamcode.Properties.LAUNCH_POS;
-
 import com.qualcomm.hardware.lynx.LynxModule;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.teamcode.Subsytems.Arm;
-import org.firstinspires.ftc.teamcode.Subsytems.DeliveryTray;
-import org.firstinspires.ftc.teamcode.Subsytems.DriveBase;
-import org.firstinspires.ftc.teamcode.Subsytems.Hanger;
-import org.firstinspires.ftc.teamcode.Subsytems.Intake;
-import org.firstinspires.ftc.teamcode.Subsytems.Launcher;
+import org.firstinspires.ftc.teamcode.Subsytems.*;
 
-import java.util.List;
+import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.AUTO;
+import static org.firstinspires.ftc.teamcode.Properties.*;
 
-@TeleOp(name = "Judging")
+@TeleOp(name = "Judging - No Drive base", group = "Production")
+@Disabled
 public class Judging extends OpMode {
+    DriveBase driveBase;
+    Hanger hanger;
+    Launcher launcher;
+    Intake intake;
+    DeliveryTray deliveryTray;
 
-    Period period = Period.NORMAL;
+    GamePeriod gamePeriod = GamePeriod.NORMAL;
 
-    public enum Period {
+    boolean intakeToggle = false;
+    boolean doorToggle   = false;
+
+    enum GamePeriod {
         NORMAL,
         ENDGAME
     }
 
-    Arm arm;
-    Intake intake;
-    DriveBase driveBase;
-    DeliveryTray deliveryTray;
-    Launcher launcher;
-    Hanger hanger;
+    Gamepad prevGamepad2, currentGamepad2;
 
-    DcMotorImplEx elevatorMotor, wormMotor;
+    private void listenForDeliveryTrayCommand() {
+        if (currentGamepad2.right_bumper && !prevGamepad2.right_bumper) {
+            doorToggle = !doorToggle;
+        }
 
-    TouchSensor elevatorLimitSwitch, wormLimitSwitch;
-
-    Gamepad currentGamepad, prevGamepad;
-
-    double wormPower         = 1.0;
-    double elevatorHoldPower = -0.05;
-
-    @Override public void init() {
-        currentGamepad = new Gamepad();
-        prevGamepad    = new Gamepad();
-
-        intake       = new Intake(hardwareMap);
-        driveBase    = new DriveBase(hardwareMap);
-        deliveryTray = new DeliveryTray(hardwareMap);
-        arm          = new Arm(hardwareMap);
-        launcher     = new Launcher(hardwareMap);
-        hanger       = new Hanger(hardwareMap);
-
-        wormMotor     = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
-        elevatorMotor = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
-        elevatorLimitSwitch = hardwareMap.get(TouchSensor.class, "ExtensionLimitSwitch");
-        wormLimitSwitch     = hardwareMap.get(TouchSensor.class, "WormLimitSwitch");
-
-        elevatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        wormMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wormMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        intake.init();
-        driveBase.init();
-        deliveryTray.init();
-        launcher.init();
-        hanger.init();
-
-        deliveryTray.closeDoor();
-
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        if (doorToggle) {
+            deliveryTray.openDoorToReleasePosition();
+        } else {
+            deliveryTray.closeDoor();
         }
     }
 
 
+    private void listenForIntakeCommand() {
+        if (currentGamepad2.left_bumper && !prevGamepad2.left_bumper) {
+            intakeToggle = !intakeToggle;
+        }
+
+        if (intakeToggle) {
+            deliveryTray.openDoorToReleasePosition();
+        } else {
+            deliveryTray.closeDoor();
+        }
+
+    }
+
+    private void listenForNormalPeriodArmCommand() {
+        if (gamepad2.dpad_down) {
+            Arm.setHoming();
+        } else if (gamepad2.cross) {
+            Arm.setTargetPos(BOTTOM_EXT_POS, BOTTOM_ROT_POS);
+        } else if (gamepad2.square) {
+            Arm.setTargetPos(LOW_EXT_POS, LOW_ROT_POS);
+        } else if (gamepad2.circle) {
+            Arm.setTargetPos(MED_EXT_POS, MED_ROT_POS);
+        } else if (gamepad2.triangle) {
+            Arm.setTargetPos(HIGH_EXT_POS, HIGH_ROT_POS);
+        } else if (gamepad2.options) {
+            Arm.setTargetPos(TOP_EXT_POS, TOP_ROT_POS);
+        }
+    }
+
+    private void listenForEndgameCommand() {
+        if (gamepad2.left_bumper) {
+            Arm.setTargetPos(0, LAUNCH_POS);
+        } else if (gamepad2.right_bumper) {
+            Arm.setTargetPos(0, HANG_POS);
+        }
+
+        if (gamepad2.left_trigger > 0.9) {
+            launcher.release();
+        }
+
+        if (gamepad2.right_trigger > 0.9) {
+            hanger.release();
+        }
+    }
+
+
+    private void normalPeriodLoop() {
+        listenForIntakeCommand();
+        listenForDeliveryTrayCommand();
+        listenForNormalPeriodArmCommand();
+    }
+
+    @Override public void init() {
+
+        driveBase    = new DriveBase(hardwareMap);
+        hanger       = new Hanger(hardwareMap);
+        launcher     = new Launcher(hardwareMap);
+        intake       = new Intake(hardwareMap);
+        deliveryTray = new DeliveryTray(hardwareMap);
+
+        driveBase.init();
+        launcher.init();
+        hanger.init();
+        intake.init();
+
+        Arm.init(hardwareMap);
+
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(AUTO);
+        }
+    }
+
     @Override public void loop() {
-        telemetry.addData("Elevator Pos", elevatorMotor.getCurrentPosition());
-        telemetry.addData("Worm Pos", wormMotor.getCurrentPosition());
+        Arm.debug(telemetry, true, true);
 
-        prevGamepad.copy(currentGamepad);
-        currentGamepad.copy(gamepad2);
+        prevGamepad2.copy(currentGamepad2);
+        currentGamepad2.copy(gamepad2);
 
-//        driveBase.driveManualRobotCentric(
-//                gamepad1.left_stick_y * -1.0,
-//                gamepad1.left_stick_x,
-//                gamepad1.right_stick_x
-//        );
+        double drive  = gamepad1.left_stick_y * -1.0;
+        double strafe = gamepad1.left_stick_x;
+        double turn   = gamepad1.right_stick_x;
 
-        switch (period) {
+        driveBase.driveManualRobotCentric(
+                drive,
+                strafe,
+                turn
+        );
+
+        switch (gamePeriod) {
             case NORMAL:
-                telemetry.addLine("Period: Normal");
-                if (currentGamepad.share && !prevGamepad.share) {
-                    period = Period.ENDGAME;
+                telemetry.addLine("Normal Period");
+
+                normalPeriodLoop();
+
+                if (gamepad2.options && gamepad2.share) {
+                    gamePeriod = GamePeriod.ENDGAME;
                 }
-
-                if (wormLimitSwitch.isPressed()) {
-                    if (currentGamepad.left_bumper) {
-                        elevatorMotor.setPower(elevatorHoldPower);
-                        deliveryTray.openDoorToIntakePos();
-                        intake.intake();
-                    } else {
-                        intake.stop();
-                        deliveryTray.closeDoor();
-                        elevatorMotor.setPower(0); // kk After intaking, we want to stop the backdrive on the elevator, so it doesn't burn
-                    }
-                } else {
-                    intake.stop();
-                }
-
-                if (elevatorMotor.getCurrentPosition() < 1300) {
-                    deliveryTray.move_tray(0.0);
-                } else {
-                    deliveryTray.move_tray(0.6);
-                }
-
-                if (gamepad2.right_bumper) {
-                    deliveryTray.openDoorToReleasePosition();
-                }
-
-                if (gamepad2.dpad_up) {
-                    if (elevatorLimitSwitch.isPressed() && wormMotor.getCurrentPosition() < 1500) {
-                        deliveryTray.closeDoor();
-                        wormMotor.setPower(wormPower);
-                        elevatorMotor.setPower(elevatorHoldPower);
-                    } else {
-                        wormMotor.setPower(0);
-                        elevatorMotor.setPower(elevatorHoldPower);
-                    }
-                } else if (gamepad2.dpad_down && elevatorLimitSwitch.isPressed() && !wormLimitSwitch.isPressed()) {
-                    wormMotor.setPower(-wormPower);
-                    deliveryTray.closeDoor();
-
-                } else if (gamepad2.dpad_down && !elevatorLimitSwitch.isPressed() && !wormLimitSwitch.isPressed()) {
-                    elevatorMotor.setPower(elevatorHoldPower);
-                    wormMotor.setPower(0);
-                } else {
-                    wormMotor.setPower(0);
-                    if (wormMotor.getCurrentPosition() > 1000) {
-                        elevatorMotor.setPower(gamepad2.right_stick_y * -1.0);
-
-                    }
-                }
-
-
                 break;
             case ENDGAME:
-                telemetry.addLine("Endgame");
-                if (currentGamepad.share && !prevGamepad.share) {
-                    period = Period.NORMAL;
-                }
+                telemetry.addLine("Endgame Period");
+                listenForEndgameCommand();
 
-                if (gamepad2.left_bumper) {
-                    wormMotor.setTargetPosition(LAUNCH_POS);
-                    wormMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    wormMotor.setPower(1);
-                } else if (gamepad2.right_bumper) {
-                    wormMotor.setTargetPosition(HANG_POS);
-                    wormMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    wormMotor.setPower(1);
-                } else if (gamepad2.dpad_down||gamepad2.dpad_up) {
-                    wormMotor.setTargetPosition(0);
-                    wormMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    wormMotor.setPower(1);
-                }
-                if (wormMotor.getTargetPosition()==LAUNCH_POS &&!wormMotor.isBusy() && gamepad2.cross) {
-                    launcher.release();
-                }
-                if (wormMotor.getTargetPosition()==HANG_POS &&!wormMotor.isBusy() && gamepad2.cross) {
-                    hanger.release();
-                }
-                if (gamepad2.options && gamepad2.options) {
-                    period = Period.NORMAL;
+                if (gamepad2.options && gamepad2.share) {
+                    gamePeriod = GamePeriod.NORMAL;
                 }
                 break;
         }
+
         telemetry.update();
     }
 }
