@@ -21,6 +21,8 @@ import static org.firstinspires.ftc.teamcode.Properties.RIGHT_X;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -36,26 +38,32 @@ import java.util.List;
 /**
  * OpenCV pipeline to detect the prop in FTC 2023 - 2024 Centerstage
  */
+@Config
 public class PropDetector extends OpenCvPipeline {
     PropColor propColor;
     Rect cropRectangle;
+    public static int VIEW_DISPLAYED = 1;
+    public static int ERODE_PASSES = 9;
+    public static int DILATE_PASSES = 0;
+
 
     PropLocation propLocation = NONE;
 
-    private Mat mat            = new Mat(),
-                mat1           = new Mat(),
-                thresh0        = new Mat(),
-                thresh1        = new Mat(),
-                edges          = new Mat(),
-                hierarchy      = new Mat(),
-                cvDilateKernel = new Mat(),
-                cvErodeKernel  = new Mat(),
-                output         = new Mat();
-
-
+    private Mat HSVmat = new Mat(),
+            mat1           = new Mat(),
+            thresh0        = new Mat(),
+            thresh1        = new Mat(),
+            edges          = new Mat(),
+            hierarchy      = new Mat(),
+            cvDilateKernel = new Mat(),
+            cvErodeKernel  = new Mat(),
+            thresholdOutput = new Mat(),
+            dilateOutput    = new Mat(),
+            erodeOutput    = new Mat();
     public PropDetector(@NonNull PropColor color, Rect cropRectangle) {
         this.cropRectangle = cropRectangle;
         propColor = color;
+        propColor=PropColor.BLUE;
     }
 
     @Override
@@ -67,28 +75,28 @@ public class PropDetector extends OpenCvPipeline {
         }
 
         // Convert color to HSV
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, mat1, Imgproc.COLOR_RGB2HSV);
         Imgproc.cvtColor(input, mat1, Imgproc.COLOR_RGB2HSV);
 
         switch (propColor) {
             case RED:
                 // Check if the image is in range, then adds the ranges together
-                Core.inRange(mat, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, thresh0);
+                Core.inRange(mat1, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, thresh0);
                 Core.inRange(mat1, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, thresh1);
-                Core.add(thresh0, thresh1, output);
+                Core.add(thresh0, thresh1, thresholdOutput);
 
                 break;
             case BLUE:
                 // Checks if the image is in range
-                Core.inRange(mat, LOW_HSV_RANGE_BLUE, HIGH_HSV_RANGE_BLUE, output);
+                Core.inRange(mat1, LOW_HSV_RANGE_BLUE, HIGH_HSV_RANGE_BLUE, thresholdOutput);
 
                 break;
         }
 
         // Erode to remove noise
         Imgproc.erode(
-                output,
-                output,
+                thresholdOutput,
+                erodeOutput,
                 cvErodeKernel,
                 CV_ANCHOR,
                 ERODE_ITERATIONS,
@@ -97,23 +105,21 @@ public class PropDetector extends OpenCvPipeline {
 
         // Dilate the image to increase the size of what is left
         Imgproc.dilate(
-                output,
-                output,
+                erodeOutput,
+                dilateOutput,
                 cvDilateKernel,
                 CV_ANCHOR,
                 DIALATE_ITERATIONS,
                 CV_BORDER_TYPE,
                 CV_BORDER_VALUE);
 
-        // Use Canny Edge Detection to find edges
-        Imgproc.Canny(output, edges, 0, 100);
 
         // Oftentimes the edges are disconnected. findContours connects these edges.
         List<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(dilateOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Creates bounding rectangles along all of the detected contours
-        MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
+        MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         Rect[] boundRect = new Rect[contours.size()];
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
@@ -121,7 +127,7 @@ public class PropDetector extends OpenCvPipeline {
             boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
         }
 
-        Rect biggestBoundingBox = new Rect(0,0,0,0);
+        Rect biggestBoundingBox = new Rect(0, 0, 0, 0);
 
         // Gets the biggest bounding box
         for (Rect rect : boundRect) {
@@ -146,12 +152,34 @@ public class PropDetector extends OpenCvPipeline {
         // All code below this line (Except for the return statement) should be commented out for competition to save processing
 
         // Draw a rectangle over the biggest bounding box
-        Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
+        Imgproc.rectangle(mat1, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
 
         // Resizes the code so it can be viewed on the driver station
-        Imgproc.resize(mat, mat, new Size(320, 240));
+        Imgproc.resize(mat1, mat1, new Size(320, 240));
 
-        return mat; // return the mat
+        if (VIEW_DISPLAYED == 1) {
+            Imgproc.rectangle(input, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
+            return input;
+        } else if (VIEW_DISPLAYED == 2) {
+            return thresh0;
+        } else if (VIEW_DISPLAYED == 3) {
+            return thresh1;
+        } else if (VIEW_DISPLAYED == 4) {
+            return thresholdOutput;
+        } else if (VIEW_DISPLAYED == 5) {
+            return erodeOutput;
+        } else if (VIEW_DISPLAYED == 6) {
+            return dilateOutput;
+        } else if (VIEW_DISPLAYED == 7) {
+
+            return edges;
+        } else if (VIEW_DISPLAYED == 8) {
+
+            return HSVmat;
+        } else {
+
+            return HSVmat;
+        } // end of if VIEW_DISPLAYED    }
     }
 
     public PropLocation getPropLocation() { return this.propLocation; }
