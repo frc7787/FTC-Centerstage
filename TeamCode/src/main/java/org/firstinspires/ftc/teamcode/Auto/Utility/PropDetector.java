@@ -143,12 +143,11 @@ public class PropDetector extends OpenCvPipeline {
             propLocation = NONE;
         }
 
-        // All code below this line (Except for the return statement) should be commented out for competition to save processing
-
         // Draw a rectangle over the biggest bounding box
         Imgproc.rectangle(mat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
 
         // Resizes the code so it can be viewed on the driver station
+        // Should probably comment this out for competition
         Imgproc.resize(mat, mat, new Size(320, 240));
 
         return mat; // return the mat
