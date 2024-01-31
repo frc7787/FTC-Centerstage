@@ -40,7 +40,7 @@ public class AutoBlueAudience extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Rect cropRectangle = new Rect(110, 120, 190, 120);
 
-        propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
+        propDetector = new PropDetector(PropColor.BLUE);
         drive        = new MecanumDriveBase(hardwareMap);
         intake       = new Intake(hardwareMap);
 

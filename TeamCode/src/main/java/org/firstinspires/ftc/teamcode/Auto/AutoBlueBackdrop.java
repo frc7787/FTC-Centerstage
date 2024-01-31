@@ -41,7 +41,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
+        propDetector = new PropDetector(PropColor.BLUE);
         drive        = new MecanumDriveBase(hardwareMap);
         intake       = new Intake(hardwareMap);
 

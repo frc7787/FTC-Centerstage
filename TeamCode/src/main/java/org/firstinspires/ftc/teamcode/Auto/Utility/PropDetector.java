@@ -4,19 +4,7 @@ import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.CENTER;
 import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.LEFT;
 import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.NONE;
 import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.RIGHT;
-import static org.firstinspires.ftc.teamcode.Properties.BOUNDING_RECTANGLE_COLOR;
-import static org.firstinspires.ftc.teamcode.Properties.CV_ANCHOR;
-import static org.firstinspires.ftc.teamcode.Properties.CV_BORDER_TYPE;
-import static org.firstinspires.ftc.teamcode.Properties.CV_BORDER_VALUE;
-import static org.firstinspires.ftc.teamcode.Properties.DIALATE_ITERATIONS;
-import static org.firstinspires.ftc.teamcode.Properties.ERODE_ITERATIONS;
-import static org.firstinspires.ftc.teamcode.Properties.HIGH_HSV_RANGE_BLUE;
-import static org.firstinspires.ftc.teamcode.Properties.HIGH_HSV_RANGE_RED_ONE;
-import static org.firstinspires.ftc.teamcode.Properties.HIGH_HSV_RANGE_RED_TWO;
 import static org.firstinspires.ftc.teamcode.Properties.LEFT_X;
-import static org.firstinspires.ftc.teamcode.Properties.LOW_HSV_RANGE_BLUE;
-import static org.firstinspires.ftc.teamcode.Properties.LOW_HSV_RANGE_RED_ONE;
-import static org.firstinspires.ftc.teamcode.Properties.LOW_HSV_RANGE_RED_TWO;
 import static org.firstinspires.ftc.teamcode.Properties.RIGHT_X;
 
 import androidx.annotation.NonNull;
@@ -27,7 +15,9 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -40,30 +30,50 @@ import java.util.List;
  */
 @Config
 public class PropDetector extends OpenCvPipeline {
-    PropColor propColor;
+    public PropColor propColor;
     Rect cropRectangle;
     public static int VIEW_DISPLAYED = 1;
     public static int ERODE_PASSES = 9;
-    public static int DILATE_PASSES = 0;
 
+    public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(255, 0, 0);
+
+    // lighter prop
+    public static volatile Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 0);
+    public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(125, 255, 255);
+
+    private static final Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 100, 0);
+    private static final Scalar HIGH_HSV_RANGE_RED_ONE = new Scalar(180, 255, 255);
+
+    private static final Scalar LOW_HSV_RANGE_RED_TWO  = new Scalar(0, 100, 0);
+    private static final Scalar HIGH_HSV_RANGE_RED_TWO = new Scalar(10, 255, 255);
+
+    private static final Point CV_ANCHOR        = new Point(-1, -1);
+    private static final Scalar CV_BORDER_VALUE = new Scalar(-1);
+    private static final int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
 
     PropLocation propLocation = NONE;
 
-    private Mat HSVmat = new Mat(),
-            mat1           = new Mat(),
-            thresh0        = new Mat(),
-            thresh1        = new Mat(),
-            edges          = new Mat(),
-            hierarchy      = new Mat(),
-            cvDilateKernel = new Mat(),
-            cvErodeKernel  = new Mat(),
+    private Mat HSVmat      = new Mat(),
+            hsvMat          = new Mat(),
+            thresh0         = new Mat(),
+            thresh1         = new Mat(),
+            hierarchy       = new Mat(),
+            cvErodeKernel   = new Mat(),
             thresholdOutput = new Mat(),
-            dilateOutput    = new Mat(),
-            erodeOutput    = new Mat();
-    public PropDetector(@NonNull PropColor color, Rect cropRectangle) {
-        this.cropRectangle = cropRectangle;
+            erodeOutput     = new Mat();
+    public PropDetector(@NonNull PropColor color) {
         propColor = color;
-        propColor=PropColor.BLUE;
+    }
+
+    public void swapColor() {
+        switch (propColor) {
+            case BLUE:
+                propColor = PropColor.RED;
+                break;
+            case RED:
+                propColor = PropColor.BLUE;
+                break;
+        }
     }
 
     @Override
@@ -75,20 +85,20 @@ public class PropDetector extends OpenCvPipeline {
         }
 
         // Convert color to HSV
-        Imgproc.cvtColor(input, mat1, Imgproc.COLOR_RGB2HSV);
-        Imgproc.cvtColor(input, mat1, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
 
         switch (propColor) {
             case RED:
                 // Check if the image is in range, then adds the ranges together
-                Core.inRange(mat1, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, thresh0);
-                Core.inRange(mat1, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, thresh1);
+                Core.inRange(hsvMat, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, thresh0);
+                Core.inRange(hsvMat, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, thresh1);
                 Core.add(thresh0, thresh1, thresholdOutput);
 
                 break;
             case BLUE:
                 // Checks if the image is in range
-                Core.inRange(mat1, LOW_HSV_RANGE_BLUE, HIGH_HSV_RANGE_BLUE, thresholdOutput);
+                Core.inRange(hsvMat, LOW_HSV_RANGE_BLUE, HIGH_HSV_RANGE_BLUE, thresholdOutput);
 
                 break;
         }
@@ -99,24 +109,14 @@ public class PropDetector extends OpenCvPipeline {
                 erodeOutput,
                 cvErodeKernel,
                 CV_ANCHOR,
-                ERODE_ITERATIONS,
-                CV_BORDER_TYPE,
-                CV_BORDER_VALUE);
-
-        // Dilate the image to increase the size of what is left
-        Imgproc.dilate(
-                erodeOutput,
-                dilateOutput,
-                cvDilateKernel,
-                CV_ANCHOR,
-                DIALATE_ITERATIONS,
+                ERODE_PASSES,
                 CV_BORDER_TYPE,
                 CV_BORDER_VALUE);
 
 
-        // Oftentimes the edges are disconnected. findContours connects these edges.
+        // Finds the contours of the image
         List<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(dilateOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(erodeOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Creates bounding rectangles along all of the detected contours
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
@@ -136,7 +136,6 @@ public class PropDetector extends OpenCvPipeline {
             }
         }
 
-        // TODO: Maybe we should adjust the range just slightly from 25% to around 23% to increase accuracy?
         if (biggestBoundingBox.area() != 0) { // If we detect the prop
             if (biggestBoundingBox.x < LEFT_X) { // Check to see if the bounding box is on the left 25% of the screen
                 propLocation = LEFT;
@@ -152,10 +151,10 @@ public class PropDetector extends OpenCvPipeline {
         // All code below this line (Except for the return statement) should be commented out for competition to save processing
 
         // Draw a rectangle over the biggest bounding box
-        Imgproc.rectangle(mat1, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
+        Imgproc.rectangle(hsvMat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
 
         // Resizes the code so it can be viewed on the driver station
-        Imgproc.resize(mat1, mat1, new Size(320, 240));
+        Imgproc.resize(hsvMat, hsvMat, new Size(320, 240));
 
         if (VIEW_DISPLAYED == 1) {
             Imgproc.rectangle(input, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
@@ -169,12 +168,6 @@ public class PropDetector extends OpenCvPipeline {
         } else if (VIEW_DISPLAYED == 5) {
             return erodeOutput;
         } else if (VIEW_DISPLAYED == 6) {
-            return dilateOutput;
-        } else if (VIEW_DISPLAYED == 7) {
-
-            return edges;
-        } else if (VIEW_DISPLAYED == 8) {
-
             return HSVmat;
         } else {
 

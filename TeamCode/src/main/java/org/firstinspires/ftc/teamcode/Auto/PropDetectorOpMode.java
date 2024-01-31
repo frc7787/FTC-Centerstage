@@ -10,15 +10,15 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Test - Prop Detector Red")
-public class PropDetectorTest extends OpMode {
-
+@Autonomous(name = "Test - Prop Detector")
+public class PropDetectorOpMode extends OpMode {
+    private long lastButtonPress=0;
     PropDetector detector;
 
     OpenCvCamera camera;
 
     @Override public void init() {
-        detector = new PropDetector(PropColor.RED, null);
+        detector = new PropDetector(PropColor.RED);
 
         int cameraMonitorViewId = hardwareMap
                 .appContext
@@ -46,6 +46,13 @@ public class PropDetectorTest extends OpMode {
 
     @Override public void init_loop() {
         telemetry.addData("Location", detector.getPropLocation());
+        telemetry.addData("Detector Color", detector.propColor);
+        telemetry.addLine("Press left bumper to swap prop detection colour");
+
+        if (gamepad1.left_bumper&&(System.currentTimeMillis()-lastButtonPress)>1000) {
+            detector.swapColor();
+            lastButtonPress=System.currentTimeMillis();
+        }
         telemetry.update();
     }
 

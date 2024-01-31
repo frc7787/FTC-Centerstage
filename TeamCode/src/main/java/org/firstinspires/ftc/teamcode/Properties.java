@@ -80,26 +80,12 @@ public class Properties {
     public static volatile double LEFT_X  = 0.25 * (double) CAMERA_WIDTH;
     public static volatile double RIGHT_X = 0.75 * (double) CAMERA_WIDTH;
 
-    public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(255, 0, 0);
 
-    // lighter prop
-    public static volatile Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 0);
-    public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(125, 255, 255);
 
     // Darker prop
     //public static volatile Scalar LOW_HSV_RANGE_BLUE = new Scalar(101, 185, 37);
     //public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(127, 255, 110);
 
-    public static volatile Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 100, 0);
-    public static volatile Scalar HIGH_HSV_RANGE_RED_ONE = new Scalar(180, 255, 255);
-
-    public static volatile Scalar LOW_HSV_RANGE_RED_TWO  = new Scalar(0, 100, 0);
-    public static volatile Scalar HIGH_HSV_RANGE_RED_TWO = new Scalar(10, 255, 255);
-
-    public static volatile Point CV_ANCHOR        = new Point(-1, -1);
-    public static volatile Scalar CV_BORDER_VALUE = new Scalar(-1);
-    public static volatile int CV_BORDER_TYPE     = Core.BORDER_CONSTANT;
-    public static volatile Rect CROP_RECT         = new Rect(130, 120, 190, 120);
 
     // -------- Position Constants ----------- //
 
