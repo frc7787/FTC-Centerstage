@@ -1,291 +1,302 @@
 package org.firstinspires.ftc.teamcode.Subsytems;
 
-import static org.firstinspires.ftc.teamcode.Properties.HANG_POS;
-import static org.firstinspires.ftc.teamcode.Properties.HOMING_POWER;
-import static org.firstinspires.ftc.teamcode.Properties.HUNG_POS;
-import static org.firstinspires.ftc.teamcode.Properties.LAUNCH_POS;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
+import static org.firstinspires.ftc.teamcode.Properties.*;
+import static org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState.*;
+import static org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmState.*;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Properties;
+import org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState;
+import org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmState;
 
-/**
- * Class to contain the arm subsystem. Arm contains two other subsystems elevator (extension) and
- * worm (rotation). This class has exclusive control over it's internal state, therefor neither it's
- * subsystem components, nor any outside class can influence it's state.
- * However, if the state of the arm needs to be read in order to control the state of another subsystem,
- * a getState method is available.
- */
 public class Arm {
-    private final Elevator elevator;
-    private final Worm worm;
+    private static final int WORM_SAFETY_LIMIT = 1041+300;
+    private static final double ELEVATOR_HOMING_POWER = -Math.abs(Properties.ELEVATOR_HOMING_POWER);
+    private static final double WORM_HOMING_POWER =-Math.abs(Properties.WORM_HOMING_POWER);
 
-    private int safetyLimit  = 2150;// worm safety limit 550 is a guess
-    private int rotTargetPos = 0;
-    private int extTargetPos = 0;
+    private static DcMotorImplEx wormMotor, elevatorMotor;
+    private static RevTouchSensor wormLimitSwitch, elevatorLimitSwitch;
 
-    HomingState homingState = HomingState.START;
-    NormalArmState normalArmState = NormalArmState.UNKNOWN;
-    EndGameState endGameArmState  = EndGameState.IDLE;
-    MoveState moveState           = MoveState.IDLE;
+    private static int elevatorTargetPos, wormTargetPos;
+    private static double wormPower, elevatorPower;
 
-    enum HomingState {
-        START,
-        HOMING_ELEVATOR,
-        HOMING_WORM,
-        COMPLETE
-    }
+    private static NormalPeriodArmState normalPeriodArmState;
+    private static HomingState homingState;
 
-    public enum NormalArmState {
-        AT_POS,
-        TO_POS,
-        HOMING,
-        UNKNOWN,
-    }
+    /**
+     * Initializes all of the hardware for the Arm, and resets the arm state
+     * @param hardwareMap The hardware map you are using to get the hardware likely "hardwareMap"
+     */
+    public static void init(@NonNull HardwareMap hardwareMap) {
+        wormLimitSwitch     = hardwareMap.get(RevTouchSensor.class, "WormLimitSwitch");
+        elevatorLimitSwitch = hardwareMap.get(RevTouchSensor.class, "ExtensionLimitSwitch");
 
-    public enum EndGameState {
-        IDLE,
-        TO_IDLE,
-        TO_HANGING_POS,
-        HANGING_POS,
-        TO_HUNG_POS,
-        HUNG,
-        TO_LAUNCHING_POS,
-        LAUNCHING_POS,
-    }
+        wormMotor     = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
+        elevatorMotor = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
 
-    enum MoveState {
-        IDLE,
-        ROTATING,
-        EXTENDING,
+        elevatorMotor.setDirection(REVERSE);
+
+        elevatorTargetPos = 0;
+        wormTargetPos     = 0;
+
+        normalPeriodArmState = UNKNOWN;
+        homingState          = START;
     }
 
     /**
-     * Arm subsystem constructor.
-     * @param hardwareMap The hardwareMap you are using, likely "hardwareMap"
+     * Function to update the state of the arm every loop, moves the arm to the target pos
+     * and checks if the arm should be homing.
      */
-    public Arm(@NonNull HardwareMap hardwareMap) {
-        elevator = new Elevator(hardwareMap);
-        worm     = new Worm(hardwareMap);
-    }
+    public static void update() {
+        switch (normalPeriodArmState) {
+            case AT_POS:
+//                if (Math.abs(elevatorMotor.getCurrentPosition()-elevatorTargetPos)>20){
+//                    normalPeriodArmState=TO_POS;
+//                }
 
-    /**
-     * Initializes the arm by calling the zero functions on elevator and worm
-     */
-    public void init() {
-        elevator.init();
-        worm.init();
-    }
+                break;
+            case TO_POS:
+                if (elevatorTargetPos > 0 && wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT) {
+                    // If the target worm pos is greater than the safety limit we go there, if not we go to the safety limit.
+                    wormTargetPos=Math.max(wormTargetPos, (WORM_SAFETY_LIMIT+20));
+                    rotateWorm(wormTargetPos);
+                } else {
+                    rotateWorm(wormTargetPos);
+                    if (wormMotor.getCurrentPosition()>WORM_SAFETY_LIMIT){
+                        extendElevator(elevatorTargetPos);
+                    }
+                    if (!elevatorMotor.isBusy() && !wormMotor.isBusy()) {
+                        normalPeriodArmState = AT_POS;
+                    }
+                }
 
-    /**
-     * Sets the elevator state to homing
-     */
-    public void setHoming() {
-        normalArmState = NormalArmState.HOMING;
-        homingState=HomingState.START;
-    }
-
-    /**
-     * Function to update the state of the arm during endgame
-     */
-    public void updateEndgame() {
-        elevator.update();
-        worm.update();
-
-        if (worm.is_busy()) {
-            if (worm.targetPos() == 0) {
-                endGameArmState = EndGameState.TO_IDLE;
-            } else if (worm.targetPos() == LAUNCH_POS) {
-                endGameArmState = EndGameState.TO_LAUNCHING_POS;
-            } else if (worm.targetPos() == HANG_POS) {
-                endGameArmState = EndGameState.TO_HANGING_POS;
-            } else if (worm.targetPos() == HUNG_POS) {
-                endGameArmState = EndGameState.TO_HUNG_POS;
-            }
-        } else {
-            switch (endGameArmState) {
-                case TO_IDLE:
-                    endGameArmState = EndGameState.IDLE;
-                    break;
-                case TO_HANGING_POS:
-                    endGameArmState = EndGameState.HANGING_POS;
-                    break;
-                case TO_LAUNCHING_POS:
-                    endGameArmState = EndGameState.LAUNCHING_POS;
-                    break;
-                case TO_HUNG_POS:
-                    endGameArmState = EndGameState.HUNG;
-                    break;
-            }
-
-        }
-    }
-
-    /**
-     * Function to update the state of the arm during the normal period of the game.
-     */
-    public void update() {
-        elevator.update();
-        worm.update();
-        moveArmToTarget();
-
-        if (normalArmState == NormalArmState.HOMING) {
-            home();
-        }
-    }
-
-
-    public void moveToPosEndgame(int rotPos) { //to fix
-        updateEndgame();
-
-        worm.rotate(rotPos);
-    }
-
-    /**
-     * Moves the arm to a specified position. Note this function updates the state of the elevator.
-     *
-     * @param extPos The position to extend the elevator to
-     * @param rotPos The position to rotate the worm to
-     */
-    public void moveToPosition(int extPos, int rotPos) {
-        extTargetPos=extPos;
-        rotTargetPos=rotPos;
-    }
-    private void moveArmToTarget() {
-
-        switch (normalArmState){
+                break;
             case UNKNOWN:
                 setHoming();
                 break;
-            case AT_POS:
-                if (extTargetPos>0 && worm.currentPos()<safetyLimit){
-                    worm.rotate(safetyLimit);
-                    rotTargetPos=Math.max(safetyLimit,rotTargetPos);
-                }
-                else{
-                    worm.rotate(rotTargetPos);
-                    elevator.extend(extTargetPos);
-                    if (elevator.is_busy()||worm.is_busy()){
-                        normalArmState=NormalArmState.TO_POS;
-                    }
-
-                }
-                break;
-            case TO_POS:
-                if (elevator.is_busy()||worm.is_busy()){
-                    break;
-                }
-                else {
-                    normalArmState=NormalArmState.AT_POS;
-                }
-                break;
             case HOMING:
+                home();
                 break;
+
         }
+    }
+
+    /**
+     * Command the arm to start the homing sequence
+     */
+    public static void setHoming() {
+        homingState          = START;
+        normalPeriodArmState = HOMING;
 
     }
 
     /**
-     * Runs the arm homing sequence
+     * Sets the target position of the arm
+     * @param wormTargetPos The target position of the worm
+     * @param elevatorTargetPos The target position of the elevator
      */
-    private void home() {
-        // Cancel homing if we start moving anywhere else
-        if (elevator.targetPos() != 0 || worm.targetPos() != 0) {
-            homingState = HomingState.COMPLETE;
-        }
+    public static void setTargetPos(int elevatorTargetPos, double elevatorPower, int wormTargetPos,  double wormPower) {
+        normalPeriodArmState = TO_POS;
+        Arm.elevatorTargetPos = elevatorTargetPos;
+        Arm.wormTargetPos     = wormTargetPos;
+        Arm.wormPower = wormPower;
+        Arm.elevatorPower = elevatorPower;
+    }
+    public static void setTargetPos(int elevatorTargetPos, int wormTargetPos) {
+        setTargetPos(elevatorTargetPos, DEFAULT_ELEVATOR_POWER, wormTargetPos, DEFAULT_WORM_POWER);
+    }
 
-        switch (homingState) {
+    /**
+     * Homes the arm and worm. First, it homes the elevator, then the worm after it is finished
+     */
+    private static void home() {
+       switch (homingState) {
             case START:
-                homingState = HomingState.HOMING_ELEVATOR;
-                normalArmState=NormalArmState.HOMING;
-                extTargetPos=0;
-                rotTargetPos=0;
-                break;
-            case HOMING_ELEVATOR:// never do this until
-                elevator.extend(-5000,HOMING_POWER);
-                if (elevator.limitSwitchIsPressed()) {
-                    homingState = HomingState.HOMING_WORM;
-                    elevator.extend(0,0);
-                }
+                wormMotor.setMotorEnable();
+                wormMotor.setMode(RUN_USING_ENCODER);
+                elevatorMotor.setMotorEnable();
+                elevatorMotor.setMode(RUN_USING_ENCODER);
+                homingState          = HOMING_ELEVATOR;
+                normalPeriodArmState = HOMING;
 
+                break;
+            case HOMING_ELEVATOR:
+                elevatorMotor.setPower(ELEVATOR_HOMING_POWER);
+                if (elevatorLimitSwitch.isPressed()) {
+                    homingState = HOMING_WORM;
+                    elevatorMotor.setMode(STOP_AND_RESET_ENCODER);
+                    extendElevator(0,0.1);
+                }
                 break;
             case HOMING_WORM:
-                worm.rotate(-5000,HOMING_POWER);
-                if (worm.limitSwitchIsPressed()) {
-                    homingState = HomingState.COMPLETE;
-                    worm.rotate(0,0);
+                wormMotor.setPower(WORM_HOMING_POWER);
+                if (wormLimitSwitch.isPressed()) {
+                    homingState = COMPLETE;
+                    wormMotor.setMode(STOP_AND_RESET_ENCODER);
+                    rotateWorm(0,0.0);
                 }
-
                 break;
             case COMPLETE:
-                normalArmState=NormalArmState.AT_POS;
+                normalPeriodArmState = AT_POS;
+                homingState = IDLE;
                 break;
+            case IDLE:
+                break;
+       }
+    }
+    /**
+     * Extends the elevator to the provided position at the provided power
+     * @param targetPos The position to move the elevator to
+     * @param power The power to move to the target position at
+     */
+    private static void extendElevator(int targetPos, double power) {
+        elevatorMotor.setTargetPosition(targetPos);
+        elevatorMotor.setMode(RUN_TO_POSITION);
+        elevatorMotor.setPower(power);
+    }
+
+    /**
+     * Extends the elevator to the provided position at the power defined by DEFAULT_ELEVATOR_POWER
+     * @param targetPos The position to move the elevator to
+     */
+    private static void extendElevator(int targetPos) {
+        extendElevator(targetPos, DEFAULT_ELEVATOR_POWER);
+    }
+
+    /**
+     * Rotates the worm to the provided position at the provided power
+     * @param pos The position to move the worm to
+     * @param power The power to move to the target position at
+     */
+    private static void rotateWorm(int pos, double power) {
+        wormMotor.setTargetPosition(pos);
+        wormMotor.setMode(RUN_TO_POSITION);
+        wormMotor.setPower(power);
+    }
+
+    /**
+     * Rotates the worm to the the provided position at the power defined by DEFAULT_WORM_POWER
+     * @param targetPos The position to move the worm to
+     */
+    private static void rotateWorm(int targetPos) {
+        rotateWorm(targetPos, DEFAULT_WORM_POWER);
+    }
+
+    /**
+     * Displays debug information about the arm
+     * @param telemetry The telemetry to display the information on
+     * @param wormTelemetry Whether or not to display telemetry about the worm motor
+     * @param elevatorTelemetry Whether or not to display telemetry about the elevator motor
+     */
+    public static void debug(@NonNull Telemetry telemetry, boolean wormTelemetry, boolean elevatorTelemetry) {
+        telemetry.addData(
+                "Worm Limit Switch Is Pressed",
+                wormLimitSwitch.isPressed());
+        telemetry.addData(
+                "Elevator Limit Switch Is Pressed",
+                elevatorLimitSwitch.isPressed());
+
+        if (wormTelemetry) {
+            telemetry.addData(
+                    "Worm Motor Direction",
+                    wormMotor.getDirection());
+            telemetry.addData(
+                    "Worm Motor Power",
+                    wormMotor.getPower());
+            telemetry.addData(
+                    "Worm Motor Current (Amps)",
+                    wormMotor.getCurrent(AMPS));
+            telemetry.addData(
+                    "Worm Current Pos",
+                    wormMotor.getCurrentPosition());
+            telemetry.addData(
+                    "Worm Target Pos",
+                    wormMotor.getTargetPosition());
         }
+
+        if (elevatorTelemetry) {
+            telemetry.addData(
+                    "Elevator Motor Direction",
+                    elevatorMotor.getDirection());
+            telemetry.addData(
+                    "Elevator Motor Power",
+                    elevatorMotor.getPower());
+            telemetry.addData(
+                    "Elevator Motor Current (AMPS)",
+                    elevatorMotor.getCurrent(AMPS));
+            telemetry.addData(
+                    "Elevator Motor Current Pos",
+                    elevatorMotor.getCurrentPosition());
+            telemetry.addData(
+                    "Elevator Motor Target Pos",
+                    elevatorMotor.getTargetPosition());
+            telemetry.addData(
+                    "Elevator Motor LOCAL Target Pos",
+                    elevatorTargetPos);
+        }
+
+        telemetry.addData(
+                "Arm State - Normal Period",
+                normalPeriodArmState);
+        telemetry.addData(
+                "Homing State",
+                homingState);
+        telemetry.addData(
+                "Total Arm Current",
+                elevatorMotor.getCurrent(AMPS) + wormMotor.getCurrent(AMPS));
+    }
+
+
+
+    /**
+     * @return The current position of the elevator
+     */
+    public static int getElevatorPos() {
+        return elevatorMotor.getCurrentPosition();
     }
 
     /**
-     * Displays debug info for the arm subsystem
-     * @param telemetry The telemetry you are using to display the data
+     * @return The current position of the worm drive
      */
-    public void debug(@NonNull Telemetry telemetry) {
-        elevator.debug(telemetry);
-        worm.debug(telemetry);
-
-        telemetry.addData("Arm Normal State", normalArmState);
-        telemetry.addData("Arm EndGame State", endGameArmState);
-        telemetry.addData("Current Arm Move Position", moveState);
-        telemetry.addData("Current homing state", homingState);
-
-        telemetry.addData("Current Arm Amps", getArmCurrentAmps());
-    }
-
-    public void disable() {
-        worm.disable();
-        elevator.disable();
-    }
-
-// Status update methods
-
-    public boolean elevatorLimitSwitchIsPressed() { return elevator.limitSwitchIsPressed(); }
-
-    public boolean wormLimitSwitchIsPressed() { return worm.limitSwitchIsPressed(); }
-
-    /**
-     * Gets the current draw of the elevator and worm motor in amps
-     */
-    public double getArmCurrentAmps() { return getElevatorCurrentAmps() + getWormCurrentAmps(); }
-
-    /**
-     * Gets the current draw of the elevator motor in amps
-     */
-    public double getElevatorCurrentAmps() { return elevator.currentAmps(); }
-
-    /**
-     * Gets the current draw of the worm motor in amps
-     */
-    public double getWormCurrentAmps() { return worm.currentAmps(); }
-    public int getWormPos() {
-        return worm.currentPos();
+    public static int getWormPos() {
+        return wormMotor.getCurrentPosition();
     }
 
     /**
-     * @return The current state of the arm.
+     * @return The target position of the worm drive
      */
-    public NormalArmState getNormalArmState() {
-        return normalArmState;
-    }
-
-    public void powerWorm(double power) { worm.power(power); }
-
-    public EndGameState endGameState() {
-        return endGameArmState;
+    public static int getWormTargetPos() {
+        return wormMotor.getTargetPosition();
     }
 
     /**
-     * @return worm_is_busy || elevator_is_busy
+     * @return The target position of the elevator
      */
-    public boolean is_busy() { return worm.is_busy() || elevator.is_busy(); }
+    public static int getElevatorTargetPos() {
+        return elevatorMotor.getTargetPosition();
+    }
 
+    /**
+     * @return The state of the arm in the normal period
+     */
+    public static NormalPeriodArmState getNormalPeriodArmState() {
+        return normalPeriodArmState;
+    }
+
+    /**
+     * @return The homing state of the elevator
+     */
+    public static HomingState getHomingState() {
+        return homingState;
+    }
 }

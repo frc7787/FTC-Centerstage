@@ -12,24 +12,18 @@ import org.firstinspires.ftc.teamcode.Subsytems.*;
 import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.AUTO;
 import static org.firstinspires.ftc.teamcode.Properties.*;
 
-import androidx.annotation.NonNull;
-
-@TeleOp(name = "TeleOp 2023/2024 - Robot Centric", group = "Production")
-@Disabled
+@TeleOp(name = "TeleOp - Provincials - Use This One", group = "Production")
 public class TeleOpMain extends OpMode {
     DriveBase driveBase;
-    Arm arm;
     Hanger hanger;
     Launcher launcher;
     Intake intake;
     DeliveryTray deliveryTray;
 
-    GamePeriod gamePeriod     = GamePeriod.NORMAL;
+    GamePeriod gamePeriod = GamePeriod.NORMAL;
 
-    boolean hangerHookReleased = false;
-    boolean intakeToggle       = false;
-    boolean doorToggle         = false;
-
+    boolean intakeToggle = false;
+    boolean doorToggle   = false;
 
     enum GamePeriod {
         NORMAL,
@@ -38,25 +32,8 @@ public class TeleOpMain extends OpMode {
 
     Gamepad prevGamepad2, currentGamepad2;
 
-    /**
-     * Set the LED color of gamepad1 and gamepad2. The color will continue until another color is set
-     * @param r Red value
-     * @param g Green value
-     * @param b Blue value
-     */
-    void setGamepadLedColors(int r, int g, int b) {
-        gamepad1.setLedColor(r, g, b, Gamepad.LED_DURATION_CONTINUOUS);
-        gamepad2.setLedColor(r, g, b, Gamepad.LED_DURATION_CONTINUOUS);
-    }
-
-    /**
-     * Listens for gamepad input to move the tray
-     * 
-     * @param currentGamePad: The current state of the gamepad
-     * @param prevGamepad: The state of the gamepad during the previous loop iteration
-     */
-    void listenForDeliveryTrayCommand(@NonNull Gamepad currentGamePad, @NonNull Gamepad prevGamepad) {
-        if (currentGamePad.right_bumper && !prevGamepad.right_bumper) {
+    private void listenForDeliveryTrayCommand() {
+        if (currentGamepad2.right_bumper && !prevGamepad2.right_bumper) {
             doorToggle = !doorToggle;
         }
 
@@ -67,127 +44,84 @@ public class TeleOpMain extends OpMode {
         }
     }
 
-    /**
-     * Listens for gamepad input to toggle the intake
-     * 
-     * @param currentGamepad: The current state of the gamepad
-     * @param prevGamepad: The state of the gamepad during the previous loop iteration
-     */
-    void listenForIntakeCommand(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
-        if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
-            intakeToggle = !intakeToggle;
-        }
-        
-        if (intakeToggle) {
-            intake.intake();
-        } else {
-            intake.stop();
-        }
+
+    private void listenForIntakeCommand() {
+      if (currentGamepad2.left_bumper && !prevGamepad2.left_bumper) {
+          intakeToggle = !intakeToggle;
+      }
+
+      if (intakeToggle) {
+          deliveryTray.openDoorToReleasePosition();
+      } else {
+          deliveryTray.closeDoor();
+      }
 
     }
 
-    /**
-     * Listens for arm commands
-     * @param currentGamePad The current copy of the gamepad state
-     * @param prevGamePad The copy of the gamepad state from the previous loop iteration
-     */
-    void listenForNormalArmCommand(@NonNull Gamepad currentGamePad, @NonNull Gamepad prevGamePad) {
-        if (currentGamePad.dpad_down) {
-            arm.setHoming();
-        } else if (currentGamePad.cross) {
-            arm.moveToPosition(BOTTOM_EXT_POS, BOTTOM_ROT_POS);
-        } else if (currentGamePad.square) {
-            arm.moveToPosition(LOW_EXT_POS, LOW_ROT_POS);
-        } else if (currentGamePad.circle) {
-            arm.moveToPosition(MED_EXT_POS, MED_ROT_POS);
-        } else if (currentGamePad.triangle) {
-            arm.moveToPosition(HIGH_EXT_POS, HIGH_ROT_POS);
-        } else if (currentGamePad.options) {
-            arm.moveToPosition(TOP_EXT_POS, TOP_ROT_POS);
+    private void listenForNormalPeriodArmCommand() {
+        if (gamepad2.dpad_down) {
+            Arm.setHoming();
+        } else if (gamepad2.cross) {
+            Arm.setTargetPos(BOTTOM_EXT_POS, BOTTOM_ROT_POS);
+        } else if (gamepad2.square) {
+            Arm.setTargetPos(LOW_EXT_POS, LOW_ROT_POS);
+        } else if (gamepad2.circle) {
+            Arm.setTargetPos(MED_EXT_POS, MED_ROT_POS);
+        } else if (gamepad2.triangle) {
+            Arm.setTargetPos(HIGH_EXT_POS, HIGH_ROT_POS);
+        } else if (gamepad2.options) {
+            Arm.setTargetPos(TOP_EXT_POS, TOP_ROT_POS);
         }
     }
 
-    void listenForEndgameArmCommand(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
-        if (currentGamepad.left_bumper && !prevGamepad.left_bumper) {
-            arm.moveToPosEndgame(LAUNCH_POS);
-        } else if (currentGamepad.right_bumper && !prevGamepad.right_bumper) {
-            arm.moveToPosEndgame(HANG_POS);
-        } else if (currentGamepad.dpad_down && !prevGamepad.dpad_down) {
-            arm.moveToPosEndgame(0);
-        } else if (currentGamepad.dpad_up) {
-            arm.moveToPosEndgame(HUNG_POS);
-        }
+    private void listenForEndgameCommand() {
+       if (gamepad2.left_bumper) {
+           Arm.setTargetPos(0, LAUNCH_POS);
+       } else if (gamepad2.right_bumper) {
+           Arm.setTargetPos(0, HANG_POS);
+       }
+
+       if (gamepad2.left_trigger > 0.9) {
+           launcher.release();
+       }
+
+       if (gamepad2.right_trigger > 0.9) {
+           hanger.release();
+       }
     }
 
-    /**
-     * Code to run every iteration of the loop during the normal period (before endgame) of the match
-     * @param currentGamepad The current state of the gamepad
-     * @param prevGamepad The state of the gamepad during the previous loop iteration
-     */
-    void normalPeriodLoop(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
-        arm.update();
 
-        listenForIntakeCommand(currentGamepad, prevGamepad);
-        listenForDeliveryTrayCommand(currentGamepad, prevGamepad);
-        listenForNormalArmCommand(currentGamepad, prevGamepad);
-    }
-
-    /**
-     * Code to run every iteration of the loop during the endgame period of the match
-     * @param currentGamepad The current state of the gamepad
-     * @param prevGamepad The state of the gamepad during the previous loop iteration
-     */
-    void endGameLoop(@NonNull Gamepad currentGamepad, @NonNull Gamepad prevGamepad) {
-        arm.updateEndgame();
-
-        switch (arm.endGameState()) {
-            case HUNG:
-                arm.disable();
-                break;
-            case HANGING_POS:
-                listenForEndgameArmCommand(currentGamepad, prevGamepad);
-                if (currentGamepad.cross && !prevGamepad.cross) {
-                    hanger.release();
-                    hangerHookReleased = true;
-                }
-                break;
-            case LAUNCHING_POS:
-                listenForEndgameArmCommand(currentGamepad, prevGamepad);
-                if (currentGamepad.cross && !prevGamepad.cross) {
-                    launcher.release();
-                }
-                break;
-            default:
-                listenForEndgameArmCommand(currentGamepad, prevGamepad);
-                break;
-        }
+    private void normalPeriodLoop() {
+        listenForIntakeCommand();
+        listenForDeliveryTrayCommand();
+        listenForNormalPeriodArmCommand();
     }
     
     @Override public void init() {
-        //RobotPropertyParser.loadProperties();
-
-        prevGamepad2    = new Gamepad();
         currentGamepad2 = new Gamepad();
+        prevGamepad2    = new Gamepad();
 
         driveBase    = new DriveBase(hardwareMap);
         hanger       = new Hanger(hardwareMap);
         launcher     = new Launcher(hardwareMap);
-        arm          = new Arm(hardwareMap);
         intake       = new Intake(hardwareMap);
         deliveryTray = new DeliveryTray(hardwareMap);
 
         driveBase.init();
-        arm.init();
         launcher.init();
         hanger.init();
         intake.init();
+
+        Arm.init(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(AUTO);
         }
     }
+
     @Override public void loop() {
-        arm.debug(telemetry);
+        Arm.update();
+        Arm.debug(telemetry, true, true);
 
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
@@ -206,27 +140,22 @@ public class TeleOpMain extends OpMode {
            case NORMAL:
                telemetry.addLine("Normal Period");
 
-               normalPeriodLoop(currentGamepad2, prevGamepad2);
+               normalPeriodLoop();
 
-               if (currentGamepad2.left_trigger > 0.5 && currentGamepad2.right_trigger > 0.5) {
+               if (gamepad2.options && gamepad2.share) {
                    gamePeriod = GamePeriod.ENDGAME;
                }
                break;
            case ENDGAME:
                telemetry.addLine("Endgame Period");
-               endGameLoop(currentGamepad2, prevGamepad2);
+               listenForEndgameCommand();
 
-               if (currentGamepad2.left_trigger > 0.9 && currentGamepad2.right_trigger > 0.9) {
+               if (gamepad2.options && gamepad2.share) {
                    gamePeriod = GamePeriod.NORMAL;
                }
                break;
        }
 
         telemetry.update();
-    }
-
-
-    @Override public void stop() {
-        arm.disable();
     }
 }
