@@ -13,16 +13,16 @@ public class Properties {
 
     // ---------- ARM CONSTANTS ---------- //
 
-    public static volatile int BOTTOM_EXT_POS = 2787;
+    public static volatile int BOTTOM_EXT_POS = 487;
     public static volatile int BOTTOM_ROT_POS = 753;
 
-    public static volatile int LOW_EXT_POS = 3050;
+    public static volatile int LOW_EXT_POS = 850;
     public static volatile int LOW_ROT_POS = 926;
 
-    public static volatile int MED_EXT_POS = 3003;
+    public static volatile int MED_EXT_POS = 1303;
     public static volatile int MED_ROT_POS = 1365;
 
-    public static volatile int HIGH_EXT_POS = 3111;
+    public static volatile int HIGH_EXT_POS = 2011;
     public static volatile int HIGH_ROT_POS = 1684;
 
     public static volatile int TOP_EXT_POS = 3002;
