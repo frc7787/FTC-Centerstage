@@ -33,7 +33,7 @@ public class Properties {
     public static volatile int HUNG_POS   = 0;
 
     public static volatile double DEFAULT_WORM_POWER     = 1.0;
-    public static volatile double DEFAULT_ELEVATOR_POWER =0.1; //1.0;
+    public static volatile double DEFAULT_ELEVATOR_POWER = 0.5; //1.0;
     public static volatile double ELEVATOR_HOMING_POWER       = 0.2;//absolute value
     public static volatile double WORM_HOMING_POWER           = 0.2;//absolute value
 
