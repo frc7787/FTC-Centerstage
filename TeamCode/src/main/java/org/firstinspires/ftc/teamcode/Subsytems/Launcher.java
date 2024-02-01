@@ -14,38 +14,30 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Subsystem to contain the drone launcher.
  */
 public class Launcher {
-    final ServoImplEx launcherServo;
-
-    double launcherServoCommandedInitPos;
-
-    /**
-     * @param hardwareMap The hardware map you are using, likely "hardwareMap"
-     */
-    public Launcher(@NonNull HardwareMap hardwareMap) {
-        launcherServo = hardwareMap.get(ServoImplEx.class, "LauncherServo");
-    }
+    private static ServoImplEx launcherServo;
 
     /**
      * Initializes the servo by setting the servo direction to reverse, and setting the launcher servo
      * to the position defined by the LAUNCHER_ZERO_POS
      */
-    public void init() {
+    public static void init(@NonNull HardwareMap hardwareMap) {
+        launcherServo = hardwareMap.get(ServoImplEx.class, "LauncherServo");
+
         launcherServo.setDirection(REVERSE);
         launcherServo.setPosition(LAUNCHER_ZERO_POS);
-        launcherServoCommandedInitPos = launcherServo.getPosition();
     }
 
     /**
      * Sets the launcher servo to the zero position
      */
-    public void zero() {
+    public static void zero() {
         launcherServo.setPosition(LAUNCHER_ZERO_POS);
     }
 
     /**
      * Releases the launcher servo
      */
-    public void release() {
+    public static void release() {
         launcherServo.setPosition(LAUNCHER_SERVO_LAUNCH_POS);
     }
 
@@ -55,17 +47,10 @@ public class Launcher {
      *
      * @param telemetry The telemetry to display the debug information on
      */
-    public void debug(@NonNull Telemetry telemetry) {
+    public static void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Launcher Debug");
 
-        telemetry.addData(
-                "Launcher Servo Initialization Position",
-                launcherServoCommandedInitPos);
-        telemetry.addData(
-                "Launcher Servo Last Commanded Position",
-                launcherServo.getPosition());
-        telemetry.addData(
-                "Launcher Servo Direction",
-                launcherServo.getDirection());
+        telemetry.addData("Launcher Servo Last Commanded Position", launcherServo.getPosition());
+        telemetry.addData("Launcher Servo Direction", launcherServo.getDirection());
     }
 }

@@ -4,6 +4,7 @@ import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirec
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
 import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_HIGH;
 import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_LOW;
 import static org.firstinspires.ftc.teamcode.Properties.STRAFE_OFFSET;
@@ -15,7 +16,9 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
 
 /**
@@ -24,33 +27,25 @@ import org.firstinspires.ftc.teamcode.Utility.MotorUtility;
 public class DriveBase {
 
     // --------- Hardware Declaration --------- //
-    final IMU imu;
-    final DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
-    final DcMotorImplEx[] driveMotors;
+    private static IMU imu;
+    private static DcMotorImplEx frontLeft, frontRight, backLeft, backRight;
+    private static DcMotorImplEx[] driveMotors;
 
     // --------- IMU Constants ---------- //
-    final RevHubOrientationOnRobot controlHubOrientation = new RevHubOrientationOnRobot(LEFT, UP);
-    final IMU.Parameters imuParameters                   = new IMU.Parameters(controlHubOrientation);
+    private static final RevHubOrientationOnRobot controlHubOrientation = new RevHubOrientationOnRobot(LEFT, UP);
+    private static final IMU.Parameters imuParameters                   = new IMU.Parameters(controlHubOrientation);
 
-    public DriveBase(@NonNull HardwareMap hardwareMap) {
+    public static void init(@NonNull HardwareMap hardwareMap) {
         frontLeft  = hardwareMap.get(DcMotorImplEx.class, "FrontLeftDriveMotor");
         frontRight = hardwareMap.get(DcMotorImplEx.class, "FrontRightDriveMotor");
         backLeft   = hardwareMap.get(DcMotorImplEx.class, "BackLeftDriveMotor");
         backRight  = hardwareMap.get(DcMotorImplEx.class, "BackRightDriveMotor");
 
+        driveMotors = new DcMotorImplEx[]{frontLeft, frontRight, backLeft, backRight};
+
         imu = hardwareMap.get(IMU.class, "imu");
 
-        driveMotors = new DcMotorImplEx[]{frontLeft, frontRight, backLeft, backRight};
-    }
-
-    /**
-     * Initializes the DriveBase Class.
-     * Reverses the left motors (Front Left & Back Left) and sets all motor zero power behaviours to brake
-     */
-    public void init() {
-        IMU.Parameters parameters = new IMU.Parameters(controlHubOrientation);
-
-        imu.initialize(parameters);
+        imu.initialize(imuParameters);
 
         MotorUtility.setDirection(REVERSE, frontLeft, backLeft);
         MotorUtility.setZeroPowerBehaviour(BRAKE, driveMotors);
@@ -61,7 +56,7 @@ public class DriveBase {
      * If the value is in range, returns 0.0d
      * @param value: The value to check
      */
-    private double deadZone(double value) {
+    private static double deadZone(double value) {
         if (DEAD_ZONE_LOW < value && DEAD_ZONE_HIGH > value ) { return 0.0d; }
         return value;
     }
@@ -73,7 +68,7 @@ public class DriveBase {
      * @param strafe: The side to side translational value
      * @param turn: THe rotational value
      */
-    public void driveManualFieldCentric(double drive, double strafe, double turn) {
+    public static void driveManualFieldCentric(double drive, double strafe, double turn) {
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Our controller has a slight drift so we artificially increase the dead zone
@@ -105,7 +100,7 @@ public class DriveBase {
      * @param strafe The side to side translational value
      * @param turn The rotational value
      */
-    public void driveManualRobotCentric(double drive, double strafe, double turn) {
+    public static void driveManualRobotCentric(double drive, double strafe, double turn) {
         // Our controller has slight drift so we artificially increase the dead zone
         drive  = deadZone(drive);
         strafe = deadZone(strafe) * STRAFE_OFFSET; // Mecanum strafing is not perfect so we slightly correct
@@ -122,5 +117,29 @@ public class DriveBase {
         frontRight.setPower(fRPower);
         backLeft.setPower(bLPower);
         backRight.setPower(bRPower);
+    }
+
+    public static void debug(@NonNull Telemetry telemetry) {
+        telemetry.addLine("Drive Base Debug");
+
+        telemetry.addData("Front Left Power", frontLeft.getPower());
+        telemetry.addData("Front Left Direction", frontLeft.getDirection());
+        telemetry.addData("Front Left Current (AMPS)", frontLeft.getCurrent(AMPS));
+
+        telemetry.addData("Front Right Power", frontRight.getPower());
+        telemetry.addData("Front Right Direction", frontRight.getDirection());
+        telemetry.addData("Front Right Current (AMPS)", frontRight.getCurrent(AMPS));
+
+        telemetry.addData("Back Left Power", backLeft.getPower());
+        telemetry.addData("Back Left Direction", backLeft.getDirection());
+        telemetry.addData("Back Left Current (AMPS)", backLeft.getCurrent(AMPS));
+
+        telemetry.addData("Back Right Power", backRight.getPower());
+        telemetry.addData("Back Right Direction", backRight.getDirection());
+        telemetry.addData("Back Right Current (AMPS)", backRight.getCurrent(AMPS));
+
+        telemetry.addData(
+                "Total Drive Base Current (AMPS)",
+                frontLeft.getCurrent(AMPS) + frontRight.getCurrent(AMPS) + backLeft.getCurrent(AMPS) + backRight.getCurrent(AMPS));
     }
 }

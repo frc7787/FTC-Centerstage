@@ -57,7 +57,7 @@ public class Properties {
     public static volatile double TRAY_DOOR_OPEN_POS = 0.1;
     public static volatile double TRAY_DOOR_INTAKE_POS = 0.26;
     public static volatile double TRAY_DOOR_CLOSED_POS = 0.0;
-    public static volatile double TRAY_UP_WRIST_POS = 1.0;
+    public static volatile double DELIVERY_TRAY_UP_POS = 1.0;
 
     // ---------- LAUNCHER CONSTANTS ---------- //
 
@@ -68,10 +68,6 @@ public class Properties {
 
     public static volatile double HANGER_SERVO_POSITION = 1.0;
 
-    // ---------- OTHER CONSTANTS ------------ //
-
-    public static volatile double ENDGAME_TRIGGER_SENSITIVITY      = 0.9;
-    public static volatile double PLANE_LAUNCH_TRIGGER_SENSITIVITY = 0.9;
 
     // ----------- Camera Constants ------------ //
 

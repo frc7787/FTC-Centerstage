@@ -14,12 +14,7 @@ import static org.firstinspires.ftc.teamcode.Properties.*;
 
 @TeleOp(name = "TeleOp - Provincials - Use This One", group = "Production")
 public class TeleOpMain extends OpMode {
-    DriveBase driveBase;
-    Hanger hanger;
-    Launcher launcher;
     Intake intake;
-    DeliveryTray deliveryTray;
-
     GamePeriod gamePeriod = GamePeriod.NORMAL;
 
     boolean intakeToggle = false;
@@ -38,9 +33,9 @@ public class TeleOpMain extends OpMode {
         }
 
         if (doorToggle) {
-            deliveryTray.openDoorToReleasePosition();
+            Arm.setDoorPos(TRAY_DOOR_OPEN_POS);
         } else {
-            deliveryTray.closeDoor();
+            Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
         }
     }
 
@@ -51,9 +46,9 @@ public class TeleOpMain extends OpMode {
       }
 
       if (intakeToggle) {
-          deliveryTray.openDoorToReleasePosition();
+          Arm.setDoorPos(TRAY_DOOR_INTAKE_POS);
       } else {
-          deliveryTray.closeDoor();
+          Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
       }
 
     }
@@ -82,11 +77,11 @@ public class TeleOpMain extends OpMode {
        }
 
        if (gamepad2.left_trigger > 0.9) {
-           launcher.release();
+           Launcher.release();
        }
 
        if (gamepad2.right_trigger > 0.9) {
-           hanger.release();
+           Hanger.release();
        }
     }
 
@@ -101,17 +96,12 @@ public class TeleOpMain extends OpMode {
         currentGamepad2 = new Gamepad();
         prevGamepad2    = new Gamepad();
 
-        driveBase    = new DriveBase(hardwareMap);
-        hanger       = new Hanger(hardwareMap);
-        launcher     = new Launcher(hardwareMap);
-        intake       = new Intake(hardwareMap);
-        deliveryTray = new DeliveryTray(hardwareMap);
-
-        driveBase.init();
-        launcher.init();
-        hanger.init();
+        intake = new Intake(hardwareMap);
         intake.init();
 
+        Launcher.init(hardwareMap);
+        Hanger.init(hardwareMap);
+        DriveBase.init(hardwareMap);
         Arm.init(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -121,16 +111,15 @@ public class TeleOpMain extends OpMode {
 
     @Override public void loop() {
         Arm.update();
-        Arm.debug(telemetry, true, true);
 
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
 
-        double drive  = gamepad1.left_stick_y * -1.0;
+        double drive  = gamepad1.left_stick_y * -1.0; // Left stick y is inverted
         double strafe = gamepad1.left_stick_x;
         double turn   = gamepad1.right_stick_x;
 
-       driveBase.driveManualRobotCentric(
+       DriveBase.driveManualRobotCentric(
                drive,
                strafe,
                turn
