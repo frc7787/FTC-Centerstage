@@ -15,16 +15,20 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Properties;
 import org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState;
 import org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmState;
 
 public class Arm {
-    private static final int WORM_SAFETY_LIMIT = 2150;
+    private static final int WORM_SAFETY_LIMIT = 1041+300;
+    private static final double ELEVATOR_HOMING_POWER = -Math.abs(Properties.ELEVATOR_HOMING_POWER);
+    private static final double WORM_HOMING_POWER =-Math.abs(Properties.WORM_HOMING_POWER);
 
     private static DcMotorImplEx wormMotor, elevatorMotor;
     private static RevTouchSensor wormLimitSwitch, elevatorLimitSwitch;
 
     private static int elevatorTargetPos, wormTargetPos;
+    private static double wormPower, elevatorPower;
 
     private static NormalPeriodArmState normalPeriodArmState;
     private static HomingState homingState;
@@ -35,25 +39,18 @@ public class Arm {
      */
     public static void init(@NonNull HardwareMap hardwareMap) {
         wormLimitSwitch     = hardwareMap.get(RevTouchSensor.class, "WormLimitSwitch");
-        elevatorLimitSwitch = hardwareMap.get(RevTouchSensor.class, "ElevatorLimitSwitch");
+        elevatorLimitSwitch = hardwareMap.get(RevTouchSensor.class, "ExtensionLimitSwitch");
 
         wormMotor     = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
-        elevatorMotor = hardwareMap.get(DcMotorImplEx.class, "ElevatorMotor");
+        elevatorMotor = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
 
-        wormMotor.setMotorEnable();
-        wormMotor.setMode(STOP_AND_RESET_ENCODER);
-        wormMotor.setMode(RUN_USING_ENCODER);
-
-        elevatorMotor.setMotorEnable();
-        elevatorMotor.setMode(STOP_AND_RESET_ENCODER);
-        elevatorMotor.setMode(RUN_USING_ENCODER);
         elevatorMotor.setDirection(REVERSE);
 
         elevatorTargetPos = 0;
         wormTargetPos     = 0;
 
         normalPeriodArmState = UNKNOWN;
-        homingState          = IDLE;
+        homingState          = START;
     }
 
     /**
@@ -61,10 +58,36 @@ public class Arm {
      * and checks if the arm should be homing.
      */
     public static void update() {
-        moveArmToTargetPos();
+        switch (normalPeriodArmState) {
+            case AT_POS:
+//                if (Math.abs(elevatorMotor.getCurrentPosition()-elevatorTargetPos)>20){
+//                    normalPeriodArmState=TO_POS;
+//                }
 
-        if (normalPeriodArmState == HOMING) {
-            home();
+                break;
+            case TO_POS:
+                if (elevatorTargetPos > 0 && wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT) {
+                    // If the target worm pos is greater than the safety limit we go there, if not we go to the safety limit.
+                    wormTargetPos=Math.max(wormTargetPos, (WORM_SAFETY_LIMIT+20));
+                    rotateWorm(wormTargetPos);
+                } else {
+                    rotateWorm(wormTargetPos);
+                    if (wormMotor.getCurrentPosition()>WORM_SAFETY_LIMIT){
+                        extendElevator(elevatorTargetPos);
+                    }
+                    if (!elevatorMotor.isBusy() && !wormMotor.isBusy()) {
+                        normalPeriodArmState = AT_POS;
+                    }
+                }
+
+                break;
+            case UNKNOWN:
+                setHoming();
+                break;
+            case HOMING:
+                home();
+                break;
+
         }
     }
 
@@ -72,8 +95,9 @@ public class Arm {
      * Command the arm to start the homing sequence
      */
     public static void setHoming() {
-        normalPeriodArmState = HOMING;
         homingState          = START;
+        normalPeriodArmState = HOMING;
+
     }
 
     /**
@@ -81,75 +105,91 @@ public class Arm {
      * @param wormTargetPos The target position of the worm
      * @param elevatorTargetPos The target position of the elevator
      */
-    public static void setTargetPos(int elevatorTargetPos, int wormTargetPos) {
+    public static void setTargetPos(int elevatorTargetPos, double elevatorPower, int wormTargetPos,  double wormPower) {
+        normalPeriodArmState = TO_POS;
         Arm.elevatorTargetPos = elevatorTargetPos;
         Arm.wormTargetPos     = wormTargetPos;
+        Arm.wormPower = wormPower;
+        Arm.elevatorPower = elevatorPower;
     }
-
-    private static void moveArmToTargetPos() {
-        switch (normalPeriodArmState) {
-            case AT_POS:
-                if (elevatorTargetPos > 0 && wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT) {
-                    // If the target worm pos is greater than the safety limit we go there, if not we go to the safety limit.
-                    rotateWorm(Math.max(wormTargetPos, WORM_SAFETY_LIMIT));
-                } else {
-                    rotateWorm(wormTargetPos);
-                    extendElevator(elevatorTargetPos);
-
-                    if (wormMotor.isBusy() || elevatorMotor.isBusy()) {
-                        normalPeriodArmState = TO_POS;
-                    }
-                }
-                break;
-            case TO_POS:
-                if (!elevatorMotor.isBusy() && !wormMotor.isBusy()) {
-                    normalPeriodArmState = AT_POS;
-                }
-                break;
-            case UNKNOWN:
-                home();
-
-        }
+    public static void setTargetPos(int elevatorTargetPos, int wormTargetPos) {
+        setTargetPos(elevatorTargetPos, DEFAULT_ELEVATOR_POWER, wormTargetPos, DEFAULT_WORM_POWER);
     }
 
     /**
      * Homes the arm and worm. First, it homes the elevator, then the worm after it is finished
      */
-    public static void home() {
-        if (elevatorMotor.getCurrentPosition() != 0 || wormMotor.getTargetPosition() != 0) {
-            normalPeriodArmState = TO_POS;
-            homingState = COMPLETE;
-        }
-
-        switch (homingState) {
+    private static void home() {
+       switch (homingState) {
             case START:
+                wormMotor.setMotorEnable();
+                wormMotor.setMode(RUN_USING_ENCODER);
+                elevatorMotor.setMotorEnable();
+                elevatorMotor.setMode(RUN_USING_ENCODER);
                 homingState          = HOMING_ELEVATOR;
                 normalPeriodArmState = HOMING;
 
-                elevatorTargetPos = 0;
-                wormTargetPos     = 0;
                 break;
             case HOMING_ELEVATOR:
-                extendElevator(-100);
+                elevatorMotor.setPower(ELEVATOR_HOMING_POWER);
                 if (elevatorLimitSwitch.isPressed()) {
                     homingState = HOMING_WORM;
                     elevatorMotor.setMode(STOP_AND_RESET_ENCODER);
-                    elevatorMotor.setMode(RUN_USING_ENCODER);
+                    extendElevator(0,0.1);
                 }
                 break;
             case HOMING_WORM:
-                rotateWorm(-100);
+                wormMotor.setPower(WORM_HOMING_POWER);
                 if (wormLimitSwitch.isPressed()) {
                     homingState = COMPLETE;
-                    elevatorMotor.setMode(STOP_AND_RESET_ENCODER);
-                    elevatorMotor.setMode(RUN_USING_ENCODER);
+                    wormMotor.setMode(STOP_AND_RESET_ENCODER);
+                    rotateWorm(0,0.0);
                 }
+                break;
             case COMPLETE:
                 normalPeriodArmState = AT_POS;
+                homingState = IDLE;
                 break;
             case IDLE:
                 break;
-        }
+       }
+    }
+    /**
+     * Extends the elevator to the provided position at the provided power
+     * @param targetPos The position to move the elevator to
+     * @param power The power to move to the target position at
+     */
+    private static void extendElevator(int targetPos, double power) {
+        elevatorMotor.setTargetPosition(targetPos);
+        elevatorMotor.setMode(RUN_TO_POSITION);
+        elevatorMotor.setPower(power);
+    }
+
+    /**
+     * Extends the elevator to the provided position at the power defined by DEFAULT_ELEVATOR_POWER
+     * @param targetPos The position to move the elevator to
+     */
+    private static void extendElevator(int targetPos) {
+        extendElevator(targetPos, DEFAULT_ELEVATOR_POWER);
+    }
+
+    /**
+     * Rotates the worm to the provided position at the provided power
+     * @param pos The position to move the worm to
+     * @param power The power to move to the target position at
+     */
+    private static void rotateWorm(int pos, double power) {
+        wormMotor.setTargetPosition(pos);
+        wormMotor.setMode(RUN_TO_POSITION);
+        wormMotor.setPower(power);
+    }
+
+    /**
+     * Rotates the worm to the the provided position at the power defined by DEFAULT_WORM_POWER
+     * @param targetPos The position to move the worm to
+     */
+    private static void rotateWorm(int targetPos) {
+        rotateWorm(targetPos, DEFAULT_WORM_POWER);
     }
 
     /**
@@ -200,6 +240,9 @@ public class Arm {
             telemetry.addData(
                     "Elevator Motor Target Pos",
                     elevatorMotor.getTargetPosition());
+            telemetry.addData(
+                    "Elevator Motor LOCAL Target Pos",
+                    elevatorTargetPos);
         }
 
         telemetry.addData(
@@ -213,43 +256,7 @@ public class Arm {
                 elevatorMotor.getCurrent(AMPS) + wormMotor.getCurrent(AMPS));
     }
 
-    /**
-     * Extends the elevator to the provided position at the provided power
-     * @param targetPos The position to move the elevator to
-     * @param power The power to move to the target position at
-     */
-    private static void extendElevator(int targetPos, double power) {
-        elevatorMotor.setTargetPosition(targetPos);
-        elevatorMotor.setMode(RUN_TO_POSITION);
-        elevatorMotor.setPower(power);
-    }
 
-    /**
-     * Extends the elevator to the provided position at the power defined by DEFAULT_ELEVATOR_POWER
-     * @param targetPos The position to move the elevator to
-     */
-    private static void extendElevator(int targetPos) {
-        extendElevator(targetPos, DEFAULT_ELEVATOR_POWER);
-    }
-
-    /**
-     * Rotates the worm to the provided position at the provided power
-     * @param pos The position to move the worm to
-     * @param power The power to move to the target position at
-     */
-    private static void rotateWorm(int pos, double power) {
-        elevatorMotor.setTargetPosition(pos);
-        elevatorMotor.setMode(RUN_TO_POSITION);
-        elevatorMotor.setPower(power);
-    }
-
-    /**
-     * Rotates the worm to the the provided position at the power defined by DEFAULT_WORM_POWER
-     * @param targetPos The position to move the worm to
-     */
-    private static void rotateWorm(int targetPos) {
-        rotateWorm(targetPos, DEFAULT_WORM_POWER);
-    }
 
     /**
      * @return The current position of the elevator

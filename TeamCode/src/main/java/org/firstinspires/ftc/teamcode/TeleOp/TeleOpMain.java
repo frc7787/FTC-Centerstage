@@ -13,7 +13,6 @@ import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.AUTO;
 import static org.firstinspires.ftc.teamcode.Properties.*;
 
 @TeleOp(name = "TeleOp - Provincials - Use This One", group = "Production")
-@Disabled
 public class TeleOpMain extends OpMode {
     DriveBase driveBase;
     Hanger hanger;
@@ -21,10 +20,10 @@ public class TeleOpMain extends OpMode {
     Intake intake;
     DeliveryTray deliveryTray;
 
-    GamePeriod gamePeriod     = GamePeriod.NORMAL;
+    GamePeriod gamePeriod = GamePeriod.NORMAL;
 
-    boolean intakeToggle       = false;
-    boolean doorToggle         = false;
+    boolean intakeToggle = false;
+    boolean doorToggle   = false;
 
     enum GamePeriod {
         NORMAL,
@@ -99,6 +98,8 @@ public class TeleOpMain extends OpMode {
     }
     
     @Override public void init() {
+        currentGamepad2 = new Gamepad();
+        prevGamepad2    = new Gamepad();
 
         driveBase    = new DriveBase(hardwareMap);
         hanger       = new Hanger(hardwareMap);
@@ -119,6 +120,7 @@ public class TeleOpMain extends OpMode {
     }
 
     @Override public void loop() {
+        Arm.update();
         Arm.debug(telemetry, true, true);
 
         prevGamepad2.copy(currentGamepad2);
