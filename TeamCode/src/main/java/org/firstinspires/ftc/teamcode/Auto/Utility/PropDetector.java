@@ -18,7 +18,6 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -31,13 +30,12 @@ import java.util.List;
 @Config
 public class PropDetector extends OpenCvPipeline {
     public PropColor propColor;
-    Rect cropRectangle;
+
     public static int VIEW_DISPLAYED = 1;
     public static int ERODE_PASSES = 9;
 
     public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(255, 0, 0);
 
-    // lighter prop
     public static volatile Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 0);
     public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(125, 255, 255);
 
@@ -53,18 +51,21 @@ public class PropDetector extends OpenCvPipeline {
 
     PropLocation propLocation = NONE;
 
-    private Mat HSVmat      = new Mat(),
-            hsvMat          = new Mat(),
-            thresh0         = new Mat(),
-            thresh1         = new Mat(),
-            hierarchy       = new Mat(),
-            cvErodeKernel   = new Mat(),
-            thresholdOutput = new Mat(),
-            erodeOutput     = new Mat();
+    private Mat hsvMat          = new Mat(),
+                threshold0 = new Mat(),
+                threshold1 = new Mat(),
+                hierarchy       = new Mat(),
+                cvErodeKernel   = new Mat(),
+                thresholdOutput = new Mat(),
+                erodeOutput     = new Mat();
+
     public PropDetector(@NonNull PropColor color) {
         propColor = color;
     }
 
+    /**
+     * Swaps the prop detector color. Debug function only
+     */
     public void swapColor() {
         switch (propColor) {
             case BLUE:
@@ -79,11 +80,6 @@ public class PropDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        if (cropRectangle != null) { // Check to see if we should crop
-            // Crop the image
-            input = input.submat(cropRectangle);
-        }
-
         // Convert color to HSV
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
@@ -91,9 +87,9 @@ public class PropDetector extends OpenCvPipeline {
         switch (propColor) {
             case RED:
                 // Check if the image is in range, then adds the ranges together
-                Core.inRange(hsvMat, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, thresh0);
-                Core.inRange(hsvMat, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, thresh1);
-                Core.add(thresh0, thresh1, thresholdOutput);
+                Core.inRange(hsvMat, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, threshold0);
+                Core.inRange(hsvMat, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, threshold1);
+                Core.add(threshold0, threshold1, thresholdOutput);
 
                 break;
             case BLUE:
@@ -112,7 +108,6 @@ public class PropDetector extends OpenCvPipeline {
                 ERODE_PASSES,
                 CV_BORDER_TYPE,
                 CV_BORDER_VALUE);
-
 
         // Finds the contours of the image
         List<MatOfPoint> contours = new ArrayList<>();
@@ -148,31 +143,24 @@ public class PropDetector extends OpenCvPipeline {
             propLocation = NONE;
         }
 
-        // All code below this line (Except for the return statement) should be commented out for competition to save processing
-
         // Draw a rectangle over the biggest bounding box
         Imgproc.rectangle(hsvMat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
 
-        // Resizes the code so it can be viewed on the driver station
-        Imgproc.resize(hsvMat, hsvMat, new Size(320, 240));
 
         if (VIEW_DISPLAYED == 1) {
             Imgproc.rectangle(input, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
             return input;
         } else if (VIEW_DISPLAYED == 2) {
-            return thresh0;
+            return threshold0;
         } else if (VIEW_DISPLAYED == 3) {
-            return thresh1;
+            return threshold1;
         } else if (VIEW_DISPLAYED == 4) {
             return thresholdOutput;
         } else if (VIEW_DISPLAYED == 5) {
             return erodeOutput;
-        } else if (VIEW_DISPLAYED == 6) {
-            return HSVmat;
-        } else {
+        }
 
-            return HSVmat;
-        } // end of if VIEW_DISPLAYED    }
+        return  hsvMat;
     }
 
     public PropLocation getPropLocation() { return this.propLocation; }
