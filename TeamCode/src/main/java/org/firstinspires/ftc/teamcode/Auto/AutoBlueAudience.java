@@ -21,25 +21,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class AutoBlueAudience extends LinearOpMode {
     PropDetector propDetector;
     PropLocation location;
-    public static OpenCvCamera camera;
+    OpenCvCamera camera;
 
     MecanumDriveBase drive;
 
-    Intake intake;
-
-    public static int CENTER_FORWARD_SLEEP = 1100;
-    public static int LEFT_FORWARD_SLEEP   = 500;
-    public static int RIGHT_FORWARD_SLEEP  = 500;
-    public static int LEFT_TURN_SLEEP      = 550;
-    public static int RIGHT_TURN_SLEEP     = 400;
-
-    public static double RIGHT_ANGLE = -0.568;
-    public static double LEFT_ANGLE  = 0.714;
-
     @Override
     public void runOpMode() throws InterruptedException {
-        Rect cropRectangle = new Rect(110, 120, 190, 120);
-
         propDetector = new PropDetector(PropColor.BLUE);
         drive        = new MecanumDriveBase(hardwareMap);
 
@@ -73,84 +60,51 @@ public class AutoBlueAudience extends LinearOpMode {
         // Pls do not delete this
         location = propDetector.getPropLocation();
 
-        while (opModeIsActive()) {
-            sleep(4000);
+        if (isStopRequested()) { return; }
 
-            int leftCount  = 0;
-            int rightCount = 0;
-            int noneCount  = 0;
+        int leftCount   = 0;
+        int rightCount  = 0;
+        int noneCount   = 0;
+        int centerCount = 0;
 
-            for (int i = 0; i <= 20;  i++) {
-                switch (propDetector.getPropLocation()) {
-                    case LEFT:
-                        leftCount += 1;
-                        break;
-                    case RIGHT:
-                        rightCount += 1;
-                        break;
-                    case NONE:
-                        noneCount += 1;
-                        break;
-                }
-            }
-
-            if (leftCount >= rightCount && leftCount >= noneCount) {
-                location = PropLocation.LEFT;
-            } else if (rightCount >= leftCount && rightCount >= noneCount) {
-                location = PropLocation.RIGHT;
-            } else {
-                location = PropLocation.NONE;
-            }
-
-            telemetry.addData("PROP LOCATION: ", location);
-            telemetry.update();
-
-            // sleep(5000);
-
-            switch (location) {
+        for (int i = 0; i <= 20;  i++) {
+            switch (propDetector.getPropLocation()) {
                 case LEFT:
-                    // THIS IS ACTUALLY CENTER LINE
-
-                    // Drive forward until you hit the line
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(CENTER_FORWARD_SLEEP);
-                    drive.setMotorPowers(0, 0, 0, 0);
-
-                    break;
-                case NONE:
-                    // THIS IS ACTUALLY LEFT LINE
-
-                    // Drive off the wall
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(LEFT_FORWARD_SLEEP);
-                    // Turn slightly and drive forward to the line
-                    drive.turn(LEFT_ANGLE);
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(LEFT_TURN_SLEEP);
-                    drive.setMotorPowers(0, 0, 0, 0);
-
+                    leftCount += 1;
                     break;
                 case RIGHT:
-                    // ACTUALLY RIGHT LINE
-
-                    // Drive off the wall
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(RIGHT_FORWARD_SLEEP);
-                    // Turn to the right and drive to the line
-                    drive.turn(RIGHT_ANGLE);
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(RIGHT_TURN_SLEEP);
-                    drive.setMotorPowers(0, 0, 0, 0);
-
+                    rightCount += 1;
+                    break;
+                case CENTER:
+                    centerCount += 1;
+                case NONE:
+                    noneCount += 1;
                     break;
             }
+        }
 
-            sleep(50);
-            drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-            sleep(400);
-            drive.setMotorPowers(0, 0, 0, 0);
+        if (leftCount >= rightCount && leftCount >= noneCount && leftCount >= centerCount) {
+            location = PropLocation.LEFT;
+        } else if (rightCount >= leftCount && rightCount >= noneCount && rightCount >= centerCount) {
+            location = PropLocation.RIGHT;
+        } else if (centerCount >= noneCount){
+            location = PropLocation.CENTER;
+        } else {
+            location = PropLocation.NONE;
+        }
 
-            sleep(99999999);
+        telemetry.addData("PROP LOCATION: ", location);
+        telemetry.update();
+
+        switch (location) {
+            case LEFT:
+                break;
+            case CENTER:
+                break;
+            case RIGHT:
+                break;
+            case NONE:
+                break;
         }
     }
 }
