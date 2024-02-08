@@ -41,7 +41,6 @@ public class AutoRedAudience extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         propDetector = new PropDetector(PropColor.RED);
         drive        = new MecanumDriveBase(hardwareMap);
-        intake       = new Intake(hardwareMap);
 
         drive.init();
 
