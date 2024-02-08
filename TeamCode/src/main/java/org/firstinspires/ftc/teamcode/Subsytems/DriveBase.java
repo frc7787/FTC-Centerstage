@@ -36,9 +36,13 @@ public class DriveBase {
     private static final IMU.Parameters imuParameters                   = new IMU.Parameters(controlHubOrientation);
 
     public static void init(@NonNull HardwareMap hardwareMap) {
+        // Control Hub Motor Port 0
         frontLeft  = hardwareMap.get(DcMotorImplEx.class, "FrontLeftDriveMotor");
+        // Expansion Hub Motor Port 2
         frontRight = hardwareMap.get(DcMotorImplEx.class, "FrontRightDriveMotor");
+        // Control Hub Motor Port 1
         backLeft   = hardwareMap.get(DcMotorImplEx.class, "BackLeftDriveMotor");
+        // Expansion Hub Motor Port 1
         backRight  = hardwareMap.get(DcMotorImplEx.class, "BackRightDriveMotor");
 
         driveMotors = new DcMotorImplEx[]{frontLeft, frontRight, backLeft, backRight};

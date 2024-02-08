@@ -21,6 +21,7 @@ public class Hanger {
      * and reverses the hanger servo
      */
     public static void init(@NonNull HardwareMap hardwareMap) {
+        // Control Hub Servo Port 1
         hangerServo = hardwareMap.get(ServoImplEx.class, "HangerServo");
 
         hangerServo.setDirection(Servo.Direction.REVERSE);

@@ -42,7 +42,6 @@ public class AutoRedBackdrop extends LinearOpMode {
 
         propDetector = new PropDetector(PropColor.RED, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);
-        intake       = new Intake(hardwareMap);
 
         drive.init();
 

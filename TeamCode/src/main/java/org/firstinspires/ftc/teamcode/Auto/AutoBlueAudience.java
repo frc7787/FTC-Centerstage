@@ -42,7 +42,6 @@ public class AutoBlueAudience extends LinearOpMode {
 
         propDetector = new PropDetector(PropColor.BLUE, cropRectangle);
         drive        = new MecanumDriveBase(hardwareMap);
-        intake       = new Intake(hardwareMap);
 
         drive.init();
 

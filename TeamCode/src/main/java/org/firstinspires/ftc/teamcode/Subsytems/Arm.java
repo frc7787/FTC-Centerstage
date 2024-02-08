@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState;
 import org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmState;
 
 public class Arm {
-    private static final int WORM_SAFETY_LIMIT = 1341;
+    public static final int WORM_SAFETY_LIMIT = 1341;
 
     private static final double ELEVATOR_HOMING_POWER = -Math.abs(Properties.ELEVATOR_HOMING_POWER);
     private static final double WORM_HOMING_POWER     = -Math.abs(Properties.WORM_HOMING_POWER);
@@ -41,19 +41,24 @@ public class Arm {
      * @param hardwareMap The hardware map you are using to get the hardware likely "hardwareMap"
      */
     public static void init(@NonNull HardwareMap hardwareMap) {
-        wormLimitSwitch     = hardwareMap.get(RevTouchSensor.class, "WormLimitSwitch");
+        // Control Hub Digital Port 0
+        wormLimitSwitch  = hardwareMap.get(RevTouchSensor.class, "WormLimitSwitch");
+        // Expansion Hub Digital Port 0
         elevatorLimitSwitch = hardwareMap.get(RevTouchSensor.class, "ExtensionLimitSwitch");
 
-        wormMotor     = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
+        // Expansion Hub Motor Port 0
+        wormMotor  = hardwareMap.get(DcMotorImplEx.class, "WormMotor");
+        // Control Hub Motor Port 3
         elevatorMotor = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
 
-        wrist     = hardwareMap.get(ServoImplEx.class, "WristServo");
-        leftDoor  = hardwareMap.get(ServoImplEx.class, "LeftDoorServo");
+        // Expansion Hub Port 0
+        wrist = hardwareMap.get(ServoImplEx.class, "WristServo");
+        // Expansion Hub Port 1
+        leftDoor = hardwareMap.get(ServoImplEx.class, "LeftDoorServo");
+        // Expnsion Hub Port 2
         rightDoor = hardwareMap.get(ServoImplEx.class, "RightDoorServo");
 
         elevatorMotor.setDirection(REVERSE);
-
-        wrist.setPosition(0);
 
         elevatorTargetPos = 0;
         wormTargetPos     = 0;
@@ -68,6 +73,10 @@ public class Arm {
      * and checks if the arm should be homing.
      */
     public static void update() {
+        if (elevatorMotor.getCurrentPosition() > 500) {
+            angleDeliveryTray(1);
+        }
+
         if (wormMotor.getCurrentPosition() > WORM_SAFETY_LIMIT) { // If we are all the way in, we don't want to have control over the tray door
             moveDeliveryTrayDoor(TRAY_DOOR_OPEN_POS);
         } else { // If we are past the safety limit
@@ -144,9 +153,7 @@ public class Arm {
                 homingState          = HOMING_ELEVATOR;
                 normalPeriodArmState = HOMING;
 
-                angleDeliveryTray(DELIVERY_TRAY_UP_POS);
                 setDoorPos(TRAY_DOOR_CLOSED_POS);
-
                 break;
             case HOMING_ELEVATOR:
                 elevatorMotor.setPower(ELEVATOR_HOMING_POWER);
@@ -326,5 +333,13 @@ public class Arm {
      */
     public static HomingState getHomingState() {
         return homingState;
+    }
+
+    public static boolean wormLimitSwitchIsPressed() {
+        return wormLimitSwitch.isPressed();
+    }
+
+    public static boolean elevatorLimitSwitchIsPressed() {
+        return elevatorLimitSwitch.isPressed();
     }
 }

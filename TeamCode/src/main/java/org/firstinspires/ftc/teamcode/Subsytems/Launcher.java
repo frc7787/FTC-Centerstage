@@ -21,6 +21,7 @@ public class Launcher {
      * to the position defined by the LAUNCHER_ZERO_POS
      */
     public static void init(@NonNull HardwareMap hardwareMap) {
+        // Control Hub Servo Port 2
         launcherServo = hardwareMap.get(ServoImplEx.class, "LauncherServo");
 
         launcherServo.setDirection(REVERSE);
