@@ -79,7 +79,6 @@ public class PropDetector extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-
         // Convert color to HSV
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
