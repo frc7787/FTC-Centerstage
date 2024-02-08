@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -9,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
-import org.firstinspires.ftc.teamcode.Subsytems.Intake;
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -26,16 +28,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
     MecanumDriveBase drive;
 
-    Intake intake;
 
-    public static int CENTER_FORWARD_SLEEP = 1170;
-    public static int LEFT_FORWARD_SLEEP   = 550;
-    public static int RIGHT_FORWARD_SLEEP  = 500;
-    public static int LEFT_TURN_SLEEP      = 400;
-    public static int RIGHT_TURN_SLEEP     = 720;
-
-    public static double RIGHT_ANGLE = -0.714;
-    public static double LEFT_ANGLE  = 0.45;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -44,7 +37,25 @@ public class AutoBlueBackdrop extends LinearOpMode {
         propDetector = new PropDetector(PropColor.BLUE);
         drive        = new MecanumDriveBase(hardwareMap);
 
+
         drive.init();
+
+        Pose2d startPose = new Pose2d(12, 66, Math.toRadians(90));
+        drive.setPoseEstimate(startPose);
+        TrajectorySequence toSpikeMark = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(12.00, 36.00))
+                .build();
+        TrajectorySequence leftTurn = drive.trajectorySequenceBuilder(startPose)
+                .turn(Math.toRadians(-90))
+                .build();
+        TrajectorySequence rightTurn = drive.trajectorySequenceBuilder(startPose)
+                .turn(Math.toRadians(90))
+                .build();
+        TrajectorySequence toBackdrop = drive.trajectorySequenceBuilder(toSpikeMark.end())
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(48.00, 36.00))
+                .build();
+
 
         int cameraMonitorViewId = hardwareMap
                 .appContext
@@ -54,7 +65,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
         camera = OpenCvCameraFactory
                 .getInstance()
                 .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
+                        hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
                 );
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -75,9 +86,10 @@ public class AutoBlueBackdrop extends LinearOpMode {
         location = propDetector.getPropLocation();
 
         while (opModeIsActive()) {
-            int leftCount  = 0;
-            int rightCount = 0;
-            int noneCount  = 0;
+            int leftCount    = 0;
+            int rightCount   = 0;
+            int noneCount    = 0;
+            int centerCount  = 0;
 
             for (int i = 0; i <= 20;  i++) {
                 switch (propDetector.getPropLocation()) {
@@ -89,6 +101,9 @@ public class AutoBlueBackdrop extends LinearOpMode {
                         break;
                     case NONE:
                         noneCount += 1;
+                        break;
+                    case CENTER:
+                        centerCount += 1;
                         break;
                 }
             }
@@ -103,52 +118,39 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
-
-            //sleep(5000);
-
+            drive.followTrajectorySequence(toSpikeMark);
             switch (location) {
                 case LEFT:
-                    // THIS IS ACTUALLY LEFT
+                    // Do the thing
 
-                    // Drive off the wall
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(LEFT_FORWARD_SLEEP);
-                    // Turn slightly and drive forward to the line
-                    drive.turn(LEFT_ANGLE);
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(LEFT_TURN_SLEEP);
-                    drive.setMotorPowers(0, 0, 0, 0);
-
-                    break;
-                case NONE:
-                    // THIS IS ACTUALLY RIGHT
-
-                    // Drive off the wall
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(RIGHT_FORWARD_SLEEP);
-                    // Turn to the right and drive to the line
-                    drive.turn(RIGHT_ANGLE);
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(RIGHT_TURN_SLEEP);
-                    drive.setMotorPowers(0, 0, 0, 0);
-
+                    sleep(1000);
+                    drive.followTrajectorySequence(toBackdrop);
                     break;
                 case RIGHT:
-                    // ACTUALLY CENTER
-                    // Drive forward until you hit the line
-                    drive.setMotorPowers(-0.5, -0.5, -0.5, -0.5);
-                    sleep(CENTER_FORWARD_SLEEP);
-                    drive.setMotorPowers(0, 0, 0, 0);
+                    // Do the other thing
 
+                    sleep(1000);
+
+                    sleep(500);
+                    drive.followTrajectorySequence(toBackdrop);
                     break;
-            }
+                case CENTER:
+                    // Do center or none
+                    sleep(1000);
 
-            sleep(50);
-            drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-            sleep(400);
-            drive.setMotorPowers(0, 0, 0, 0);
+                    sleep(500);
+                    drive.followTrajectorySequence(toBackdrop);
+                    break;
+                case NONE:
+                    // Do center or none
+                    sleep(1000);
 
-            sleep(99999999);
-        }
+                    sleep(500);
+                    drive.followTrajectorySequence(toBackdrop);
+                    break;
+            } // end of switch location
+            sleep(30000);
+        } // end of while opmode is active
     }
 }
+
