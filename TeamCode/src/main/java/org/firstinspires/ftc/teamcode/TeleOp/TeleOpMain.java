@@ -109,11 +109,11 @@ public class TeleOpMain extends OpMode {
        }
 
        if (gamepad2.left_trigger > 0.9) {
-           Launcher.release();
+           Auxiliaries.releaseLauncher();
        }
 
        if (gamepad2.right_trigger > 0.9) {
-           Hanger.release();
+           Auxiliaries.releaseHanger();
        }
     }
 
@@ -129,8 +129,7 @@ public class TeleOpMain extends OpMode {
         prevGamepad2    = new Gamepad();
 
         Intake.init(hardwareMap);
-        Launcher.init(hardwareMap);
-        Hanger.init(hardwareMap);
+        Auxiliaries.init(hardwareMap);
         DriveBase.init(hardwareMap);
         Arm.init(hardwareMap);
 
