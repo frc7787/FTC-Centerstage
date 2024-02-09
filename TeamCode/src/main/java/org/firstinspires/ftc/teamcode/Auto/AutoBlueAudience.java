@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -9,15 +10,12 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
-import org.firstinspires.ftc.teamcode.Subsytems.Intake;
-import org.opencv.core.Rect;
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-// ---------------------------------- WORKING ------------------------------------ //
 @Autonomous(name = "Auto Blue - Audience", group = "Blue")
-@Config
 public class AutoBlueAudience extends LinearOpMode {
     PropDetector propDetector;
     PropLocation location;
@@ -32,6 +30,25 @@ public class AutoBlueAudience extends LinearOpMode {
 
         drive.init();
 
+        Pose2d startPos = new Pose2d(-36, 66, Math.toRadians(90));
+
+        drive.setPoseEstimate(startPos);
+
+        TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPos)
+                .lineTo(new Vector2d(-37, 39))
+                .build();
+
+        TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPos)
+                .lineTo(new Vector2d(-37, 39))
+                .turn(Math.toRadians(90))
+                .build();
+
+        TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPos)
+                .lineTo(new Vector2d(-37, 39))
+                .turn(Math.toRadians(-90))
+                .build();
+
+
         int cameraMonitorViewId = hardwareMap
                 .appContext
                 .getResources()
@@ -39,9 +56,7 @@ public class AutoBlueAudience extends LinearOpMode {
 
         camera = OpenCvCameraFactory
                 .getInstance()
-                .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
-                );
+                .createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override public void onOpened() {
@@ -98,12 +113,16 @@ public class AutoBlueAudience extends LinearOpMode {
 
         switch (location) {
             case LEFT:
+                drive.followTrajectorySequence(toSpikeLeft);
                 break;
             case CENTER:
+                drive.followTrajectorySequence(toSpikeCenter);
                 break;
             case RIGHT:
+                drive.followTrajectorySequence(toSpikeRight);
                 break;
             case NONE:
+                drive.followTrajectorySequence(toSpikeCenter);
                 break;
         }
     }
