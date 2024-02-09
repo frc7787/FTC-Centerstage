@@ -42,19 +42,32 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(12, 66, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
-        TrajectorySequence toSpikeMark = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(12.00, 36.00))
+        TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(12.00, 37.00))
                 .build();
-        TrajectorySequence leftTurn = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence toBoardCenter = drive.trajectorySequenceBuilder((toSpikeCenter.end()))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(30.00, 37.00))
+                .build();
+
+        TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(12.00, 37.00))
+                .turn(Math.toRadians(90))
+                .build();
+        TrajectorySequence toBoardLeft = drive.trajectorySequenceBuilder((toSpikeLeft.end()))
+
+                .lineTo(new Vector2d(30.00, 37.00))
+                .build();
+
+        TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(12.00, 37.00))
                 .turn(Math.toRadians(-90))
                 .build();
-        TrajectorySequence rightTurn = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence toBoardRight = drive.trajectorySequenceBuilder((toSpikeRight.end()))
                 .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(30.00, 37.00))
                 .build();
-        TrajectorySequence toBackdrop = drive.trajectorySequenceBuilder(toSpikeMark.end())
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(48.00, 36.00))
-                .build();
+
 
 
         int cameraMonitorViewId = hardwareMap
@@ -118,35 +131,24 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
             telemetry.addData("PROP LOCATION: ", location);
             telemetry.update();
-            drive.followTrajectorySequence(toSpikeMark);
+
             switch (location) {
                 case LEFT:
                     // Do the thing
-
-                    sleep(1000);
-                    drive.followTrajectorySequence(toBackdrop);
+                    drive.followTrajectorySequence(toSpikeLeft);
                     break;
                 case RIGHT:
                     // Do the other thing
+                    drive.followTrajectorySequence(toSpikeRight);
 
-                    sleep(1000);
-
-                    sleep(500);
-                    drive.followTrajectorySequence(toBackdrop);
                     break;
                 case CENTER:
                     // Do center or none
-                    sleep(1000);
-
-                    sleep(500);
-                    drive.followTrajectorySequence(toBackdrop);
+                    drive.followTrajectorySequence(toSpikeCenter);
                     break;
                 case NONE:
                     // Do center or none
-                    sleep(1000);
-
-                    sleep(500);
-                    drive.followTrajectorySequence(toBackdrop);
+                    drive.followTrajectorySequence(toSpikeCenter);
                     break;
             } // end of switch location
             sleep(30000);
