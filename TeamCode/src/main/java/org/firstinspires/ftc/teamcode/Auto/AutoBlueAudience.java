@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.Subsytems.Arm;
+import org.firstinspires.ftc.teamcode.Subsytems.Auxiliaries;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,6 +25,8 @@ public class AutoBlueAudience extends LinearOpMode {
 
     MecanumDriveBase drive;
 
+    TrajectorySequence toSpikeLeft, toSpikeCenter, toSpikeRight, toBackdropLeft, toBackdropCenter, toBackdropRight;
+
     @Override
     public void runOpMode() throws InterruptedException {
         propDetector = new PropDetector(PropColor.BLUE);
@@ -30,22 +34,40 @@ public class AutoBlueAudience extends LinearOpMode {
 
         drive.init();
 
-        Pose2d startPos = new Pose2d(-36, 66, Math.toRadians(90));
+        Pose2d startPos = new Pose2d(-35, 63, Math.toRadians(90));
 
         drive.setPoseEstimate(startPos);
 
-        TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPos)
-                .lineTo(new Vector2d(-37, 39))
+        toSpikeLeft = drive.trajectorySequenceBuilder(startPos)
+                .lineTo(new Vector2d(-35, 12))
+                .strafeTo(new Vector2d(-29, 12))
                 .build();
 
-        TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPos)
-                .lineTo(new Vector2d(-37, 39))
-                .turn(Math.toRadians(90))
+        toSpikeCenter = drive.trajectorySequenceBuilder(startPos)
+                .lineTo(new Vector2d(-35, 15))
                 .build();
 
-        TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPos)
-                .lineTo(new Vector2d(-37, 39))
+        toSpikeRight = drive.trajectorySequenceBuilder(startPos)
+                .strafeTo(new Vector2d(-54, 63))
+                .lineTo(new Vector2d(-54, 17))
+                .build();
+
+        toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(49, 12))
+                .strafeTo(new Vector2d(50.6, 42))
+                .build();
+
+        toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(49, 15))
+                .strafeTo(new Vector2d(50.6, 35))
+                .build();
+
+        toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(49, 15))
+                .strafeTo(new Vector2d(50.6, 29))
                 .build();
 
 
@@ -69,6 +91,12 @@ public class AutoBlueAudience extends LinearOpMode {
                 telemetry.update();
             }
         });
+
+        Arm.init(hardwareMap);
+
+        Arm.update();
+
+        Arm.rotateWorm(1400);
 
         waitForStart();
 
@@ -111,18 +139,44 @@ public class AutoBlueAudience extends LinearOpMode {
         telemetry.addData("PROP LOCATION: ", location);
         telemetry.update();
 
+        Arm.rotateWorm(25);
+
         switch (location) {
             case LEFT:
                 drive.followTrajectorySequence(toSpikeLeft);
+                Auxiliaries.releasePixelPlacerRight();
+
+                sleep(50);
+
+                Auxiliaries.retractPixelPlacerRight();
+                drive.followTrajectorySequence(toBackdropLeft);
                 break;
             case CENTER:
                 drive.followTrajectorySequence(toSpikeCenter);
+                Auxiliaries.releasePixelPlacerRight();
+
+                sleep(50);
+
+                Auxiliaries.retractPixelPlacerRight();
+                drive.followTrajectorySequence(toBackdropCenter);
                 break;
             case RIGHT:
                 drive.followTrajectorySequence(toSpikeRight);
+                Auxiliaries.releasePixelPlacerRight();
+
+                sleep(50);
+
+                Auxiliaries.retractPixelPlacerRight();
+                drive.followTrajectorySequence(toBackdropRight);
                 break;
             case NONE:
                 drive.followTrajectorySequence(toSpikeCenter);
+                Auxiliaries.releasePixelPlacerRight();
+
+                sleep(50);
+
+                Auxiliaries.retractPixelPlacerRight();
+                drive.followTrajectorySequence(toBackdropCenter);
                 break;
         }
     }
