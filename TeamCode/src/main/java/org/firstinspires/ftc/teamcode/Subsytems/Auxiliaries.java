@@ -54,6 +54,10 @@ public class Auxiliaries {
         pixelPlacerServoLeft.setPosition(pos);
     }
 
+    public static void setPixelPlacerServoRightTargetPosition(double pos) {
+        pixelPlacerServoRight.setPosition(pos);
+    }
+
     public static void releasePixelPlacerRight() {
         pixelPlacerServoRight.setPosition(1.0);
     }
@@ -78,5 +82,6 @@ public class Auxiliaries {
         telemetry.addLine("Purple Pixel Placer Servo Debug");
 
         telemetry.addData("Left Pixel Placer Servo Target Position", pixelPlacerServoLeft.getPosition());
+        telemetry.addData("Right Pixel Placer Servo Target Position", pixelPlacerServoRight.getPosition());
     }
 }

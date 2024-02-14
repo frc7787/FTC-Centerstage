@@ -144,38 +144,18 @@ public class AutoBlueAudience extends LinearOpMode {
         switch (location) {
             case LEFT:
                 drive.followTrajectorySequence(toSpikeLeft);
-                Auxiliaries.releasePixelPlacerRight();
-
-                sleep(50);
-
-                Auxiliaries.retractPixelPlacerRight();
                 drive.followTrajectorySequence(toBackdropLeft);
                 break;
             case CENTER:
                 drive.followTrajectorySequence(toSpikeCenter);
-                Auxiliaries.releasePixelPlacerRight();
-
-                sleep(50);
-
-                Auxiliaries.retractPixelPlacerRight();
                 drive.followTrajectorySequence(toBackdropCenter);
                 break;
             case RIGHT:
                 drive.followTrajectorySequence(toSpikeRight);
-                Auxiliaries.releasePixelPlacerRight();
-
-                sleep(50);
-
-                Auxiliaries.retractPixelPlacerRight();
                 drive.followTrajectorySequence(toBackdropRight);
                 break;
             case NONE:
                 drive.followTrajectorySequence(toSpikeCenter);
-                Auxiliaries.releasePixelPlacerRight();
-
-                sleep(50);
-
-                Auxiliaries.retractPixelPlacerRight();
                 drive.followTrajectorySequence(toBackdropCenter);
                 break;
         }
