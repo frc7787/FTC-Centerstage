@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmSt
 import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -25,18 +26,19 @@ public class Arm {
 
     private static final double ELEVATOR_HOMING_POWER = -Math.abs(Properties.ELEVATOR_HOMING_POWER);
     private static final double WORM_HOMING_POWER     = -Math.abs(Properties.WORM_HOMING_POWER);
+    private static final double SAFETY_VOLTAGE = 0.4;
+    private static final double WRIST_DOWN_POS = 0.6;
 
     private static DcMotorImplEx wormMotor, elevatorMotor;
     private static ServoImplEx wrist, leftDoor, rightDoor;
     private static RevTouchSensor wormLimitSwitch, elevatorLimitSwitch;
+    private static AnalogInput wormPotentiometer;
 
     private static int elevatorTargetPos, wormTargetPos;
     private static double doorPos;
 
     private static NormalPeriodArmState normalPeriodArmState;
     private static HomingState homingState;
-
-    private static boolean isAuto = false;
 
     /**
      * Initializes all of the hardware for the Arm, and resets the arm state
@@ -53,12 +55,15 @@ public class Arm {
         // Control Hub Motor Port 3
         elevatorMotor = hardwareMap.get(DcMotorImplEx.class, "ExtensionMotor");
 
-        // Expansion Hub Port 0
-        wrist = hardwareMap.get(ServoImplEx.class, "WristServo");
         // Expansion Hub Port 1
         leftDoor = hardwareMap.get(ServoImplEx.class, "LeftDoorServo");
         // Expnsion Hub Port 2
         rightDoor = hardwareMap.get(ServoImplEx.class, "RightDoorServo");
+        // ????
+        wrist = hardwareMap.get(ServoImplEx.class, "WristServo");
+        wrist.setPosition(0.0);
+
+        wormPotentiometer = hardwareMap.analogInput.get("WormPotentiometer");
 
         elevatorMotor.setDirection(REVERSE);
 
@@ -74,9 +79,11 @@ public class Arm {
      * Function to update the state of the arm every loop, moves the arm to the target pos
      * and checks if the arm should be homing.
      */
-    public static void update() {
-        if (elevatorMotor.getCurrentPosition() > 500) {
-            angleDeliveryTray(1);
+    public static void update(boolean intaking) {
+        if (elevatorMotor.getCurrentPosition() > 800) {
+            angleDeliveryTray(WRIST_DOWN_POS);
+        }else{
+            angleDeliveryTray(0.0);
         }
 
         if (wormMotor.getCurrentPosition() > WORM_SAFETY_LIMIT) { // If we are all the way in, we don't want to have control over the tray door
@@ -87,9 +94,27 @@ public class Arm {
 
         switch (normalPeriodArmState) {
             case AT_POS: // While this might look redundant, it is not so pls don't delete it
-                break;
+                if (elevatorMotor.getTargetPosition() == 0 && wormMotor.getTargetPosition() == 0 && !intaking) {
+                    elevatorMotor.setPower(0.0);
+                }
             case TO_POS:
-                if (elevatorTargetPos > 0 && wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT) {
+
+                // first if for going back to 0,0 check current state of arm and make sure it follows a safe sequence back
+                if (elevatorTargetPos == 0 && wormTargetPos == 0){
+                    if (wormMotor.getCurrentPosition() > WORM_SAFETY_LIMIT && elevatorMotor.getCurrentPosition() > 10) {
+                        extendElevator(0);
+                    } else if (wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT && elevatorMotor.getCurrentPosition() > 900){
+                        rotateWorm(WORM_SAFETY_LIMIT + 20);
+                        extendElevator(1000);
+                    } else if (10 < elevatorMotor.getCurrentPosition() && elevatorMotor.getCurrentPosition() < 900) {
+                        extendElevator(0);
+                    } else {
+                        if (elevatorMotor.getCurrentPosition() < 10) {
+                            extendElevator(0);
+                            rotateWorm(0);
+                        }
+                    }
+                }else if (elevatorTargetPos > 0 && wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT) {
                     // If the target worm pos is greater than the safety limit we go there, if not we go to the safety limit.
                     wormTargetPos = Math.max(wormTargetPos, (WORM_SAFETY_LIMIT + 20)); // We want to overshoot a little bit to improve consistency
                     rotateWorm(wormTargetPos);
@@ -152,7 +177,18 @@ public class Arm {
                 wormMotor.setMode(RUN_USING_ENCODER);
                 elevatorMotor.setMotorEnable();
                 elevatorMotor.setMode(RUN_USING_ENCODER);
-                homingState          = HOMING_ELEVATOR;
+                if (wormPotentiometer.getVoltage()>SAFETY_VOLTAGE){
+                    wormMotor.setPower(0.0);
+                    homingState = HOMING_ELEVATOR;
+                } else {
+                    wormMotor.setPower(1.0);
+                    elevatorMotor.setPower(-0.05);
+                    if(elevatorLimitSwitchIsPressed()){
+                        wormMotor.setPower(0.0);
+                        homingState = HOMING_ELEVATOR;
+                    }
+                }
+
                 normalPeriodArmState = HOMING;
 
                 setDoorPos(TRAY_DOOR_CLOSED_POS);
@@ -177,7 +213,7 @@ public class Arm {
                 normalPeriodArmState = AT_POS;
                 homingState = IDLE;
 
-                setDoorPos(TRAY_DOOR_INTAKE_POS);
+
 
                 break;
             case IDLE:
@@ -253,40 +289,40 @@ public class Arm {
      * @param telemetry The telemetry to display the information on
      */
     public static void debug(@NonNull Telemetry telemetry) {
-//        telemetry.addLine("Worm Debug");
-//
-//        telemetry.addData("Worm Limit Switch Is Pressed", wormLimitSwitch.isPressed());
-//        telemetry.addData("Worm Motor Direction", wormMotor.getDirection());
-//        telemetry.addData("Worm Motor Power", wormMotor.getPower());
-//        telemetry.addData("Worm Motor Current (Amps)", wormMotor.getCurrent(AMPS));
-//        telemetry.addData("Worm Current Pos", wormMotor.getCurrentPosition());
-//        telemetry.addData("Worm Target Pos", wormMotor.getTargetPosition());
-//        telemetry.addData("Elevator Motor LOCAL Target Pos", wormTargetPos);
-//        telemetry.addData("Worm Run Mode", wormMotor.getMode());
-//
-//        telemetry.addLine("Elevator Debug");
-//
-//        telemetry.addData("Elevator Limit Switch Is Pressed", elevatorLimitSwitch.isPressed());
-//        telemetry.addData("Elevator Motor Direction", elevatorMotor.getDirection());
-//        telemetry.addData("Elevator Motor Power", elevatorMotor.getPower());
-//        telemetry.addData("Elevator Motor Current (AMPS)", elevatorMotor.getCurrent(AMPS));
-//        telemetry.addData("Elevator Motor Current Pos", elevatorMotor.getCurrentPosition());
-//        telemetry.addData("Elevator Motor Target Pos", elevatorMotor.getTargetPosition());
-//        telemetry.addData("Elevator Motor LOCAL Target Pos", elevatorTargetPos);
-//        telemetry.addData("Elevator Motor Run Mode", elevatorMotor.getMode());
-//
-//        telemetry.addLine("Delivery Tray Debug");
-//
-//        // NOTE: You might think that adding the direction of the servos would be useful
-//        // however, since these are the higher quality servos we just change it in firmware
-//        // so what the SDK thinks the direction is and the actual direction are different
-//
-//        telemetry.addData("Wrist Servo Commanded Position", wrist.getPosition());
-//        telemetry.addData("Wrist Servo PWM Range", wrist.getPwmRange());
-//        telemetry.addData("Left Door Servo Commanded Position", leftDoor.getPosition());
-//        telemetry.addData("Left Door PWM Range", leftDoor.getPwmRange());
-//        telemetry.addData("Right Door Servo Commanded Position", rightDoor.getPosition());
-//        telemetry.addData("Right Door Servo PWM Range", rightDoor.getPwmRange());
+        telemetry.addLine("Worm Debug");
+
+        telemetry.addData("Worm Limit Switch Is Pressed", wormLimitSwitch.isPressed());
+        telemetry.addData("Worm Motor Direction", wormMotor.getDirection());
+        telemetry.addData("Worm Motor Power", wormMotor.getPower());
+        telemetry.addData("Worm Motor Current (Amps)", wormMotor.getCurrent(AMPS));
+        telemetry.addData("Worm Current Pos", wormMotor.getCurrentPosition());
+        telemetry.addData("Worm Target Pos", wormMotor.getTargetPosition());
+        telemetry.addData("Elevator Motor LOCAL Target Pos", wormTargetPos);
+        telemetry.addData("Worm Run Mode", wormMotor.getMode());
+
+        telemetry.addLine("Elevator Debug");
+
+        telemetry.addData("Elevator Limit Switch Is Pressed", elevatorLimitSwitch.isPressed());
+        telemetry.addData("Elevator Motor Direction", elevatorMotor.getDirection());
+        telemetry.addData("Elevator Motor Power", elevatorMotor.getPower());
+        telemetry.addData("Elevator Motor Current (AMPS)", elevatorMotor.getCurrent(AMPS));
+        telemetry.addData("Elevator Motor Current Pos", elevatorMotor.getCurrentPosition());
+        telemetry.addData("Elevator Motor Target Pos", elevatorMotor.getTargetPosition());
+        telemetry.addData("Elevator Motor LOCAL Target Pos", elevatorTargetPos);
+        telemetry.addData("Elevator Motor Run Mode", elevatorMotor.getMode());
+
+        telemetry.addLine("Delivery Tray Debug");
+
+        // NOTE: You might think that adding the direction of the servos would be useful
+        // however, since these are the higher quality servos we just change it in firmware
+        // so what the SDK thinks the direction is and the actual direction are different
+
+        telemetry.addData("Wrist Servo Commanded Position", wrist.getPosition());
+        telemetry.addData("Wrist Servo PWM Range", wrist.getPwmRange());
+        telemetry.addData("Left Door Servo Commanded Position", leftDoor.getPosition());
+        telemetry.addData("Left Door PWM Range", leftDoor.getPwmRange());
+        telemetry.addData("Right Door Servo Commanded Position", rightDoor.getPosition());
+        telemetry.addData("Right Door Servo PWM Range", rightDoor.getPwmRange());
 
         telemetry.addLine("Arm Debug");
 

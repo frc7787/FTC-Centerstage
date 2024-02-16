@@ -46,7 +46,8 @@ public class TeleOpMain extends OpMode {
 
     private GamePeriod gamePeriod = GamePeriod.NORMAL;
 
-    private boolean doorToggle   = false;
+    private boolean doorToggle = false;
+    private boolean intaking   = false;
 
     private double intakeTriggerValue;
 
@@ -58,13 +59,11 @@ public class TeleOpMain extends OpMode {
     private Gamepad prevGamepad2, currentGamepad2;
 
     private void listenForDeliveryTrayCommand() {
-        if (currentGamepad2.right_bumper && !prevGamepad2.right_bumper) {
-            doorToggle = !doorToggle;
-        }
-
-        if (doorToggle) {
+        if (currentGamepad2.right_bumper ) {
             Arm.setDoorPos(TRAY_DOOR_OPEN_POS);
-        } else {
+            telemetry.addData("it got into the currentgmepd2",0);
+        }
+        else if (currentGamepad2.left_bumper){
             Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
         }
     }
@@ -74,12 +73,15 @@ public class TeleOpMain extends OpMode {
       intakeTriggerValue = currentGamepad2.left_trigger;
 
       if (intakeTriggerValue > 0.9) {
+          intaking = true;
           Intake.intake();
           Arm.setDoorPos(TRAY_DOOR_OPEN_POS);
       } else if (intakeTriggerValue < 0.9 && intakeTriggerValue > 0.5) {
+          intaking = true;
           Intake.intake();
           Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
       } else {
+          intaking = false;
           Intake.stop();
           Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
       }
@@ -87,7 +89,7 @@ public class TeleOpMain extends OpMode {
 
     private void listenForNormalPeriodArmCommand() {
         if (gamepad2.dpad_down) {
-            Arm.setHoming();
+            Arm.setTargetPos(0,0);
         } else if (gamepad2.cross) {
             Arm.setTargetPos(BOTTOM_EXT_POS, BOTTOM_ROT_POS);
         } else if (gamepad2.square) {
@@ -96,8 +98,6 @@ public class TeleOpMain extends OpMode {
             Arm.setTargetPos(MED_EXT_POS, MED_ROT_POS);
         } else if (gamepad2.triangle) {
             Arm.setTargetPos(HIGH_EXT_POS, HIGH_ROT_POS);
-        } else if (gamepad2.options) {
-            Arm.setTargetPos(TOP_EXT_POS, TOP_ROT_POS);
         }
     }
 
@@ -109,11 +109,11 @@ public class TeleOpMain extends OpMode {
        }
 
        if (gamepad2.left_trigger > 0.9) {
-           //Auxiliaries.releaseLauncher();
+           Auxiliaries.releaseLauncher();
        }
 
        if (gamepad2.right_trigger > 0.9) {
-           //Auxiliaries.releaseHanger();
+           Auxiliaries.releaseHanger();
        }
     }
 
@@ -129,7 +129,7 @@ public class TeleOpMain extends OpMode {
         prevGamepad2    = new Gamepad();
 
         Intake.init(hardwareMap);
-        //Auxiliaries.init(hardwareMap);
+        Auxiliaries.init(hardwareMap);
         DriveBase.init(hardwareMap);
         Arm.init(hardwareMap);
 
@@ -141,7 +141,7 @@ public class TeleOpMain extends OpMode {
     @Override public void loop() {
         telemetry.addData("Intake trigger value", intakeTriggerValue);
 
-        Arm.update();
+        Arm.update(intaking);
         Arm.debug(telemetry);
 
         prevGamepad2.copy(currentGamepad2);

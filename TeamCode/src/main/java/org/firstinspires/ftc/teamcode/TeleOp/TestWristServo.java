@@ -13,24 +13,59 @@ public class TestWristServo extends OpMode {
 
     DcMotorImplEx elevatorMotor;
 
+    private double SERVO_POS = 0.0;
+
+    private boolean leftBumperWasPressed  = false;
+    private boolean rightBumperWasPressed = false;
+
     @Override public void init() {
-        wristServo    = hardwareMap.get(ServoImplEx.class, "WristServo");
+        // Expansion Hub Port 0
+        wristServo = hardwareMap.get(ServoImplEx.class, "WristServo");
 
         // Control Hub Port 3; Encoder Port 3
-        elevatorMotor = hardwareMap.get(DcMotorImplEx.class,  "ElevatorMotor");
+        elevatorMotor = hardwareMap.get(DcMotorImplEx.class,  "ExtensionMotor");
         elevatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        wristServo.setPosition(0.0);
     }
 
     @Override public void loop() {
-        if (elevatorMotor.getCurrentPosition() > 500) {
-            wristServo.setPosition(1);
-        } else {
-            wristServo.setPosition(0);
+        if (gamepad1.options) { // Reset Position
+            SERVO_POS = 0;
         }
 
-        telemetry.addData("Elevator Motor Position", elevatorMotor.getCurrentPosition());
+        if (gamepad1.left_bumper) { // Increment Position
+           if (!leftBumperWasPressed) {
+               SERVO_POS += 0.01;
+
+               if (SERVO_POS > 1.0) {
+                   SERVO_POS = 1;
+               }
+
+               leftBumperWasPressed = true;
+           }
+        } else {
+            leftBumperWasPressed = false;
+        }
+
+        if (gamepad1.right_bumper) { // Decrement Position
+            if (!rightBumperWasPressed) {
+                SERVO_POS -= 0.01;
+
+                if (SERVO_POS < 0.0) {
+                    SERVO_POS = 0;
+                }
+
+                rightBumperWasPressed = true;
+            }
+        } else {
+            rightBumperWasPressed = false;
+        }
+
+        wristServo.setPosition(SERVO_POS);
+
         telemetry.addData("Wrist Servo Commanded Position", wristServo.getPosition());
 
-
+        telemetry.update();
     }
 }

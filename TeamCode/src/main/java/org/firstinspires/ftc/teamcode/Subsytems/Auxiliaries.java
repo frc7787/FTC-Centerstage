@@ -13,12 +13,16 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Auxiliaries {
+    public static double PIXEL_PLACER_SERVO_INIT_POS        = 0.1;
+    public static double PIXEL_PLACER_SERVO_SPIKE_STRIP_POS = 0.84;
+    public static double PIXEL_PLACER_SERVO_BACKDROP_POS    = 0.52;
+
     private static ServoImplEx hangerServo, launcherServo, pixelPlacerServoLeft, pixelPlacerServoRight;
 
     public static void init(@NonNull HardwareMap hardwareMap) {
-        hangerServo = hardwareMap.get(ServoImplEx.class, "HangerServo");
-        launcherServo = hardwareMap.get(ServoImplEx.class, "LauncherServo");
-        pixelPlacerServoLeft = hardwareMap.get(ServoImplEx.class, "PixelPlacerServoLeft");
+        hangerServo           = hardwareMap.get(ServoImplEx.class, "HangerServo");
+        launcherServo         = hardwareMap.get(ServoImplEx.class, "LauncherServo");
+        pixelPlacerServoLeft  = hardwareMap.get(ServoImplEx.class, "PixelPlacerServoLeft");
         pixelPlacerServoRight = hardwareMap.get(ServoImplEx.class, "PixelPlacerServoRight");
 
         pixelPlacerServoLeft.setDirection(Servo.Direction.REVERSE);
@@ -28,6 +32,9 @@ public class Auxiliaries {
 
         hangerServo.setDirection(Servo.Direction.REVERSE);
         hangerServo.setPosition(0.0);
+
+        pixelPlacerServoLeft.setPosition(0.1);
+        pixelPlacerServoRight.setPosition(0.1);
     }
 
     public static void releaseLauncher() {
@@ -39,32 +46,31 @@ public class Auxiliaries {
     }
 
     public static void placePixelOnSpikeStripLeft() {
-        pixelPlacerServoLeft.setPosition(0.8);
+        pixelPlacerServoLeft.setPosition(PIXEL_PLACER_SERVO_SPIKE_STRIP_POS);
     }
 
     public static void placePixelOnBackdropLeft() {
-        pixelPlacerServoLeft.setPosition(0.52);
+        pixelPlacerServoLeft.setPosition(PIXEL_PLACER_SERVO_BACKDROP_POS);
     }
 
     public static void retractPixelPlacerLeft() {
         pixelPlacerServoLeft.setPosition(0.0);
+        pixelPlacerServoLeft.setPosition(PIXEL_PLACER_SERVO_INIT_POS); // ****REMOVE BEFORE COMP
     }
 
-    public static void setPixelPlacerServoLeftTargetPosition(double pos) {
-        pixelPlacerServoLeft.setPosition(pos);
+    public static void placePixelOnSpikeStripRight() {
+        pixelPlacerServoRight.setPosition(PIXEL_PLACER_SERVO_SPIKE_STRIP_POS);
     }
 
-    public static void setPixelPlacerServoRightTargetPosition(double pos) {
-        pixelPlacerServoRight.setPosition(pos);
-    }
-
-    public static void releasePixelPlacerRight() {
-        pixelPlacerServoRight.setPosition(1.0);
+    public static void placePixelOnBackdropRight() {
+        pixelPlacerServoRight.setPosition(PIXEL_PLACER_SERVO_BACKDROP_POS);
     }
 
     public static void retractPixelPlacerRight() {
         pixelPlacerServoRight.setPosition(0.0);
+        pixelPlacerServoRight.setPosition(PIXEL_PLACER_SERVO_INIT_POS); // ****REMOVE BEFORE COMP
     }
+
 
     public static void debug(@NonNull Telemetry telemetry) {
         telemetry.addLine("Hanger Debug");

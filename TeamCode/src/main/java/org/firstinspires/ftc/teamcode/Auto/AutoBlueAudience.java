@@ -93,8 +93,9 @@ public class AutoBlueAudience extends LinearOpMode {
         });
 
         Arm.init(hardwareMap);
+        Auxiliaries.init(hardwareMap);
 
-        Arm.update();
+        Arm.update(false);
 
         Arm.rotateWorm(1400);
 
@@ -148,6 +149,11 @@ public class AutoBlueAudience extends LinearOpMode {
                 break;
             case CENTER:
                 drive.followTrajectorySequence(toSpikeCenter);
+                Auxiliaries.placePixelOnSpikeStripRight();
+
+                sleep(500);
+
+                Auxiliaries.retractPixelPlacerRight();
                 drive.followTrajectorySequence(toBackdropCenter);
                 break;
             case RIGHT:
@@ -156,6 +162,11 @@ public class AutoBlueAudience extends LinearOpMode {
                 break;
             case NONE:
                 drive.followTrajectorySequence(toSpikeCenter);
+                Auxiliaries.placePixelOnSpikeStripRight();
+
+                sleep(500);
+
+                Auxiliaries.retractPixelPlacerRight();
                 drive.followTrajectorySequence(toBackdropCenter);
                 break;
         }

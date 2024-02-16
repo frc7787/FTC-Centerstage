@@ -13,8 +13,22 @@ public class PixelPlacerServoArmTest extends OpMode {
     }
 
     @Override public void loop() {
-       Auxiliaries.setPixelPlacerServoLeftTargetPosition(gamepad1.left_stick_y * -1);
-       Auxiliaries.setPixelPlacerServoRightTargetPosition(gamepad1.right_stick_x * -1);
+       if (gamepad1.dpad_down) {
+           Auxiliaries.retractPixelPlacerLeft();
+       } else if (gamepad1.dpad_left) {
+           Auxiliaries.placePixelOnBackdropLeft();
+       } else if (gamepad1.dpad_right) {
+           Auxiliaries.placePixelOnSpikeStripLeft();
+       }
+
+       if (gamepad1.cross) {
+           Auxiliaries.retractPixelPlacerRight();
+       } else if (gamepad1.square) {
+           Auxiliaries.placePixelOnBackdropRight();
+       } else if (gamepad1.circle) {
+           Auxiliaries.placePixelOnSpikeStripRight();
+       }
+
 
        Auxiliaries.debug(telemetry);
 
