@@ -67,6 +67,9 @@ public class Arm {
 
         elevatorMotor.setDirection(REVERSE);
 
+        elevatorMotor.setMode(STOP_AND_RESET_ENCODER);
+        wormMotor.setMode(STOP_AND_RESET_ENCODER);
+
         elevatorTargetPos = 0;
         wormTargetPos     = 0;
         doorPos           = TRAY_DOOR_OPEN_POS; // TODO: This might need to change, this is just a default value
