@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsytems;
 
 import static org.firstinspires.ftc.teamcode.Properties.HANGER_SERVO_POSITION;
 import static org.firstinspires.ftc.teamcode.Properties.LAUNCHER_SERVO_LAUNCH_POS;
-import static org.firstinspires.ftc.teamcode.Properties.LAUNCHER_ZERO_POS;
+import static org.firstinspires.ftc.teamcode.Properties.LAUNCHER_SERVO_ZERO_POS;
 
 import androidx.annotation.NonNull;
 
@@ -28,7 +28,7 @@ public class Auxiliaries {
         pixelPlacerServoLeft.setDirection(Servo.Direction.REVERSE);
 
         launcherServo.setDirection(Servo.Direction.REVERSE);
-        launcherServo.setPosition(LAUNCHER_ZERO_POS);
+        launcherServo.setPosition(LAUNCHER_SERVO_ZERO_POS);
 
         hangerServo.setDirection(Servo.Direction.REVERSE);
         hangerServo.setPosition(0.0);
@@ -39,6 +39,10 @@ public class Auxiliaries {
 
     public static void releaseLauncher() {
         launcherServo.setPosition(LAUNCHER_SERVO_LAUNCH_POS);
+    }
+
+    public static void resetLauncher() {
+        launcherServo.setPosition(LAUNCHER_SERVO_ZERO_POS);
     }
 
     public static void releaseHanger() {

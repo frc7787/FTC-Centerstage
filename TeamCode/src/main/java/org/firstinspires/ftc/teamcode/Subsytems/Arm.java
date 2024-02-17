@@ -35,7 +35,6 @@ public class Arm {
     private static AnalogInput wormPotentiometer;
 
     private static int elevatorTargetPos, wormTargetPos;
-    private static double doorPos;
 
     private static NormalPeriodArmState normalPeriodArmState;
     private static HomingState homingState;
@@ -72,7 +71,7 @@ public class Arm {
 
         elevatorTargetPos = 0;
         wormTargetPos     = 0;
-        doorPos           = TRAY_DOOR_OPEN_POS; // TODO: This might need to change, this is just a default value
+        moveDeliveryTrayDoor(TRAY_DOOR_CLOSED_POS); // TODO: This might need to change, this is just a default value
 
         normalPeriodArmState = UNKNOWN;
         homingState          = START;
@@ -89,10 +88,8 @@ public class Arm {
             angleDeliveryTray(0.0);
         }
 
-        if (wormMotor.getCurrentPosition() > WORM_SAFETY_LIMIT) { // If we are all the way in, we don't want to have control over the tray door
-            moveDeliveryTrayDoor(TRAY_DOOR_OPEN_POS);
-        } else { // If we are past the safety limit
-            moveDeliveryTrayDoor(doorPos);
+        if (wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT && !intaking) { // If we are all the way in, we don't want to have control over the tray door
+            moveDeliveryTrayDoor(TRAY_DOOR_CLOSED_POS);
         }
 
         switch (normalPeriodArmState) {
@@ -167,7 +164,7 @@ public class Arm {
      * @param doorPos The position for the door to go to
      */
     public static void setDoorPos(double doorPos) {
-        Arm.doorPos = doorPos;
+        moveDeliveryTrayDoor(doorPos);
     }
 
     /**
@@ -176,11 +173,13 @@ public class Arm {
     private static void home() {
        switch (homingState) {
             case START:
+                setDoorPos(TRAY_DOOR_CLOSED_POS);
+
                 wormMotor.setMotorEnable();
                 wormMotor.setMode(RUN_USING_ENCODER);
                 elevatorMotor.setMotorEnable();
                 elevatorMotor.setMode(RUN_USING_ENCODER);
-                if (wormPotentiometer.getVoltage()>SAFETY_VOLTAGE){
+                if (wormPotentiometer.getVoltage() > SAFETY_VOLTAGE){
                     wormMotor.setPower(0.0);
                     homingState = HOMING_ELEVATOR;
                 } else {
@@ -193,8 +192,6 @@ public class Arm {
                 }
 
                 normalPeriodArmState = HOMING;
-
-                setDoorPos(TRAY_DOOR_CLOSED_POS);
                 break;
             case HOMING_ELEVATOR:
                 elevatorMotor.setPower(ELEVATOR_HOMING_POWER);
@@ -215,9 +212,6 @@ public class Arm {
             case COMPLETE:
                 normalPeriodArmState = AT_POS;
                 homingState = IDLE;
-
-
-
                 break;
             case IDLE:
                 break;

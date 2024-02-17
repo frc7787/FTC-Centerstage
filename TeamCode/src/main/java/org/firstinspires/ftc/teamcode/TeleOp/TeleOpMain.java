@@ -46,10 +46,7 @@ public class TeleOpMain extends OpMode {
 
     private GamePeriod gamePeriod = GamePeriod.NORMAL;
 
-    private boolean doorToggle = false;
-    private boolean intaking   = false;
-
-    private double intakeTriggerValue;
+    private boolean isIntaking = false;
 
     private enum GamePeriod {
         NORMAL,
@@ -58,36 +55,58 @@ public class TeleOpMain extends OpMode {
 
     private Gamepad prevGamepad2, currentGamepad2;
 
-    private void listenForDeliveryTrayCommand() {
-        if (currentGamepad2.right_bumper ) {
-            Arm.setDoorPos(TRAY_DOOR_OPEN_POS);
-            telemetry.addData("it got into the currentgmepd2",0);
-        }
-        else if (currentGamepad2.left_bumper){
-            Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
-        }
+    private void EndgameLoop() {
+       if (gamepad2.left_bumper) {
+           Arm.setTargetPos(0, LAUNCH_POS);
+       } else if (gamepad2.right_bumper) {
+           Arm.setTargetPos(0, HANG_POS);
+       }else if (gamepad2.dpad_down&& Arm.getWormTargetPos() == HANG_POS) {
+           Arm.setTargetPos(0, 5);
+       }
+
+
+
+       if (gamepad2.left_trigger > 0.9 && Arm.getWormTargetPos() == LAUNCH_POS) {
+           Auxiliaries.releaseLauncher();
+       }
+
+       if (gamepad2.right_trigger > 0.9 && Arm.getWormTargetPos() == HANG_POS) {
+           Auxiliaries.releaseHanger();
+       }
     }
 
+    private void normalPeriodLoop() {
 
-    private void listenForIntakeCommand() {
-      intakeTriggerValue = currentGamepad2.left_trigger;
+        // Intake and delivery tray logic
+        if (Arm.getWormPos()<10){
+            if (gamepad2.left_trigger > 0.9) {
+                isIntaking = true;
+                Intake.intake();
+                Arm.setDoorPos(TRAY_DOOR_OPEN_POS);
+            } else if (gamepad2.left_trigger < 0.9 && gamepad2.left_trigger > 0.5) {
+                isIntaking = true;
+                Intake.intake();
+                Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
+            } else if (gamepad2.right_trigger > 0.9) {
+                isIntaking = false;
+                Intake.outtake();
+            } else {
+                isIntaking = false;
+                Intake.stop();
+                Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
+            }
+        } else {
+            isIntaking = false;
+            Intake.stop();
 
-      if (intakeTriggerValue > 0.9) {
-          intaking = true;
-          Intake.intake();
-          Arm.setDoorPos(TRAY_DOOR_OPEN_POS);
-      } else if (intakeTriggerValue < 0.9 && intakeTriggerValue > 0.5) {
-          intaking = true;
-          Intake.intake();
-          Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
-      } else {
-          intaking = false;
-          Intake.stop();
-          Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
-      }
-    }
+            if (gamepad2.right_bumper) {
+                Arm.setDoorPos(TRAY_DOOR_OPEN_POS);
+            } else {
+                Arm.setDoorPos(TRAY_DOOR_CLOSED_POS);
+            }
+        }
 
-    private void listenForNormalPeriodArmCommand() {
+        // Arm Logic
         if (gamepad2.dpad_down) {
             Arm.setTargetPos(0,0);
         } else if (gamepad2.cross) {
@@ -99,29 +118,6 @@ public class TeleOpMain extends OpMode {
         } else if (gamepad2.triangle) {
             Arm.setTargetPos(HIGH_EXT_POS, HIGH_ROT_POS);
         }
-    }
-
-    private void listenForEndgameCommand() {
-       if (gamepad2.left_bumper) {
-           Arm.setTargetPos(0, LAUNCH_POS);
-       } else if (gamepad2.right_bumper) {
-           Arm.setTargetPos(0, HANG_POS);
-       }
-
-       if (gamepad2.left_trigger > 0.9) {
-           Auxiliaries.releaseLauncher();
-       }
-
-       if (gamepad2.right_trigger > 0.9) {
-           Auxiliaries.releaseHanger();
-       }
-    }
-
-
-    private void normalPeriodLoop() {
-        listenForNormalPeriodArmCommand();
-        listenForIntakeCommand();
-        listenForDeliveryTrayCommand();
     }
     
     @Override public void init() {
@@ -139,9 +135,7 @@ public class TeleOpMain extends OpMode {
     }
 
     @Override public void loop() {
-        telemetry.addData("Intake trigger value", intakeTriggerValue);
-
-        Arm.update(intaking);
+        Arm.update(isIntaking);
         Arm.debug(telemetry);
 
         prevGamepad2.copy(currentGamepad2);
@@ -164,7 +158,7 @@ public class TeleOpMain extends OpMode {
            case ENDGAME:
                telemetry.addLine("Endgame Period");
 
-               listenForEndgameCommand();
+               EndgameLoop();
 
                if (gamepad2.options && gamepad2.share) { gamePeriod = GamePeriod.NORMAL; }
                break;

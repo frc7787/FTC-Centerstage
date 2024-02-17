@@ -48,7 +48,8 @@ public class AutoBlueAudience extends LinearOpMode {
                 .strafeTo(new Vector2d(-54, 60))
                 .lineTo(new Vector2d(-54, 23))
                 .strafeTo(new Vector2d(-39, 23))
-                .lineTo(new Vector2d(-39, 10))
+                .strafeTo(new Vector2d(-45, 23))
+                .lineTo(new Vector2d(-45, 10))
                 .build();
 
         toSpikeRight = drive.trajectorySequenceBuilder(startPos)
@@ -154,13 +155,18 @@ public class AutoBlueAudience extends LinearOpMode {
                 break;
             case CENTER:
                 drive.followTrajectorySequence(toSpikeCenter);
+
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-
                 sleep(500);
-
                 Auxiliaries.retractPixelPlacerRight();
+
                 drive.followTrajectorySequence(toBackdropCenter);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
                 break;
             case RIGHT:
                 drive.followTrajectorySequence(toSpikeRight);
@@ -176,5 +182,7 @@ public class AutoBlueAudience extends LinearOpMode {
                 drive.followTrajectorySequence(toBackdropCenter);
                 break;
         }
+
+        sleep(100);
     }
 }

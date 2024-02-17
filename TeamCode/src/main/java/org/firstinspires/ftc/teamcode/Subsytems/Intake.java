@@ -76,6 +76,10 @@ public class Intake {
        intakeForDuration(durationMills, DEFAULT_INTAKE_POWER);
     }
 
+    public static void outtake() {
+        intakeMotor.setDirection(FORWARD);
+        intakeMotor.setPower(DEFAULT_OUTTAKE_POWER);
+    }
     /**
      * Stops the intake by setting the power to 0
      */

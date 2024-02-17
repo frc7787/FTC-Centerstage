@@ -1,12 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-
-import org.opencv.core.Core;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 
 @Config
 public class Properties {
@@ -43,7 +37,7 @@ public class Properties {
     // ----------- INTAKE PROPERTIES ---------- //
 
     public static volatile double DEFAULT_INTAKE_POWER       = 1.0;
-    public static volatile double DEFAULT_OUTTAKE_POWER      = 1.0;
+    public static volatile double DEFAULT_OUTTAKE_POWER      = 0.3;
     public static volatile double DEFAULT_INTAKE_BELT_POWER  = 1.0;
     public static volatile double DEFAULT_OUTTAKE_BELT_POWER = 1.0;
 
@@ -55,7 +49,7 @@ public class Properties {
 
     // ---------- LAUNCHER PROPERTIES ---------- //
 
-    public static volatile double LAUNCHER_ZERO_POS = 0.00;
+    public static volatile double LAUNCHER_SERVO_ZERO_POS = 0.00;
     public static volatile double LAUNCHER_SERVO_LAUNCH_POS = 0.60;
 
     // ---------- HANGER PROPERTIES ---------- //
