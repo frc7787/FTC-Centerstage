@@ -82,9 +82,10 @@ public class Arm {
      * and checks if the arm should be homing.
      */
     public static void update(boolean intaking) {
+        // Control the tray position
         if (elevatorMotor.getCurrentPosition() > 800) {
             angleDeliveryTray(WRIST_DOWN_POS);
-        }else{
+        } else {
             angleDeliveryTray(0.0);
         }
 
@@ -93,12 +94,11 @@ public class Arm {
         }
 
         switch (normalPeriodArmState) {
-            case AT_POS: // While this might look redundant, it is not so pls don't delete it
+            case AT_POS:
                 if (elevatorMotor.getTargetPosition() == 0 && wormMotor.getTargetPosition() == 0 && !intaking) {
                     elevatorMotor.setPower(0.0);
                 }
             case TO_POS:
-
                 // first if for going back to 0,0 check current state of arm and make sure it follows a safe sequence back
                 if (elevatorTargetPos == 0 && wormTargetPos == 0){
                     if (wormMotor.getCurrentPosition() > WORM_SAFETY_LIMIT && elevatorMotor.getCurrentPosition() > 10) {
@@ -114,7 +114,7 @@ public class Arm {
                             rotateWorm(0);
                         }
                     }
-                }else if (elevatorTargetPos > 0 && wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT) {
+                } else if (elevatorTargetPos > 0 && wormMotor.getCurrentPosition() < WORM_SAFETY_LIMIT) {
                     // If the target worm pos is greater than the safety limit we go there, if not we go to the safety limit.
                     wormTargetPos = Math.max(wormTargetPos, (WORM_SAFETY_LIMIT + 20)); // We want to overshoot a little bit to improve consistency
                     rotateWorm(wormTargetPos);

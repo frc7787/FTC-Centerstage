@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.Subsytems.Arm;
+import org.firstinspires.ftc.teamcode.Subsytems.Auxiliaries;
 import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -40,35 +42,47 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
         drive.init();
 
-        Pose2d startPose = new Pose2d(12, 66, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(11, 63, Math.toRadians(90));
+
         drive.setPoseEstimate(startPose);
-        TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(12.00, 37.00))
-                .build();
-        TrajectorySequence toBoardCenter = drive.trajectorySequenceBuilder((toSpikeCenter.end()))
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(30.00, 37.00))
-                .build();
 
         TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(12.00, 37.00))
-                .turn(Math.toRadians(90))
+                .strafeTo(new Vector2d(28, 28))
+                .lineTo(new Vector2d(28, 11))
                 .build();
-        TrajectorySequence toBoardLeft = drive.trajectorySequenceBuilder((toSpikeLeft.end()))
 
-                .lineTo(new Vector2d(30.00, 37.00))
+        TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(11, 60))
+                .strafeTo(new Vector2d(28, 60))
+                .lineTo(new Vector2d(28, 28))
+                .strafeTo(new Vector2d(11, 28))
+                .lineTo(new Vector2d(11, 12))
                 .build();
 
         TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(12.00, 37.00))
-                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(11, 12))
+                .strafeTo(new Vector2d(4, 12))
                 .build();
-        TrajectorySequence toBoardRight = drive.trajectorySequenceBuilder((toSpikeRight.end()))
+
+        TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(30.00, 37.00))
+                .lineTo(new Vector2d(49, 12))
+                .strafeTo(new Vector2d(49, 42))
+                .lineTo(new Vector2d(51, 42))
                 .build();
 
+        TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(49, 12))
+                .strafeTo(new Vector2d(49, 28))
+                .lineTo(new Vector2d(51, 28))
+                .build();
 
+        TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(49, 12))
+                .strafeTo(new Vector2d(49, 29)) // **** This y value seems very odd to me
+                .build();
 
         int cameraMonitorViewId = hardwareMap
                 .appContext
@@ -93,66 +107,122 @@ public class AutoBlueBackdrop extends LinearOpMode {
             }
         });
 
+        Arm.init(hardwareMap);
+        Auxiliaries.init(hardwareMap);
+
+        Arm.update(false);
+
+        Arm.rotateWorm(1400);
+
         waitForStart();
 
         // Pls do not delete this
         location = propDetector.getPropLocation();
 
-        while (opModeIsActive()) {
-            int leftCount    = 0;
-            int rightCount   = 0;
-            int noneCount    = 0;
-            int centerCount  = 0;
+        if (isStopRequested()) { return; }
 
-            for (int i = 0; i <= 20;  i++) {
-                switch (propDetector.getPropLocation()) {
-                    case LEFT:
-                        leftCount += 1;
-                        break;
-                    case RIGHT:
-                        rightCount += 1;
-                        break;
-                    case NONE:
-                        noneCount += 1;
-                        break;
-                    case CENTER:
-                        centerCount += 1;
-                        break;
-                }
-            }
+        int leftCount   = 0;
+        int rightCount  = 0;
+        int noneCount   = 0;
+        int centerCount = 0;
 
-            if (leftCount >= rightCount && leftCount >= noneCount) {
-                location = PropLocation.LEFT;
-            } else if (rightCount >= leftCount && rightCount >= noneCount) {
-                location = PropLocation.RIGHT;
-            } else {
-                location = PropLocation.NONE;
-            }
-
-            telemetry.addData("PROP LOCATION: ", location);
-            telemetry.update();
-
-            switch (location) {
+        for (int i = 0; i <= 20;  i++) {
+            switch (propDetector.getPropLocation()) {
                 case LEFT:
-                    // Do the thing
-                    drive.followTrajectorySequence(toSpikeLeft);
+                    leftCount += 1;
                     break;
                 case RIGHT:
-                    // Do the other thing
-                    drive.followTrajectorySequence(toSpikeRight);
-
+                    rightCount += 1;
                     break;
                 case CENTER:
-                    // Do center or none
-                    drive.followTrajectorySequence(toSpikeCenter);
-                    break;
+                    centerCount += 1;
                 case NONE:
-                    // Do center or none
-                    drive.followTrajectorySequence(toSpikeCenter);
+                    noneCount += 1;
                     break;
-            } // end of switch location
-            sleep(30000);
-        } // end of while opmode is active
+            }
+        }
+
+        if (leftCount >= rightCount && leftCount >= noneCount && leftCount >= centerCount) {
+            location = PropLocation.LEFT;
+        } else if (rightCount >= leftCount && rightCount >= noneCount && rightCount >= centerCount) {
+            location = PropLocation.RIGHT;
+        } else if (centerCount >= noneCount){
+            location = PropLocation.CENTER;
+        } else {
+            location = PropLocation.NONE;
+        }
+
+        telemetry.addData("PROP LOCATION: ", location);
+        telemetry.update();
+
+        Arm.rotateWorm(25);
+
+        switch (location) {
+            case LEFT:
+                drive.followTrajectorySequence(toSpikeLeft);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(500);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropLeft);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+            case CENTER:
+                drive.followTrajectorySequence(toSpikeCenter);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(500);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropCenter);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+            case RIGHT:
+                drive.followTrajectorySequence(toSpikeRight);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(500);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropRight);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+            case NONE: // This case should copy center
+                drive.followTrajectorySequence(toSpikeCenter);
+                Auxiliaries.placePixelOnSpikeStripRight();
+
+                sleep(1000);
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(500);
+                Auxiliaries.retractPixelPlacerRight();
+
+                Auxiliaries.retractPixelPlacerRight();
+                drive.followTrajectorySequence(toBackdropCenter);
+
+                sleep(1000);
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+        }
+
+        sleep(100);
     }
 }
 
