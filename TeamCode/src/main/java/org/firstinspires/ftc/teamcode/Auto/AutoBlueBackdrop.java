@@ -65,21 +65,21 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 .build();
 
         TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
                 .strafeTo(new Vector2d(49, 42))
                 .lineTo(new Vector2d(51, 42))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
                 .strafeTo(new Vector2d(49, 28))
                 .lineTo(new Vector2d(51, 28))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
                 .strafeTo(new Vector2d(49, 29)) // **** This y value seems very odd to me
                 .build();
