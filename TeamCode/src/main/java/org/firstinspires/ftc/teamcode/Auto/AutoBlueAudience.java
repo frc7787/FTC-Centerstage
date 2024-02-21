@@ -39,8 +39,11 @@ public class AutoBlueAudience extends LinearOpMode {
         drive.setPoseEstimate(startPos);
 
         toSpikeLeft = drive.trajectorySequenceBuilder(startPos)
+                .lineTo(new Vector2d(-35, 34))
+                .strafeTo(new Vector2d(-31, 34))
+                .strafeTo(new Vector2d(-35, 34))
                 .lineTo(new Vector2d(-35, 12))
-                .strafeTo(new Vector2d(-31, 12))
+                .strafeTo(new Vector2d(-30, 12))
                 .build();
 
         toSpikeCenter = drive.trajectorySequenceBuilder(startPos)
@@ -49,19 +52,23 @@ public class AutoBlueAudience extends LinearOpMode {
                 .lineTo(new Vector2d(-54, 23))
                 .strafeTo(new Vector2d(-39, 23))
                 .strafeTo(new Vector2d(-45, 23))
-                .lineTo(new Vector2d(-45, 10))
+                .lineTo(new Vector2d(-45, 12))
                 .build();
 
         toSpikeRight = drive.trajectorySequenceBuilder(startPos)
-                .strafeTo(new Vector2d(-54, 63))
-                .lineTo(new Vector2d(-54, 15))
+                .lineTo(new Vector2d(-35, 60))
+                .strafeTo(new Vector2d(-56, 60))
+                .lineTo(new Vector2d(-56, 32))
+                .strafeTo(new Vector2d(-48, 32))
+                .strafeTo(new Vector2d(-54, 32))
+                .lineTo(new Vector2d(-54, 12))
                 .build();
 
         toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 42))
-                .lineTo(new Vector2d(51, 42))
+                .strafeTo(new Vector2d(49, 35))
+                .lineTo(new Vector2d(52, 35))
                 .build();
 
         toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
@@ -73,9 +80,9 @@ public class AutoBlueAudience extends LinearOpMode {
 
         toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 15))
-                .strafeTo(new Vector2d(49, 29)) // **** This y value seems very odd to me
-                .lineTo(new Vector2d(51, 29))
+                .lineTo(new Vector2d(49, 12))
+                .strafeTo(new Vector2d(49, 21)) // **** This y value seems very odd to me
+                .lineTo(new Vector2d(51, 21))
                 .build();
 
 
@@ -163,7 +170,7 @@ public class AutoBlueAudience extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnBackdropLeft();
-                sleep(800);
+                sleep(1000);
                 Auxiliaries.retractPixelPlacerLeft();
                 break;
             case CENTER:
@@ -203,7 +210,7 @@ public class AutoBlueAudience extends LinearOpMode {
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
                 sleep(500);
-                Auxiliaries.retractPixelPlacerRight();
+                Auxiliaries.placePixelOnBackdropRight();
 
                 Auxiliaries.retractPixelPlacerRight();
                 drive.followTrajectorySequence(toBackdropCenter);

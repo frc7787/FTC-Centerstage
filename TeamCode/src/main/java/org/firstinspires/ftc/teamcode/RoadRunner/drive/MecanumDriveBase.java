@@ -79,7 +79,7 @@ public class MecanumDriveBase extends MecanumDrive {
         this.hardwareMap = hardwareMap;
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_DRIVE, TRANSLATIONAL_PID_STRAFE, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);// Modified to allow L/R tuning with another PID
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 1.5);// Modified to allow L/R tuning with another PID
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 

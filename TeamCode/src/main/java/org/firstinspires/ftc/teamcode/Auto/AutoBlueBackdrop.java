@@ -48,15 +48,16 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
         TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
                 .strafeTo(new Vector2d(28, 28))
-                .lineTo(new Vector2d(28, 11))
+                .lineTo(new Vector2d(28, -1))
                 .build();
 
         TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(new Vector2d(11, 60))
                 .strafeTo(new Vector2d(28, 60))
                 .lineTo(new Vector2d(28, 28))
-                .strafeTo(new Vector2d(11, 28))
-                .lineTo(new Vector2d(11, 12))
+                .strafeTo(new Vector2d(14, 28))
+                .lineTo(new Vector2d(14, 12))
+                .strafeTo(new Vector2d(6, 12))
                 .build();
 
         TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
@@ -65,21 +66,21 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 .build();
 
         TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
                 .strafeTo(new Vector2d(49, 42))
                 .lineTo(new Vector2d(51, 42))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
                 .strafeTo(new Vector2d(49, 28))
                 .lineTo(new Vector2d(51, 28))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
                 .strafeTo(new Vector2d(49, 29)) // **** This y value seems very odd to me
                 .build();
