@@ -52,8 +52,8 @@ public class PropDetector extends OpenCvPipeline {
     PropLocation propLocation = NONE;
 
     private Mat hsvMat          = new Mat(),
-                threshold0 = new Mat(),
-                threshold1 = new Mat(),
+                threshold0      = new Mat(),
+                threshold1      = new Mat(),
                 hierarchy       = new Mat(),
                 cvErodeKernel   = new Mat(),
                 thresholdOutput = new Mat(),
@@ -89,12 +89,10 @@ public class PropDetector extends OpenCvPipeline {
                 Core.inRange(hsvMat, LOW_HSV_RANGE_RED_ONE, HIGH_HSV_RANGE_RED_ONE, threshold0);
                 Core.inRange(hsvMat, LOW_HSV_RANGE_RED_TWO, HIGH_HSV_RANGE_RED_TWO, threshold1);
                 Core.add(threshold0, threshold1, thresholdOutput);
-
                 break;
             case BLUE:
                 // Checks if the image is in range
                 Core.inRange(hsvMat, LOW_HSV_RANGE_BLUE, HIGH_HSV_RANGE_BLUE, thresholdOutput);
-
                 break;
         }
 
@@ -135,16 +133,15 @@ public class PropDetector extends OpenCvPipeline {
                 propLocation = LEFT;
             } else if (biggestBoundingBox.x > RIGHT_X) { // Check to see if the bounding box is on the right 25% of the screen
                 propLocation = RIGHT;
-            } else { // If it isn't either, and the prop is detected it must be in the center
+            } else { // If it isn't left or right and the prop is detected it must be in the center
                 propLocation = CENTER;
             }
-        } else { // If we don't detect anything we assume there is no prop
+        } else { // If we don't detect the prop
             propLocation = NONE;
         }
 
         // Draw a rectangle over the biggest bounding box
         Imgproc.rectangle(hsvMat, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
-
 
         if (VIEW_DISPLAYED == 1) {
             Imgproc.rectangle(input, biggestBoundingBox, BOUNDING_RECTANGLE_COLOR);
