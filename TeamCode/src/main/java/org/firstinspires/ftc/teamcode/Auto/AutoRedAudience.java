@@ -36,11 +36,16 @@ public class AutoRedAudience extends LinearOpMode {
 
         drive.init();
 
-        Pose2d startPose = new Pose2d(-35, -63);
+        Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(270.0));
 
-        TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-54, -63))
-                .lineTo(new Vector2d(-54, -12))
+        drive.setPoseEstimate(startPose);
+
+        TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(-35, -34))
+                .strafeTo(new Vector2d(-31, -34))
+                .strafeTo(new Vector2d(-35, -34))
+                .lineTo(new Vector2d(-35, -12))
+                .strafeTo(new Vector2d(-18, -12))
                 .build();
 
         TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
@@ -48,34 +53,40 @@ public class AutoRedAudience extends LinearOpMode {
                 .strafeTo(new Vector2d(-54, -60))
                 .lineTo(new Vector2d(-54, -23))
                 .strafeTo(new Vector2d(-39, -23))
-                .strafeTo(new Vector2d(-45, -23))
-                .lineTo(new Vector2d(-45, -10))
+                .strafeTo(new Vector2d(-40, -23))
+                .lineTo(new Vector2d(-40, -10))
+                .strafeTo(new Vector2d(-28, -10))
                 .build();
 
-        TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-54, -63))
-                .lineTo(new Vector2d(-54, -15))
+        TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(-35, -60))
+                .strafeTo(new Vector2d(-56, -60))
+                .lineTo(new Vector2d(-56, -32))
+                .strafeTo(new Vector2d(-48, -32))
+                .strafeTo(new Vector2d(-52, -32))
+                .lineTo(new Vector2d(-52, -12))
+                .strafeTo(new Vector2d(-40, -12))
                 .build();
 
         TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
-                .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 42))
-                .lineTo(new Vector2d(51, 42))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(49, -12))
+                .strafeTo(new Vector2d(49, -33))
+                .lineTo(new Vector2d(52.5, -33))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
-                .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 28))
-                .lineTo(new Vector2d(51, 28))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(49, -10))
+                .strafeTo(new Vector2d(49, -43))
+                .lineTo(new Vector2d(53.5, -43))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
-                .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 15))
-                .strafeTo(new Vector2d(49, 29)) // **** This y value seems very odd to me
-                .lineTo(new Vector2d(51, 29))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(49, -12))
+                .strafeTo(new Vector2d(49, -49))
+                .lineTo(new Vector2d(53.5, -49))
                 .build();
 
         int cameraMonitorViewId = hardwareMap
@@ -86,7 +97,7 @@ public class AutoRedAudience extends LinearOpMode {
         camera = OpenCvCameraFactory
                 .getInstance()
                 .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId
+                        hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
                 );
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -110,63 +121,102 @@ public class AutoRedAudience extends LinearOpMode {
 
         waitForStart();
 
-        // Pls do not delete this
+        if (isStopRequested()) { return; }
+
         location = propDetector.getPropLocation();
 
-        while (opModeIsActive()) {
-            location = propDetector.getPropLocation();
+        telemetry.addData("PROP LOCATION: ", location);
+        telemetry.update();
 
-            telemetry.addData("PROP LOCATION: ", location);
-            telemetry.update();
+        int leftCount   = 0;
+        int rightCount  = 0;
+        int centerCount = 0;
+        int noneCount   = 0;
 
-            int leftCount   = 0;
-            int rightCount  = 0;
-            int centerCount = 0;
-            int noneCount   = 0;
-
-            for (int i = 0; i <= 20;  i++) {
-                switch (propDetector.getPropLocation()) {
-                    case LEFT:
-                        leftCount += 1;
-                        break;
-                    case RIGHT:
-                        rightCount += 1;
-                        break;
-                    case CENTER:
-                        centerCount += 1;
-                        break;
-                    case NONE:
-                        noneCount += 1;
-                        break;
-                }
-            }
-
-            if (leftCount >= rightCount && leftCount >= centerCount && leftCount >= noneCount) {
-                location = PropLocation.LEFT;
-            } else if (rightCount >= leftCount && rightCount >= noneCount && rightCount >= centerCount) {
-                location = PropLocation.RIGHT;
-            } else if (centerCount >= noneCount) {
-                location = PropLocation.CENTER;
-            } else {
-                location = PropLocation.NONE;
-            }
-
-            Arm.rotateWorm(25);
-
-            switch (location) {
+        for (int i = 0; i <= 20;  i++) {
+            switch (propDetector.getPropLocation()) {
                 case LEFT:
-                    drive.followTrajectorySequence(toSpikeLeft);
-                case CENTER:
+                    leftCount += 1;
+                    break;
                 case RIGHT:
-                case NONE: // This case should mirror
+                    rightCount += 1;
+                    break;
+                case CENTER:
+                    centerCount += 1;
+                    break;
+                case NONE:
+                    noneCount += 1;
+                    break;
             }
-
-            sleep(50);
-            drive.setMotorPowers(0.5, 0.5, 0.5, 0.5);
-            sleep(400);
-            drive.setMotorPowers(0, 0, 0, 0);
-
-            sleep(99999999);
         }
+
+        if (leftCount >= rightCount && leftCount >= centerCount && leftCount >= noneCount) {
+            location = PropLocation.LEFT;
+        } else if (rightCount >= leftCount && rightCount >= noneCount && rightCount >= centerCount) {
+            location = PropLocation.RIGHT;
+        } else if (centerCount >= noneCount) {
+            location = PropLocation.CENTER;
+        } else {
+            location = PropLocation.NONE;
+        }
+
+        Arm.rotateWorm(25);
+
+        switch (location) {
+            case LEFT:
+                drive.followTrajectorySequence(toSpikeLeft);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropLeft);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+            case CENTER:
+                drive.followTrajectorySequence(toSpikeCenter);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropCenter);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+            case RIGHT:
+                drive.followTrajectorySequence(toSpikeRight);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropRight);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+            case NONE: // This case should mirror center
+                drive.followTrajectorySequence(toSpikeCenter);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropCenter);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerLeft();
+                break;
+        }
+
+        sleep(20000);
     }
 }

@@ -30,8 +30,6 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
     MecanumDriveBase drive;
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -61,8 +59,10 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 .build();
 
         TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(11, 12))
-                .strafeTo(new Vector2d(4, 12))
+                .lineTo(new Vector2d(11, 27))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(7, 26))
+                .lineTo(new Vector2d(11, 26))
                 .build();
 
         TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
@@ -80,9 +80,8 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
-                .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 29)) // **** This y value seems very odd to me
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(51, 26))
                 .build();
 
         int cameraMonitorViewId = hardwareMap
@@ -92,9 +91,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
         camera = OpenCvCameraFactory
                 .getInstance()
-                .createWebcam(
-                        hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
-                );
+                .createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override public void onOpened() {

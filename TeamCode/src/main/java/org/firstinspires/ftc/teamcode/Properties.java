@@ -21,8 +21,8 @@ public class Properties {
     public static volatile int LAUNCH_POS = 2000;
     public static volatile int HANG_POS   = 2850;
 
-    public static volatile double DEFAULT_WORM_POWER     = 1.0;
-    public static volatile double DEFAULT_ELEVATOR_POWER = 0.5; // 1.0;
+    public static volatile double DEFAULT_WORM_POWER     = 0.8;
+    public static volatile double DEFAULT_ELEVATOR_POWER = 1.0; // 1.0;
     public static volatile double ELEVATOR_HOMING_POWER  = 0.2; // Absolute value
     public static volatile double WORM_HOMING_POWER      = 0.2; // Absolute value
 
@@ -43,19 +43,17 @@ public class Properties {
 
     // --------- DELIVERY TRAY PROPERTIES ---------- //
 
-    public static volatile double TRAY_DOOR_OPEN_POS = 0.1;
-    public static volatile double TRAY_DOOR_INTAKE_POS = 0.26;
+    public static volatile double TRAY_DOOR_OPEN_POS   = 0.1;
     public static volatile double TRAY_DOOR_CLOSED_POS = 0.0;
 
     // ---------- LAUNCHER PROPERTIES ---------- //
 
-    public static volatile double LAUNCHER_SERVO_ZERO_POS = 0.00;
+    public static volatile double LAUNCHER_SERVO_ZERO_POS   = 0.00;
     public static volatile double LAUNCHER_SERVO_LAUNCH_POS = 0.60;
 
     // ---------- HANGER PROPERTIES ---------- //
 
     public static volatile double HANGER_SERVO_POSITION = 1.0;
-
 
     // ----------- CAMERA PROPERTIES ------------ //
 

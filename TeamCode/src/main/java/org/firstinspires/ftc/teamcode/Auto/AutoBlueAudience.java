@@ -81,7 +81,7 @@ public class AutoBlueAudience extends LinearOpMode {
         toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
                 .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 21)) // **** This y value seems very odd to me
+                .strafeTo(new Vector2d(49, 21))
                 .lineTo(new Vector2d(51, 21))
                 .build();
 
@@ -222,6 +222,6 @@ public class AutoBlueAudience extends LinearOpMode {
                 break;
         }
 
-        sleep(100);
+        sleep(20000);
     }
 }
