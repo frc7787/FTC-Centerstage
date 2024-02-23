@@ -61,7 +61,7 @@ public class TeleOpMain extends OpMode {
        } else if (gamepad2.right_bumper) {
            Arm.setTargetPos(0, HANG_POS);
        }else if (gamepad2.dpad_down&& Arm.getWormTargetPos() == HANG_POS) {
-           Arm.setTargetPos(0, 5);
+           Arm.setTargetPos(0, -300);
        }
 
 
@@ -136,7 +136,6 @@ public class TeleOpMain extends OpMode {
 
     @Override public void loop() {
         Arm.update(isIntaking);
-        Arm.debug(telemetry);
 
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
@@ -164,6 +163,6 @@ public class TeleOpMain extends OpMode {
                break;
        }
 
-        telemetry.update();
+       telemetry.update();
     }
 }

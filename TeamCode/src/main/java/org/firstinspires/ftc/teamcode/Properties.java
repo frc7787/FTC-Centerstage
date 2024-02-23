@@ -21,10 +21,10 @@ public class Properties {
     public static volatile int LAUNCH_POS = 2000;
     public static volatile int HANG_POS   = 2850;
 
-    public static volatile double DEFAULT_WORM_POWER     = 0.8;
+    public static volatile double DEFAULT_WORM_POWER     = 1.0;
     public static volatile double DEFAULT_ELEVATOR_POWER = 1.0; // 1.0;
-    public static volatile double ELEVATOR_HOMING_POWER  = 0.2; // Absolute value
-    public static volatile double WORM_HOMING_POWER      = 0.2; // Absolute value
+    public static volatile double ELEVATOR_HOMING_POWER  = 0.3; // Absolute value
+    public static volatile double WORM_HOMING_POWER      = 0.3; // Absolute value
 
 
     // ----------- DRIVE PROPERTIES ---------- //

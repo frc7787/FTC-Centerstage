@@ -4,5 +4,5 @@ public enum NormalPeriodArmState {
     AT_POS,
     TO_POS,
     UNKNOWN,
-    HOMING
+    HOMING,
 }

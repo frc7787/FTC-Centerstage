@@ -102,8 +102,7 @@ public class AutoRedBackdrop extends LinearOpMode {
                 .build();
 
         TrajectorySequence toParkRight = drive.trajectorySequenceBuilder(toBackdropRight.end())
-                .lineTo(new Vector2d(49, -50
-                ))
+                .lineTo(new Vector2d(49, -50))
                 .strafeTo(new Vector2d(49, -63))
                 .build();
 
