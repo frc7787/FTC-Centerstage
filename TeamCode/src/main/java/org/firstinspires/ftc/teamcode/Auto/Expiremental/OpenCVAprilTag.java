@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Autonomous(name="April Tag Detection")
+@Disabled
 public class OpenCVAprilTag extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.

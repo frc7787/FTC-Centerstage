@@ -59,7 +59,6 @@ public class Auxiliaries {
 
     public static void retractPixelPlacerLeft() {
         pixelPlacerServoLeft.setPosition(0.0);
-        pixelPlacerServoLeft.setPosition(PIXEL_PLACER_SERVO_INIT_POS); // ****REMOVE BEFORE COMP
     }
 
     public static void placePixelOnSpikeStripRight() {
@@ -72,7 +71,14 @@ public class Auxiliaries {
 
     public static void retractPixelPlacerRight() {
         pixelPlacerServoRight.setPosition(0.0);
-        pixelPlacerServoRight.setPosition(PIXEL_PLACER_SERVO_INIT_POS); // ****REMOVE BEFORE COMP
+    }
+
+    public static void movePixelPlacerToMosiacFixingPositionLeft() {
+        pixelPlacerServoLeft.setPosition(PIXEL_PLACER_SERVO_BACKDROP_POS + 0.1);
+    }
+
+    public static void movePixelPlacerToMosiacFixingPositionRight() {
+        pixelPlacerServoRight.setPosition(PIXEL_PLACER_SERVO_BACKDROP_POS + 0.1);
     }
 
 

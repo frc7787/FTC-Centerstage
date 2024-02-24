@@ -35,7 +35,7 @@ public class AutoRedBackdrop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         propDetector = new PropDetector(PropColor.RED);
-        drive        = new MecanumDriveBase(hardwareMap);
+        drive = new MecanumDriveBase(hardwareMap);
 
         drive.init();
 
@@ -73,8 +73,8 @@ public class AutoRedBackdrop extends LinearOpMode {
         TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(49, -12))
-                .strafeTo(new Vector2d(49, -34))
-                .lineTo(new Vector2d(52.5, -34))
+                .strafeTo(new Vector2d(49, -35))
+                .lineTo(new Vector2d(52.5, -35))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
@@ -88,11 +88,11 @@ public class AutoRedBackdrop extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(49, -12))
                 .strafeTo(new Vector2d(49, -49))
-                .lineTo(new Vector2d(53.5, -50))
+                .lineTo(new Vector2d(53.5, -49))
                 .build();
 
         TrajectorySequence toParkLeft = drive.trajectorySequenceBuilder(toBackdropLeft.end())
-                .lineTo(new Vector2d(49, -34))
+                .lineTo(new Vector2d(49, -35))
                 .strafeTo(new Vector2d(49, -64))
                 .build();
 
@@ -116,12 +116,14 @@ public class AutoRedBackdrop extends LinearOpMode {
                 .createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override public void onOpened() {
+            @Override
+            public void onOpened() {
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 camera.setPipeline(propDetector);
             }
 
-            @Override public void onError(int errorCode) {
+            @Override
+            public void onError(int errorCode) {
                 telemetry.addData("Failed to open camera due to error code", errorCode);
                 telemetry.update();
             }
@@ -136,112 +138,111 @@ public class AutoRedBackdrop extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) { return; }
+        if (isStopRequested()) {
+            return;
+        }
 
         location = propDetector.getPropLocation();
 
-        while (opModeIsActive()) {
-            int leftCount   = 0;
-            int rightCount  = 0;
-            int centerCount = 0;
-            int noneCount   = 0;
+        int leftCount = 0;
+        int rightCount = 0;
+        int centerCount = 0;
+        int noneCount = 0;
 
-            for (int i = 0; i <= 20;  i++) {
-                switch (propDetector.getPropLocation()) {
-                    case LEFT:
-                        leftCount += 1;
-                        break;
-                    case RIGHT:
-                        rightCount += 1;
-                        break;
-                    case CENTER:
-                        centerCount += 1;
-                        break;
-                    case NONE:
-                        noneCount += 1;
-                        break;
-                }
-            }
-
-            if (leftCount >= rightCount && leftCount >= noneCount && leftCount >= centerCount) {
-                location = PropLocation.LEFT;
-            } else if (rightCount >= leftCount && rightCount >= noneCount && rightCount >= centerCount) {
-                location = PropLocation.RIGHT;
-            } else if (centerCount >= noneCount) {
-                location = PropLocation.CENTER;
-            } else {
-                location = PropLocation.NONE;
-            }
-
-            Arm.rotateWorm(25);
-
-            telemetry.addData("PROP LOCATION: ", location);
-            telemetry.update();
-
-            switch (location) {
+        for (int i = 0; i <= 20; i++) {
+            switch (propDetector.getPropLocation()) {
                 case LEFT:
-                    drive.followTrajectorySequence(toSpikeLeft);
-
-                    Auxiliaries.placePixelOnSpikeStripRight();
-                    sleep(1000);
-                    Auxiliaries.retractPixelPlacerRight();
-
-                    drive.followTrajectorySequence(toBackdropLeft);
-
-                    Auxiliaries.placePixelOnBackdropLeft();
-                    sleep(800);
-                    Auxiliaries.retractPixelPlacerLeft();
-
-                    drive.followTrajectorySequence(toParkLeft);
-                    break;
-                case CENTER:
-                    drive.followTrajectorySequence(toSpikeCenter);
-
-                    Auxiliaries.placePixelOnSpikeStripRight();
-                    sleep(1000);
-                    Auxiliaries.retractPixelPlacerRight();
-
-                    drive.followTrajectorySequence(toBackdropCenter);
-
-                    Auxiliaries.placePixelOnBackdropLeft();
-                    sleep(800);
-                    Auxiliaries.retractPixelPlacerLeft();
-
-                    drive.followTrajectorySequence(toParkCenter);
+                    leftCount += 1;
                     break;
                 case RIGHT:
-                    drive.followTrajectorySequence(toSpikeRight);
-
-                    Auxiliaries.placePixelOnSpikeStripRight();
-                    sleep(1000);
-                    Auxiliaries.retractPixelPlacerRight();
-
-                    drive.followTrajectorySequence(toBackdropRight);
-
-                    Auxiliaries.placePixelOnBackdropLeft();
-                    sleep(800);
-                    Auxiliaries.retractPixelPlacerLeft();
-
-                    drive.followTrajectorySequence(toParkRight);
+                    rightCount += 1;
+                    break;
+                case CENTER:
+                    centerCount += 1;
                     break;
                 case NONE:
-                    drive.followTrajectorySequence(toSpikeCenter);
-
-                    Auxiliaries.placePixelOnSpikeStripRight();
-                    sleep(1000);
-                    Auxiliaries.retractPixelPlacerRight();
-
-                    drive.followTrajectorySequence(toBackdropCenter);
-
-                    Auxiliaries.placePixelOnBackdropLeft();
-                    sleep(800);
-                    Auxiliaries.retractPixelPlacerLeft();
-
-                    drive.followTrajectorySequence(toSpikeCenter);
+                    noneCount += 1;
                     break;
             }
-
-            sleep(20000);
         }
+
+        if (leftCount >= rightCount && leftCount >= noneCount && leftCount >= centerCount) {
+            location = PropLocation.LEFT;
+        } else if (rightCount >= leftCount && rightCount >= noneCount && rightCount >= centerCount) {
+            location = PropLocation.RIGHT;
+        } else if (centerCount >= noneCount) {
+            location = PropLocation.CENTER;
+        } else {
+            location = PropLocation.NONE;
+        }
+
+        Arm.rotateWorm(25);
+
+        telemetry.addData("PROP LOCATION: ", location);
+        telemetry.update();
+
+        switch (location) {
+            case LEFT:
+                drive.followTrajectorySequence(toSpikeLeft);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropLeft);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toParkLeft);
+                break;
+            case CENTER:
+                drive.followTrajectorySequence(toSpikeCenter);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropCenter);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toParkCenter);
+                break;
+            case RIGHT:
+                drive.followTrajectorySequence(toSpikeRight);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropRight);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toParkRight);
+                break;
+            case NONE:
+                drive.followTrajectorySequence(toSpikeCenter);
+
+                Auxiliaries.placePixelOnSpikeStripRight();
+                sleep(1000);
+                Auxiliaries.retractPixelPlacerRight();
+
+                drive.followTrajectorySequence(toBackdropCenter);
+
+                Auxiliaries.placePixelOnBackdropLeft();
+                sleep(800);
+                Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toSpikeCenter);
+                break;
+        }
+        sleep(20000);
     }
 }

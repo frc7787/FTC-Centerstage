@@ -4,7 +4,11 @@ import com.qualcomm.hardware.lynx.LynxModule;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.LED;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
@@ -55,6 +59,8 @@ public class TeleOpMain extends OpMode {
 
     private Gamepad prevGamepad2, currentGamepad2;
 
+    private LED LEDOne, LEDTwo;
+
     private void EndgameLoop() {
        if (gamepad2.left_bumper) {
            Arm.setTargetPos(0, LAUNCH_POS);
@@ -76,6 +82,17 @@ public class TeleOpMain extends OpMode {
     }
 
     private void normalPeriodLoop() {
+        if (gamepad1.dpad_up) {
+            Auxiliaries.movePixelPlacerToMosiacFixingPositionLeft();
+        } else if (gamepad1.dpad_down) {
+            Auxiliaries.retractPixelPlacerLeft();
+        }
+
+        if (gamepad1.triangle) {
+            Auxiliaries.movePixelPlacerToMosiacFixingPositionRight();
+        } else if (gamepad1.cross) {
+            Auxiliaries.retractPixelPlacerRight();
+        }
 
         // Intake and delivery tray logic
         if (Arm.getWormPos()<10){
@@ -132,6 +149,12 @@ public class TeleOpMain extends OpMode {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(AUTO);
         }
+
+        LEDOne = hardwareMap.get(LED.class, "LEDOne");
+        LEDTwo = hardwareMap.get(LED.class, "LEDTwo");
+
+        LEDOne.enable(false);
+        LEDTwo.enable(false);
     }
 
     @Override public void loop() {
@@ -148,21 +171,31 @@ public class TeleOpMain extends OpMode {
 
        switch (gamePeriod) {
            case NORMAL:
-               telemetry.addLine("Normal Period");
+               gamepad1.setLedColor(0, 0, 255, Gamepad.LED_DURATION_CONTINUOUS);
+               gamepad2.setLedColor(0,0,255, Gamepad.LED_DURATION_CONTINUOUS);
+
+               LEDOne.enable(false);
+               LEDTwo.enable(false);
 
                normalPeriodLoop();
 
-               if (gamepad2.options && gamepad2.share) { gamePeriod = GamePeriod.ENDGAME; }
+               if (gamepad2.share) {
+                   gamePeriod = GamePeriod.ENDGAME;
+                   gamepad1.rumble(1, 1, 1000);
+                   gamepad2.rumble(1, 1, 1000);
+               }
+
                break;
            case ENDGAME:
-               telemetry.addLine("Endgame Period");
+               gamepad1.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
+               gamepad2.setLedColor(255, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
+
+               LEDOne.enable(true);
+               LEDTwo.enable(true);
 
                EndgameLoop();
-
-               if (gamepad2.options && gamepad2.share) { gamePeriod = GamePeriod.NORMAL; }
                break;
        }
 
-       telemetry.update();
     }
 }

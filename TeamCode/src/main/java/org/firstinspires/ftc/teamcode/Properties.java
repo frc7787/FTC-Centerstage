@@ -18,7 +18,7 @@ public class Properties {
     public static volatile int HIGH_EXT_POS = 2894;
     public static volatile int HIGH_ROT_POS = 1920;
 
-    public static volatile int LAUNCH_POS = 2000;
+    public static volatile int LAUNCH_POS = 2525;
     public static volatile int HANG_POS   = 2850;
 
     public static volatile double DEFAULT_WORM_POWER     = 1.0;

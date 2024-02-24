@@ -83,7 +83,7 @@ public class Arm {
      */
     public static void update(boolean intaking) {
         // Control the tray position
-        if (elevatorMotor.getCurrentPosition() > 800) {
+        if (elevatorMotor.getCurrentPosition() > 1100) {
             angleDeliveryTray(WRIST_DOWN_POS);
         } else {
             angleDeliveryTray(0.0);
@@ -97,6 +97,7 @@ public class Arm {
             case AT_POS:
                 if (elevatorMotor.getTargetPosition() == 0 && wormMotor.getTargetPosition() == 0 && !intaking) {
                     elevatorMotor.setPower(0.0);
+                    wormMotor.setPower(0.0);
                 }
             case TO_POS:
                 // first if for going back to 0,0 check current state of arm and make sure it follows a safe sequence back

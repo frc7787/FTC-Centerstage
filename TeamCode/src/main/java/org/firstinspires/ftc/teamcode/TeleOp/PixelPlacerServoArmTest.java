@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsytems.Auxiliaries;
 
 @TeleOp(name = "Test - Pixel Placer Servo")
+@Disabled
 public class PixelPlacerServoArmTest extends OpMode {
 
     @Override public void init() {

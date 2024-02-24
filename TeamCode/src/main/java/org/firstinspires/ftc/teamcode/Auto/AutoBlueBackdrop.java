@@ -45,8 +45,13 @@ public class AutoBlueBackdrop extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(28, 28))
-                .lineTo(new Vector2d(28, -1))
+                .lineTo(new Vector2d(11, 61))
+                .strafeTo(new Vector2d(33, 61))
+                .lineTo(new Vector2d(33, 40))
+                .strafeTo(new Vector2d(20, 40))
+                .strafeTo(new Vector2d(33, 40))
+                .lineTo(new Vector2d(33, 11))
+                .strafeTo(new Vector2d(16, 11))
                 .build();
 
         TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
@@ -54,34 +59,52 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 .strafeTo(new Vector2d(28, 60))
                 .lineTo(new Vector2d(28, 28))
                 .strafeTo(new Vector2d(14, 28))
-                .lineTo(new Vector2d(14, 12))
-                .strafeTo(new Vector2d(6, 12))
+                .lineTo(new Vector2d(14, 10))
+                .strafeTo(new Vector2d(6, 10))
                 .build();
 
         TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(11, 27))
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(7, 26))
-                .lineTo(new Vector2d(11, 26))
+                .lineTo(new Vector2d(11, 30))
+                .strafeTo(new Vector2d(7, 30))
+                .strafeTo(new Vector2d(11, 30))
+                .lineTo(new Vector2d(11, 13))
+                .strafeTo(new Vector2d(-6, 13))
                 .build();
 
         TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 42))
-                .lineTo(new Vector2d(51, 42))
+                .lineTo(new Vector2d(48, 11))
+                .strafeTo(new Vector2d(48, 35))
+                .lineTo(new Vector2d(52.0, 35))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 28))
-                .lineTo(new Vector2d(51, 28))
+                .lineTo(new Vector2d(49, 10))
+                .strafeTo(new Vector2d(49, 24))
+                .lineTo(new Vector2d(51, 4))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
-                .turn(Math.toRadians(180))
-                .lineTo(new Vector2d(51, 26))
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(49, 13))
+                .strafeTo(new Vector2d(49, 21))
+                .lineTo(new Vector2d(53, 21))
+                .build();
+
+        TrajectorySequence toParkCenter = drive.trajectorySequenceBuilder(toBackdropCenter.end())
+                .lineTo(new Vector2d(49, 28))
+                .strafeTo(new Vector2d(49, 63))
+                .build();
+
+        TrajectorySequence toParkLeft = drive.trajectorySequenceBuilder(toBackdropLeft.end())
+                .lineTo(new Vector2d(47, 35))
+                .strafeTo(new Vector2d(47, 63))
+                .build();
+
+        TrajectorySequence toParkRight = drive.trajectorySequenceBuilder(toBackdropRight.end())
+                .lineTo(new Vector2d(47, 21))
+                .strafeTo(new Vector2d(47, 63))
                 .build();
 
         int cameraMonitorViewId = hardwareMap
@@ -170,6 +193,8 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 Auxiliaries.placePixelOnBackdropLeft();
                 sleep(800);
                 Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toParkLeft);
                 break;
             case CENTER:
                 drive.followTrajectorySequence(toSpikeCenter);
@@ -185,6 +210,8 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 Auxiliaries.placePixelOnBackdropLeft();
                 sleep(800);
                 Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toParkCenter);
                 break;
             case RIGHT:
                 drive.followTrajectorySequence(toSpikeRight);
@@ -200,6 +227,8 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 Auxiliaries.placePixelOnBackdropLeft();
                 sleep(800);
                 Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toParkRight);
                 break;
             case NONE: // This case should copy center
                 drive.followTrajectorySequence(toSpikeCenter);
@@ -217,6 +246,8 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 Auxiliaries.placePixelOnBackdropLeft();
                 sleep(800);
                 Auxiliaries.retractPixelPlacerLeft();
+
+                drive.followTrajectorySequence(toParkCenter);
                 break;
         }
 
