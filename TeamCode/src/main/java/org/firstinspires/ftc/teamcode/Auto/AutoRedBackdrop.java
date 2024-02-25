@@ -74,36 +74,36 @@ public class AutoRedBackdrop extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(49, -12))
                 .strafeTo(new Vector2d(49, -35))
-                .lineTo(new Vector2d(52.5, -35))
+                .lineTo(new Vector2d(51, -35))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(49, -12))
-                .strafeTo(new Vector2d(49, -42))
+                .lineTo(new Vector2d(45, -12))
+                .strafeTo(new Vector2d(45, -42))
                 .lineTo(new Vector2d(51, -42))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(49, -12))
-                .strafeTo(new Vector2d(49, -49))
-                .lineTo(new Vector2d(53.5, -49))
+                .lineTo(new Vector2d(45, -12))
+                .strafeTo(new Vector2d(45, -49))
+                .lineTo(new Vector2d(51, -49))
                 .build();
 
         TrajectorySequence toParkLeft = drive.trajectorySequenceBuilder(toBackdropLeft.end())
-                .lineTo(new Vector2d(49, -35))
-                .strafeTo(new Vector2d(49, -64))
+                .lineTo(new Vector2d(45, -35))
+                .strafeTo(new Vector2d(45, -64))
                 .build();
 
         TrajectorySequence toParkCenter = drive.trajectorySequenceBuilder(toBackdropCenter.end())
-                .lineTo(new Vector2d(49, -42))
-                .strafeTo(new Vector2d(49, -63))
+                .lineTo(new Vector2d(45, -42))
+                .strafeTo(new Vector2d(45, -63))
                 .build();
 
         TrajectorySequence toParkRight = drive.trajectorySequenceBuilder(toBackdropRight.end())
-                .lineTo(new Vector2d(49, -50))
-                .strafeTo(new Vector2d(49, -63))
+                .lineTo(new Vector2d(45, -50))
+                .strafeTo(new Vector2d(45, -63))
                 .build();
 
         int cameraMonitorViewId = hardwareMap

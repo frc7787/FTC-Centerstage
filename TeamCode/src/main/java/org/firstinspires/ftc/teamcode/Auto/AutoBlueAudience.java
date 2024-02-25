@@ -47,41 +47,40 @@ public class AutoBlueAudience extends LinearOpMode {
                 .build();
 
         toSpikeCenter = drive.trajectorySequenceBuilder(startPos)
-                .lineTo(new Vector2d(-35, 60))
-                .strafeTo(new Vector2d(-54, 60))
+                .lineTo(new Vector2d(-35, 40))
+                .strafeTo(new Vector2d(-54, 40))
                 .lineTo(new Vector2d(-54, 23))
                 .strafeTo(new Vector2d(-39, 23))
                 .strafeTo(new Vector2d(-45, 23))
-                .lineTo(new Vector2d(-45, 12))
+                .lineTo(new Vector2d(-45, 11))
                 .build();
 
         toSpikeRight = drive.trajectorySequenceBuilder(startPos)
-                .lineTo(new Vector2d(-35, 60))
-                .strafeTo(new Vector2d(-56, 60))
-                .lineTo(new Vector2d(-56, 32))
-                .strafeTo(new Vector2d(-48, 32))
-                .strafeTo(new Vector2d(-54, 32))
-                .lineTo(new Vector2d(-54, 12))
+                .lineTo(new Vector2d(-35, 40))
+                .strafeTo(new Vector2d(-42, 40))
+                .lineTo(new Vector2d(-42, 11))
+                .strafeTo(new Vector2d(-52, 11))
                 .build();
+
 
         toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 35))
-                .lineTo(new Vector2d(52, 35))
+                .lineTo(new Vector2d(45, 11))
+                .strafeTo(new Vector2d(45, 35))
+                .lineTo(new Vector2d(53, 35))
                 .build();
 
         toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 27))
-                .lineTo(new Vector2d(51, 27))
+                .lineTo(new Vector2d(45, 11))
+                .strafeTo(new Vector2d(45, 27))
+                .lineTo(new Vector2d(50, 27))
                 .build();
 
         toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(49, 12))
-                .strafeTo(new Vector2d(49, 21))
+                .lineTo(new Vector2d(45, 11))
+                .strafeTo(new Vector2d(45, 21))
                 .lineTo(new Vector2d(52, 21))
                 .build();
 
@@ -118,6 +117,8 @@ public class AutoBlueAudience extends LinearOpMode {
 
         // Pls do not delete this
         location = propDetector.getPropLocation();
+
+        telemetry.addData("Location", location);
 
         if (isStopRequested()) { return; }
 
@@ -163,7 +164,7 @@ public class AutoBlueAudience extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(500);
+                sleep(1000);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropLeft);
@@ -178,7 +179,7 @@ public class AutoBlueAudience extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(500);
+                sleep(1000);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropCenter);
@@ -193,7 +194,7 @@ public class AutoBlueAudience extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(500);
+                sleep(1000);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropRight);
@@ -209,7 +210,7 @@ public class AutoBlueAudience extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(500);
+                sleep(1000);
                 Auxiliaries.placePixelOnBackdropRight();
 
                 Auxiliaries.retractPixelPlacerRight();

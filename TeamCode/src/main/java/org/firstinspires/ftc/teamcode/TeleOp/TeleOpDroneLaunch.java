@@ -2,19 +2,16 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
 import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.AUTO;
 import static org.firstinspires.ftc.teamcode.Properties.*;
 
-@TeleOp(name = "TeleOp drone testing", group = "Production")
-@Disabled
+@TeleOp(name = "TeleOp drone testing", group = "Testing")
 public class TeleOpDroneLaunch extends OpMode {
     private enum GamePeriod {
         NORMAL,

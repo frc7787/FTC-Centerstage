@@ -107,7 +107,7 @@ public class MecanumDriveBase extends MecanumDrive {
 
         motors = Arrays.asList(fL, bL, bR, fR);
 
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+        //LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

@@ -70,8 +70,6 @@ public class TeleOpMain extends OpMode {
            Arm.setTargetPos(0, -300);
        }
 
-
-
        if (gamepad2.left_trigger > 0.9 && Arm.getWormTargetPos() == LAUNCH_POS) {
            Auxiliaries.releaseLauncher();
        }

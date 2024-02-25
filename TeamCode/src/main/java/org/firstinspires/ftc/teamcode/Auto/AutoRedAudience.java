@@ -49,8 +49,8 @@ public class AutoRedAudience extends LinearOpMode {
                 .build();
 
         TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(-35, -60))
-                .strafeTo(new Vector2d(-54, -60))
+                .lineTo(new Vector2d(-35, -36))
+                .strafeTo(new Vector2d(-54, -36))
                 .lineTo(new Vector2d(-54, -23))
                 .strafeTo(new Vector2d(-39, -23))
                 .strafeTo(new Vector2d(-40, -23))
@@ -59,33 +59,30 @@ public class AutoRedAudience extends LinearOpMode {
                 .build();
 
         TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(-35, -60))
-                .strafeTo(new Vector2d(-56, -60))
-                .lineTo(new Vector2d(-56, -32))
-                .strafeTo(new Vector2d(-48, -32))
-                .strafeTo(new Vector2d(-52, -32))
-                .lineTo(new Vector2d(-52, -12))
-                .strafeTo(new Vector2d(-40, -12))
+                .lineTo(new Vector2d(-35, -32))
+                .strafeTo(new Vector2d(-42, -32))
+                .lineTo(new Vector2d(-42, -13))
+                .strafeTo(new Vector2d(-37, -13))
                 .build();
 
         TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(49, -12))
-                .strafeTo(new Vector2d(49, -33))
-                .lineTo(new Vector2d(52.5, -33))
+                .lineTo(new Vector2d(45, -13))
+                .strafeTo(new Vector2d(45, -35))
+                .lineTo(new Vector2d(53, -35))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(49, -10))
-                .strafeTo(new Vector2d(49, -43))
+                .lineTo(new Vector2d(45, -10))
+                .strafeTo(new Vector2d(45, -43))
                 .lineTo(new Vector2d(53.5, -43))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(49, -12))
-                .strafeTo(new Vector2d(49, -49))
+                .lineTo(new Vector2d(45, -12))
+                .strafeTo(new Vector2d(45, -49))
                 .lineTo(new Vector2d(53.5, -49))
                 .build();
 
