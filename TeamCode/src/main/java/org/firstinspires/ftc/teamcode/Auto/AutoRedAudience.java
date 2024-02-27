@@ -7,15 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsytems.Arm;
 import org.firstinspires.ftc.teamcode.Subsytems.Auxiliaries;
-import org.firstinspires.ftc.teamcode.Subsytems.Intake;
-import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -25,22 +20,39 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class AutoRedAudience extends LinearOpMode {
     PropDetector propDetector;
     PropLocation location;
-    public static OpenCvCamera camera;
 
+    OpenCvCamera camera;
     MecanumDriveBase drive;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    int cameraMonitorViewId;
+
+    int leftCount   = 0;
+    int rightCount  = 0;
+    int centerCount = 0;
+    int noneCount   = 0;
+
+    int spikeStripPixelPlacementSleep = 1000;
+    int backdropPixelPlacementSleep   = 800;
+
+    TrajectorySequence toSpikeLeft, toSpikeCenter, toSpikeRight;
+    TrajectorySequence toBackdropLeft, toBackdropCenter, toBackdropRight;
+
+    @Override public void runOpMode() throws InterruptedException {
         propDetector = new PropDetector(PropColor.RED);
         drive        = new MecanumDriveBase(hardwareMap);
 
         drive.init();
 
+        Arm.init(hardwareMap);
+        Auxiliaries.init(hardwareMap);
+
+        Arm.update(false);
+
         Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(270.0));
 
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence toSpikeRight = drive.trajectorySequenceBuilder(startPose)
+        toSpikeRight = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(new Vector2d(-35, -34))
                 .strafeTo(new Vector2d(-31, -34))
                 .strafeTo(new Vector2d(-35, -34))
@@ -48,7 +60,14 @@ public class AutoRedAudience extends LinearOpMode {
                 .strafeTo(new Vector2d(-18, -12))
                 .build();
 
-        TrajectorySequence toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
+        toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(45, -12))
+                .strafeTo(new Vector2d(45, -49))
+                .lineTo(new Vector2d(53.5, -49))
+                .build();
+
+        toSpikeCenter = drive.trajectorySequenceBuilder(startPose)
                 .lineTo(new Vector2d(-35, -36))
                 .strafeTo(new Vector2d(-54, -36))
                 .lineTo(new Vector2d(-54, -23))
@@ -58,35 +77,28 @@ public class AutoRedAudience extends LinearOpMode {
                 .strafeTo(new Vector2d(-28, -10))
                 .build();
 
-        TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(new Vector2d(-35, -32))
-                .strafeTo(new Vector2d(-42, -32))
-                .lineTo(new Vector2d(-42, -13))
-                .strafeTo(new Vector2d(-37, -13))
-                .build();
-
-        TrajectorySequence toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(45, -13))
-                .strafeTo(new Vector2d(45, -35))
-                .lineTo(new Vector2d(53, -35))
-                .build();
-
-        TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
+        toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(45, -10))
                 .strafeTo(new Vector2d(45, -43))
                 .lineTo(new Vector2d(53.5, -43))
                 .build();
 
-        TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(45, -12))
-                .strafeTo(new Vector2d(45, -49))
-                .lineTo(new Vector2d(53.5, -49))
+        toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(new Vector2d(-35, -32))
+                .strafeTo(new Vector2d(-42, -32))
+                .lineTo(new Vector2d(-42, -13))
+                .strafeTo(new Vector2d(-37, -13))
                 .build();
 
-        int cameraMonitorViewId = hardwareMap
+        toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(45, -13))
+                .strafeTo(new Vector2d(45, -35))
+                .lineTo(new Vector2d(53, -35))
+                .build();
+
+        cameraMonitorViewId = hardwareMap
                 .appContext
                 .getResources()
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -109,26 +121,14 @@ public class AutoRedAudience extends LinearOpMode {
             }
         });
 
-        Arm.init(hardwareMap);
-        Auxiliaries.init(hardwareMap);
-
-        Arm.update(false);
-
         Arm.rotateWorm(1400);
 
         waitForStart();
 
         if (isStopRequested()) { return; }
 
-        location = propDetector.getPropLocation();
-
         telemetry.addData("PROP LOCATION: ", location);
         telemetry.update();
-
-        int leftCount   = 0;
-        int rightCount  = 0;
-        int centerCount = 0;
-        int noneCount   = 0;
 
         for (int i = 0; i <= 20;  i++) {
             switch (propDetector.getPropLocation()) {
@@ -157,63 +157,50 @@ public class AutoRedAudience extends LinearOpMode {
             location = PropLocation.NONE;
         }
 
-        Arm.rotateWorm(25);
+        Arm.rotateWorm(0);
 
         switch (location) {
             case LEFT:
                 drive.followTrajectorySequence(toSpikeLeft);
 
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(spikeStripPixelPlacementSleep);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropLeft);
 
                 Auxiliaries.placePixelOnBackdropLeft();
-                sleep(1000);
-                Auxiliaries.retractPixelPlacerLeft();
-                break;
-            case CENTER:
-                drive.followTrajectorySequence(toSpikeCenter);
-
-                Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
-                Auxiliaries.retractPixelPlacerRight();
-
-                drive.followTrajectorySequence(toBackdropCenter);
-
-                Auxiliaries.placePixelOnBackdropLeft();
-                sleep(1000);
+                sleep(backdropPixelPlacementSleep);
                 Auxiliaries.retractPixelPlacerLeft();
                 break;
             case RIGHT:
                 drive.followTrajectorySequence(toSpikeRight);
 
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(spikeStripPixelPlacementSleep);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropRight);
 
                 Auxiliaries.placePixelOnBackdropLeft();
-                sleep(1000);
+                sleep(backdropPixelPlacementSleep);
                 Auxiliaries.retractPixelPlacerLeft();
                 break;
-            case NONE: // This case should mirror center
+            default: // Center or None
                 drive.followTrajectorySequence(toSpikeCenter);
 
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(spikeStripPixelPlacementSleep);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropCenter);
 
                 Auxiliaries.placePixelOnBackdropLeft();
-                sleep(1000);
+                sleep(backdropPixelPlacementSleep);
                 Auxiliaries.retractPixelPlacerLeft();
                 break;
         }
 
-        sleep(20000);
+        sleep(20000); // This is so the auto doesn't loop
     }
 }

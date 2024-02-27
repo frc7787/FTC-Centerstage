@@ -5,6 +5,7 @@ import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirect
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
+import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
 import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_HIGH;
 import static org.firstinspires.ftc.teamcode.Properties.DEAD_ZONE_LOW;
 import static org.firstinspires.ftc.teamcode.Properties.STRAFE_OFFSET;
@@ -79,7 +80,7 @@ public class DriveBase {
         drive  = deadZone(drive);
         strafe = deadZone(strafe);
 
-        drive  = drive * Math.cos(-botHeading) - strafe * Math.sin(-botHeading);
+        drive  = drive  * Math.cos(-botHeading) - strafe * Math.sin(-botHeading);
         strafe = drive  * Math.sin(-botHeading) + strafe * Math.cos(-botHeading);
 
         strafe *= STRAFE_OFFSET; // Mecanum strafing is not perfect so we slightly correct
@@ -123,27 +124,41 @@ public class DriveBase {
         backRight.setPower(bRPower);
     }
 
-    public static void debug(@NonNull Telemetry telemetry) {
+    /**
+     * Displays debug information about the drive base
+     * @param telemetry The telemetry you are displaying the information on
+     */
+    public static void debug(@NonNull Telemetry telemetry, @NonNull CurrentUnit currentUnit) {
         telemetry.addLine("Drive Base Debug");
 
         telemetry.addData("Front Left Power", frontLeft.getPower());
         telemetry.addData("Front Left Direction", frontLeft.getDirection());
-        telemetry.addData("Front Left Current (AMPS)", frontLeft.getCurrent(AMPS));
 
         telemetry.addData("Front Right Power", frontRight.getPower());
         telemetry.addData("Front Right Direction", frontRight.getDirection());
-        telemetry.addData("Front Right Current (AMPS)", frontRight.getCurrent(AMPS));
 
         telemetry.addData("Back Left Power", backLeft.getPower());
         telemetry.addData("Back Left Direction", backLeft.getDirection());
-        telemetry.addData("Back Left Current (AMPS)", backLeft.getCurrent(AMPS));
 
         telemetry.addData("Back Right Power", backRight.getPower());
         telemetry.addData("Back Right Direction", backRight.getDirection());
-        telemetry.addData("Back Right Current (AMPS)", backRight.getCurrent(AMPS));
 
-        telemetry.addData(
-                "Total Drive Base Current (AMPS)",
-                frontLeft.getCurrent(AMPS) + frontRight.getCurrent(AMPS) + backLeft.getCurrent(AMPS) + backRight.getCurrent(AMPS));
+        switch (currentUnit) {
+            case AMPS:
+                telemetry.addData("Front Left Current (AMPS)", frontLeft.getCurrent(AMPS));
+                telemetry.addData("Front Right Current (AMPS)", frontRight.getCurrent(AMPS));
+                telemetry.addData("Back Left Current (AMPS)", backLeft.getCurrent(AMPS));
+                telemetry.addData("Back Right Current (AMPS)", backRight.getCurrent(AMPS));
+                telemetry.addData("Total drive base current (AMPS)",
+                        frontLeft.getCurrent(AMPS) + frontRight.getCurrent(AMPS) + backLeft.getCurrent(AMPS) + backRight.getCurrent(AMPS));
+            case MILLIAMPS:
+                telemetry.addData("Front Left Current (MILLI-AMPS)", frontLeft.getCurrent(MILLIAMPS));
+                telemetry.addData("Front Right Current (MILLI-AMPS)", frontRight.getCurrent(MILLIAMPS));
+                telemetry.addData("Back Left Current (MILLI-AMPS)", backLeft.getCurrent(MILLIAMPS));
+                telemetry.addData("Back Right Current (MILLI-AMPS)", backRight.getCurrent(MILLIAMPS));
+                telemetry.addData("Total drive base current (MILLI-AMPS)",
+                        frontLeft.getCurrent(MILLIAMPS) + frontRight.getCurrent(MILLIAMPS) + backLeft.getCurrent(MILLIAMPS) + backRight.getCurrent(MILLIAMPS));
+        }
+
     }
 }

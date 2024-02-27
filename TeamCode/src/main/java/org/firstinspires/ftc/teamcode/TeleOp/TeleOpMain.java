@@ -4,11 +4,8 @@ import com.qualcomm.hardware.lynx.LynxModule;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.LED;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
@@ -81,13 +78,13 @@ public class TeleOpMain extends OpMode {
 
     private void normalPeriodLoop() {
         if (gamepad1.dpad_up) {
-            Auxiliaries.movePixelPlacerToMosiacFixingPositionLeft();
+            Auxiliaries.movePixelPlacerToMosaicFixingPositionLeft();
         } else if (gamepad1.dpad_down) {
             Auxiliaries.retractPixelPlacerLeft();
         }
 
         if (gamepad1.triangle) {
-            Auxiliaries.movePixelPlacerToMosiacFixingPositionRight();
+            Auxiliaries.movePixelPlacerToMosaicFixingPositionRight();
         } else if (gamepad1.cross) {
             Auxiliaries.retractPixelPlacerRight();
         }

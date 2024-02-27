@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Auto.Utility;
+package org.firstinspires.ftc.teamcode.Auto;
 
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.CENTER;
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.LEFT;
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.NONE;
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.RIGHT;
+import static org.firstinspires.ftc.teamcode.Auto.PropLocation.CENTER;
+import static org.firstinspires.ftc.teamcode.Auto.PropLocation.LEFT;
+import static org.firstinspires.ftc.teamcode.Auto.PropLocation.NONE;
+import static org.firstinspires.ftc.teamcode.Auto.PropLocation.RIGHT;
 import static org.firstinspires.ftc.teamcode.Properties.LEFT_X;
 import static org.firstinspires.ftc.teamcode.Properties.RIGHT_X;
 
@@ -32,12 +32,12 @@ public class PropDetector extends OpenCvPipeline {
     public PropColor propColor;
 
     public static int VIEW_DISPLAYED = 1;
-    public static int ERODE_PASSES = 9;
+    public static int ERODE_PASSES   = 9;
 
     public static volatile Scalar BOUNDING_RECTANGLE_COLOR = new Scalar(255, 0, 0);
 
-    public static volatile Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 0);
-    public static volatile Scalar HIGH_HSV_RANGE_BLUE = new Scalar(125, 255, 255);
+    public static Scalar LOW_HSV_RANGE_BLUE  = new Scalar(97, 100, 0);
+    public static Scalar HIGH_HSV_RANGE_BLUE = new Scalar(125, 255, 255);
 
     private static final Scalar LOW_HSV_RANGE_RED_ONE  = new Scalar(160, 100, 0);
     private static final Scalar HIGH_HSV_RANGE_RED_ONE = new Scalar(180, 255, 255);
@@ -51,13 +51,13 @@ public class PropDetector extends OpenCvPipeline {
 
     PropLocation propLocation = NONE;
 
-    private Mat hsvMat          = new Mat(),
-                threshold0      = new Mat(),
-                threshold1      = new Mat(),
-                hierarchy       = new Mat(),
-                cvErodeKernel   = new Mat(),
-                thresholdOutput = new Mat(),
-                erodeOutput     = new Mat();
+    private final Mat hsvMat          = new Mat(),
+                      threshold0      = new Mat(),
+                      threshold1      = new Mat(),
+                      hierarchy       = new Mat(),
+                      cvErodeKernel   = new Mat(),
+                      thresholdOutput = new Mat(),
+                      erodeOutput     = new Mat();
 
     public PropDetector(@NonNull PropColor color) {
         propColor = color;

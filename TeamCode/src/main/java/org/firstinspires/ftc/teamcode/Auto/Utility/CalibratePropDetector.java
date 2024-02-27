@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.Auto.PropLocation;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -25,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.LEFT;
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.NONE;
-import static org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation.RIGHT;
+import static org.firstinspires.ftc.teamcode.Auto.PropLocation.LEFT;
+import static org.firstinspires.ftc.teamcode.Auto.PropLocation.NONE;
+import static org.firstinspires.ftc.teamcode.Auto.PropLocation.RIGHT;
 
 // Goes with FirstVisionOpmodeNov26 to attempt integration with FTC Dashboard
 @Config

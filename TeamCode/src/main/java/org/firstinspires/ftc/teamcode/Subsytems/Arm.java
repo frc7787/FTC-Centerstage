@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
+import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
 import static org.firstinspires.ftc.teamcode.Properties.*;
 import static org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState.*;
 import static org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmState.*;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Properties;
 import org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState;
 import org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmState;
@@ -26,6 +28,7 @@ public class Arm {
 
     private static final double ELEVATOR_HOMING_POWER = -Math.abs(Properties.ELEVATOR_HOMING_POWER);
     private static final double WORM_HOMING_POWER     = -Math.abs(Properties.WORM_HOMING_POWER);
+
     private static final double SAFETY_VOLTAGE = 0.4;
     private static final double WRIST_DOWN_POS = 0.5;
 
@@ -56,13 +59,14 @@ public class Arm {
 
         // Expansion Hub Port 1
         leftDoor = hardwareMap.get(ServoImplEx.class, "LeftDoorServo");
-        // Expnsion Hub Port 2
+        // Expansion Hub Port 2
         rightDoor = hardwareMap.get(ServoImplEx.class, "RightDoorServo");
         // ????
         wrist = hardwareMap.get(ServoImplEx.class, "WristServo");
-        wrist.setPosition(0.0);
 
         wormPotentiometer = hardwareMap.analogInput.get("WormPotentiometer");
+
+        wrist.setPosition(0.0);
 
         elevatorMotor.setDirection(REVERSE);
 
@@ -71,15 +75,18 @@ public class Arm {
 
         elevatorTargetPos = 0;
         wormTargetPos     = 0;
-        moveDeliveryTrayDoor(TRAY_DOOR_CLOSED_POS); // TODO: This might need to change, this is just a default value
+
+        moveDeliveryTrayDoor(TRAY_DOOR_CLOSED_POS);
 
         normalPeriodArmState = UNKNOWN;
         homingState          = START;
     }
 
     /**
-     * Function to update the state of the arm every loop, moves the arm to the target pos
-     * and checks if the arm should be homing.
+     * Function to control the state of the arm. Should be called every iteration of the loop
+     * Also controls the outtake tray along with overriding the delivery tray if the arm is
+     * in the robot
+     * @param intaking Whether or not the robot is currently intaking a pixel
      */
     public static void update(boolean intaking) {
         // Control the tray position
@@ -169,7 +176,7 @@ public class Arm {
     }
 
     /**
-     * Homes the arm and worm. First, it homes the elevator, then the worm after it is finished
+     * Arm homing sequence. Note, that this function can home from PRACTICALLY any position
      */
     private static void home() {
        switch (homingState) {
@@ -180,12 +187,14 @@ public class Arm {
                 wormMotor.setMode(RUN_USING_ENCODER);
                 elevatorMotor.setMotorEnable();
                 elevatorMotor.setMode(RUN_USING_ENCODER);
+
                 if (wormPotentiometer.getVoltage() > SAFETY_VOLTAGE){
                     wormMotor.setPower(0.0);
                     homingState = HOMING_ELEVATOR;
                 } else {
                     wormMotor.setPower(1.0);
                     elevatorMotor.setPower(-0.05);
+
                     if(elevatorLimitSwitchIsPressed()){
                         wormMotor.setPower(0.0);
                         homingState = HOMING_ELEVATOR;
@@ -204,6 +213,7 @@ public class Arm {
                 break;
             case HOMING_WORM:
                 wormMotor.setPower(WORM_HOMING_POWER);
+
                 if (wormLimitSwitch.isPressed()) {
                     homingState = COMPLETE;
                     wormMotor.setMode(STOP_AND_RESET_ENCODER);
@@ -283,32 +293,54 @@ public class Arm {
     }
 
     /**
-     * Displays debug information about the arm
+     * Displays debug information about the elevator
      * @param telemetry The telemetry to display the information on
+     * @param currentUnit What unit to display the current in (AMPS/MILLI-AMPS)
      */
-    public static void debug(@NonNull Telemetry telemetry) {
-        telemetry.addLine("Worm Debug");
-
-        telemetry.addData("Worm Limit Switch Is Pressed", wormLimitSwitch.isPressed());
-        telemetry.addData("Worm Motor Direction", wormMotor.getDirection());
-        telemetry.addData("Worm Motor Power", wormMotor.getPower());
-        telemetry.addData("Worm Motor Current (Amps)", wormMotor.getCurrent(AMPS));
-        telemetry.addData("Worm Current Pos", wormMotor.getCurrentPosition());
-        telemetry.addData("Worm Target Pos", wormMotor.getTargetPosition());
-        telemetry.addData("Elevator Motor LOCAL Target Pos", wormTargetPos);
-        telemetry.addData("Worm Run Mode", wormMotor.getMode());
-
+    public static void debugElevator(@NonNull Telemetry telemetry, CurrentUnit currentUnit) {
         telemetry.addLine("Elevator Debug");
 
         telemetry.addData("Elevator Limit Switch Is Pressed", elevatorLimitSwitch.isPressed());
         telemetry.addData("Elevator Motor Direction", elevatorMotor.getDirection());
         telemetry.addData("Elevator Motor Power", elevatorMotor.getPower());
-        telemetry.addData("Elevator Motor Current (AMPS)", elevatorMotor.getCurrent(AMPS));
         telemetry.addData("Elevator Motor Current Pos", elevatorMotor.getCurrentPosition());
         telemetry.addData("Elevator Motor Target Pos", elevatorMotor.getTargetPosition());
         telemetry.addData("Elevator Motor LOCAL Target Pos", elevatorTargetPos);
         telemetry.addData("Elevator Motor Run Mode", elevatorMotor.getMode());
 
+        switch (currentUnit) {
+            case AMPS:
+                telemetry.addData("Elevator Current (AMPS)", elevatorMotor.getCurrent(AMPS));
+            case MILLIAMPS:
+                telemetry.addData("Elevator Current (MILLIAMPS)", elevatorMotor.getCurrent(MILLIAMPS));
+        }
+    }
+
+    /**
+     * Displays debug information about the worm
+     * @param telemetry The telemetry to display the information on
+     * @param currentUnit What unit to display the current in (AMPS/MILLI-AMPS)
+     */
+    public static void debugWorm(@NonNull Telemetry telemetry, CurrentUnit currentUnit) {
+        telemetry.addLine("Worm Debug");
+
+        telemetry.addData("Worm Limit Switch Is Pressed", wormLimitSwitch.isPressed());
+        telemetry.addData("Worm Motor Direction", wormMotor.getDirection());
+        telemetry.addData("Worm Motor Power", wormMotor.getPower());
+        telemetry.addData("Worm Current Pos", wormMotor.getCurrentPosition());
+        telemetry.addData("Worm Target Pos", wormMotor.getTargetPosition());
+        telemetry.addData("Elevator Motor LOCAL Target Pos", wormTargetPos);
+        telemetry.addData("Worm Run Mode", wormMotor.getMode());
+
+        switch (currentUnit) {
+            case AMPS:
+                telemetry.addData("Worm Current (AMPS)", wormMotor.getCurrent(AMPS));
+            case MILLIAMPS:
+                telemetry.addData("Worm Current (AMPS)", wormMotor.getCurrent(MILLIAMPS));
+        }
+    }
+
+    public static void debugDeliveryTray(@NonNull Telemetry telemetry) {
         telemetry.addLine("Delivery Tray Debug");
 
         // NOTE: You might think that adding the direction of the servos would be useful
@@ -321,12 +353,36 @@ public class Arm {
         telemetry.addData("Left Door PWM Range", leftDoor.getPwmRange());
         telemetry.addData("Right Door Servo Commanded Position", rightDoor.getPosition());
         telemetry.addData("Right Door Servo PWM Range", rightDoor.getPwmRange());
+    }
 
+    /**
+     * Displays debug information about the arm NOT about the worm, elevator, or delivery tray
+     * @param telemetry The telemetry to display the information on
+     */
+    public static void debugArm(@NonNull Telemetry telemetry, CurrentUnit currentUnit) {
         telemetry.addLine("Arm Debug");
 
         telemetry.addData("Arm State - Normal Period", normalPeriodArmState);
         telemetry.addData("Homing State", homingState);
-        telemetry.addData("Total Arm Current (AMPS) ", elevatorMotor.getCurrent(AMPS) + wormMotor.getCurrent(AMPS));
+
+        switch (currentUnit) {
+            case AMPS:
+                telemetry.addData("Total Arm Current (AMPS)", elevatorMotor.getCurrent(AMPS) + wormMotor.getCurrent(AMPS));
+            case MILLIAMPS:
+                telemetry.addData("Total Arm Current (MILLIAMPS)", elevatorMotor.getCurrent(MILLIAMPS) + wormMotor.getCurrent(MILLIAMPS));
+        }
+    }
+
+    /**
+     * Displays debug information about all components of the arm
+     * @param telemetry The telemetry to display the information on
+     * @param currentUnit The unit to display the current in (AMPS/MILLI-AMPS)
+     */
+    public static void debugAll(@NonNull Telemetry telemetry, CurrentUnit currentUnit) {
+        debugElevator(telemetry, currentUnit);
+        debugWorm(telemetry, currentUnit);
+        debugDeliveryTray(telemetry);
+        debugArm(telemetry, currentUnit);
     }
 
     /**

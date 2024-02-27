@@ -6,9 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropLocation;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsytems.Arm;
@@ -25,7 +22,8 @@ public class AutoBlueAudience extends LinearOpMode {
 
     MecanumDriveBase drive;
 
-    TrajectorySequence toSpikeLeft, toSpikeCenter, toSpikeRight, toBackdropLeft, toBackdropCenter, toBackdropRight;
+    TrajectorySequence toSpikeLeft, toSpikeCenter, toSpikeRight;
+    TrajectorySequence toBackdropLeft, toBackdropCenter, toBackdropRight;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,7 +59,6 @@ public class AutoBlueAudience extends LinearOpMode {
                 .lineTo(new Vector2d(-42, 11))
                 .strafeTo(new Vector2d(-52, 11))
                 .build();
-
 
         toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(-90))
