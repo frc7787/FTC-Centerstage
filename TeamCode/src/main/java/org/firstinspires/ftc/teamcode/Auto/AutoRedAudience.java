@@ -55,7 +55,7 @@ public class AutoRedAudience extends LinearOpMode {
                 .strafeTo(new Vector2d(-39, -23))
                 .strafeTo(new Vector2d(-40, -23))
                 .lineTo(new Vector2d(-40, -10))
-                .strafeTo(new Vector2d(-28, -10))
+                .strafeTo(new Vector2d(-28, -11))
                 .build();
 
         TrajectorySequence toSpikeLeft = drive.trajectorySequenceBuilder(startPose)
@@ -74,9 +74,9 @@ public class AutoRedAudience extends LinearOpMode {
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(45, -10))
-                .strafeTo(new Vector2d(45, -43))
-                .lineTo(new Vector2d(53.5, -43))
+                .lineTo(new Vector2d(45, -11))
+                .strafeTo(new Vector2d(45, -42))
+                .lineTo(new Vector2d(53.5, -42))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
@@ -159,12 +159,14 @@ public class AutoRedAudience extends LinearOpMode {
 
         Arm.rotateWorm(25);
 
+        sleep(4000);
+
         switch (location) {
             case LEFT:
                 drive.followTrajectorySequence(toSpikeLeft);
 
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropLeft);
@@ -177,7 +179,7 @@ public class AutoRedAudience extends LinearOpMode {
                 drive.followTrajectorySequence(toSpikeCenter);
 
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropCenter);
@@ -190,8 +192,10 @@ public class AutoRedAudience extends LinearOpMode {
                 drive.followTrajectorySequence(toSpikeRight);
 
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
+
+                sleep(2000);
 
                 drive.followTrajectorySequence(toBackdropRight);
 
@@ -203,7 +207,7 @@ public class AutoRedAudience extends LinearOpMode {
                 drive.followTrajectorySequence(toSpikeCenter);
 
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropCenter);

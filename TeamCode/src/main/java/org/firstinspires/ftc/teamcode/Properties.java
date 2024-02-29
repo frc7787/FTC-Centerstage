@@ -12,8 +12,8 @@ public class Properties {
     public static volatile int LOW_EXT_POS = 1820;
     public static volatile int LOW_ROT_POS = 1470;
 
-    public static volatile int MED_EXT_POS = 2347;
-    public static volatile int MED_ROT_POS = 1691;
+    public static volatile int MED_EXT_POS = 2401;
+    public static volatile int MED_ROT_POS = 1814;
 
     public static volatile int HIGH_EXT_POS = 2894;
     public static volatile int HIGH_ROT_POS = 1920;
@@ -23,8 +23,8 @@ public class Properties {
 
     public static volatile double DEFAULT_WORM_POWER     = 1.0;
     public static volatile double DEFAULT_ELEVATOR_POWER = 1.0; // 1.0;
-    public static volatile double ELEVATOR_HOMING_POWER  = 0.3; // Absolute value
-    public static volatile double WORM_HOMING_POWER      = 0.3; // Absolute value
+    public static volatile double ELEVATOR_HOMING_POWER  = 0.5; // Absolute value
+    public static volatile double WORM_HOMING_POWER      = 0.5; // Absolute value
 
 
     // ----------- DRIVE PROPERTIES ---------- //

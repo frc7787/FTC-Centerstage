@@ -184,7 +184,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropLeft);
@@ -201,7 +201,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropCenter);
@@ -218,7 +218,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
 
                 drive.followTrajectorySequence(toBackdropRight);
@@ -236,7 +236,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
 
                 sleep(1000);
                 Auxiliaries.placePixelOnSpikeStripRight();
-                sleep(1000);
+                sleep(1050);
                 Auxiliaries.retractPixelPlacerRight();
 
                 Auxiliaries.retractPixelPlacerRight();
@@ -251,7 +251,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
                 break;
         }
 
-        sleep(100);
+        sleep(6000);
     }
 }
 

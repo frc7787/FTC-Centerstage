@@ -266,6 +266,14 @@ public class Arm {
         rightDoor.setPosition(rightPos);
     }
 
+    public static void openDeliveryTrayDoorLeft(double pos) {
+        leftDoor.setPosition(pos);
+    }
+
+    public static void openDeliveryTrayDoorright(double pos) {
+        rightDoor.setPosition(pos);
+    }
+
     /**
      * Moves the door to the provided position. Note that this moves BOTH door servos
      * @param pos

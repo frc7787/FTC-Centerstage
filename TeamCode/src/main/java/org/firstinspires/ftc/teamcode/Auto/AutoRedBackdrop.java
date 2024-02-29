@@ -74,21 +74,21 @@ public class AutoRedBackdrop extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(49, -12))
                 .strafeTo(new Vector2d(49, -35))
-                .lineTo(new Vector2d(51, -35))
+                .lineTo(new Vector2d(52, -35))
                 .build();
 
         TrajectorySequence toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(45, -12))
                 .strafeTo(new Vector2d(45, -42))
-                .lineTo(new Vector2d(51, -42))
+                .lineTo(new Vector2d(52, -42))
                 .build();
 
         TrajectorySequence toBackdropRight = drive.trajectorySequenceBuilder(toSpikeRight.end())
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(45, -12))
                 .strafeTo(new Vector2d(45, -49))
-                .lineTo(new Vector2d(51, -49))
+                .lineTo(new Vector2d(52, -49))
                 .build();
 
         TrajectorySequence toParkLeft = drive.trajectorySequenceBuilder(toBackdropLeft.end())
