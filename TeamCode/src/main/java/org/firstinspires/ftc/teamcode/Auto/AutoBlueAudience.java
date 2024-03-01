@@ -63,8 +63,8 @@ public class AutoBlueAudience extends LinearOpMode {
         toBackdropLeft = drive.trajectorySequenceBuilder(toSpikeLeft.end())
                 .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(45, 11))
-                .strafeTo(new Vector2d(45, 35))
-                .lineTo(new Vector2d(53, 35))
+                .strafeTo(new Vector2d(45, 36))
+                .lineTo(new Vector2d(53, 36))
                 .build();
 
         toBackdropCenter = drive.trajectorySequenceBuilder(toSpikeCenter.end())
@@ -154,6 +154,8 @@ public class AutoBlueAudience extends LinearOpMode {
         telemetry.update();
 
         Arm.rotateWorm(25);
+
+        sleep(4000);
 
         switch (location) {
             case LEFT:

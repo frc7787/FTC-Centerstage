@@ -1,0 +1,139 @@
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+            telemetry.addData("Setting Trajectories", "Ready to begin");
+            telemetry.update();
+            setTrajectories();
+            // roadrunner to element
+            telemetry.addData("Follow Sequence 1", "On my way");
+
+            /*
+            drive.followTrajectorySequence(trajSeqTest);
+            drive.followTrajectorySequence(trajSeq1);
+            sleep(1000);
+            // dropoff pixel
+            // roadrunner to backdrop
+            telemetry.addData("Follow Sequence 2", "On my way");
+            drive.followTrajectorySequence(trajSeq2);
+            sleep(1000);
+
+             */
+            telemetry.addData("End of Sequence 2", "Switching to April Tag Drive");
+            sleep(1000);
+            aprilTagBackdrop();
+
+
+            // april tag movement
+            // roadrunner to transit
+            // roadrunner to pixel stack
+            // april tag movement
+            // roadrunner to transit
+            // roadrunner to backdrop
+            // dropoff pixel
+
+
+            telemetry.update();
+            sleep(30000);
+        } // end of while opModeIsActive
+    } // end of runOpMode
+
+    public void aprilTagBackdrop() {
+        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+        boolean targetReached   = false;    // Set to true when the AprilTage target has been reached
+        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+
+        targetFound = false;
+        desiredTag  = null;
+
+        telemetry.addData("Inside April Tag Drive", "Embark on adventure");
+        sleep(1000);
+
+        while (opModeIsActive() && !targetReached) {
+            targetFound = false;
+
+            // Step through the list of detected tags and look for a matching tag
+            telemetry.addData("Detecting April Tags", "Now");
+            List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                        // Yes, we want to use this tag.
+                        telemetry.addData("April Tag found", detection.id);
+                        targetFound = true;
+                        desiredTag = detection;
+                        break;  // don't look any further.
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                    }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                }
+            } // end for detection
+
+            if (targetFound) {
+                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                double headingError = desiredTag.ftcPose.bearing;
+                double yawError = desiredTag.ftcPose.yaw;
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move.
+                drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                strafe = -1.0*Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+                turn = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                telemetry.addData("Distance", "Range %5.2f, RangeError %5.2f, HeadingError %5.2f, TurnError %5.2f ", desiredTag.ftcPose.range ,rangeError, headingError, yawError);
+
+                // Apply desired axes motions to the drivetrain.
+                if (rangeError <= 0.1) {
+                    targetReached = true;
+                    telemetry.addData("Target Reached!! rangeError:", rangeError);
+                } else {
+                    //moveRobot(drive, strafe, turn);
+                    //driveBase.driveManualRobotCentric(drive, strafe, turn);
+                    driveBase.driveManualRobotCentric(drive, strafe, turn);
+                    sleep(10);
+                }
+                telemetry.update();
+            } // end of if targetFound
+            else {
+                moveRobot(0, 0, 0);
+            } // end of else target not found
+
+        } // end of while !targetReached
+
+        moveRobot(0, 0, 0);
+
+    } // end of aprilTagBackdrop
+
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send powers to the wheels.
+        telemetry.addData("Move Robot", "Giddyup!");
+        drive.setMotorPowers(leftFrontPower, leftBackPower, rightBackPower, rightFrontPower);
+        drive.update();
+    } // end of moveRobot
+
+} // end of public class

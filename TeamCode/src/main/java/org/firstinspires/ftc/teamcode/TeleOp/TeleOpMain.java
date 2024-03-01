@@ -58,21 +58,21 @@ public class TeleOpMain extends OpMode {
 
     private LED LEDOne, LEDTwo;
 
-    private void EndgameLoop() {
+    private void endgameLoop() {
        if (gamepad2.left_bumper) {
            Arm.setTargetPos(0, LAUNCH_POS);
-       } else if (gamepad2.right_bumper) {
-           Arm.setTargetPos(0, HANG_POS);
-       }else if (gamepad2.dpad_down&& Arm.getWormTargetPos() == HANG_POS) {
-           Arm.setTargetPos(0, -300);
        }
 
-       if (gamepad2.left_trigger > 0.9 && Arm.getWormTargetPos() == LAUNCH_POS) {
-           Auxiliaries.releaseLauncher();
-       }
-
-       if (gamepad2.right_trigger > 0.9 && Arm.getWormTargetPos() == HANG_POS) {
+       if (Arm.getWormTargetPos() == LAUNCH_POS) {
            Auxiliaries.releaseHanger();
+
+           if (gamepad2.left_trigger > 0.9) {
+               Auxiliaries.releaseLauncher();
+           }
+
+           if (gamepad2.dpad_down) {
+               Arm.setTargetPos(0, -300);
+           }
        }
     }
 
@@ -188,7 +188,7 @@ public class TeleOpMain extends OpMode {
                LEDOne.enable(true);
                LEDTwo.enable(true);
 
-               EndgameLoop();
+               endgameLoop();
                break;
        }
 
