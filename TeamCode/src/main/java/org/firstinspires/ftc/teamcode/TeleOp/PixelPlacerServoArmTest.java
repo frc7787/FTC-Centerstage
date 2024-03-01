@@ -32,7 +32,7 @@ public class PixelPlacerServoArmTest extends OpMode {
        }
 
 
-       Auxiliaries.debug(telemetry);
+       //Auxiliaries.debug(telemetry);
 
        telemetry.update();
     }

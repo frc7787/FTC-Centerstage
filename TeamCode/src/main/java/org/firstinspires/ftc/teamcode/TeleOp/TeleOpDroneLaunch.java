@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Subsytems.*;
 
 import static com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode.AUTO;
@@ -56,7 +57,7 @@ public class TeleOpDroneLaunch extends OpMode {
         //telemetry.addData("Intake trigger value", intakeTriggerValue);
 
         Arm.update(intaking);
-        Arm.debugArm(telemetry);
+        Arm.debugArm(telemetry, CurrentUnit.AMPS);
 
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
