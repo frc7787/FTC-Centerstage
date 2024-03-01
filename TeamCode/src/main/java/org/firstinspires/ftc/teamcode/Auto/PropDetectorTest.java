@@ -5,18 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropColor;
-import org.firstinspires.ftc.teamcode.Auto.Utility.PropDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Test - Prop Detector")
 @Disabled
-public class PropDetectorOpMode extends OpMode {
-    private long lastButtonPress=0;
-    PropDetector detector;
+public class PropDetectorTest extends OpMode {
+    private long lastButtonPress = 0;
 
+    PropDetector detector;
     OpenCvCamera camera;
 
     @Override public void init() {
@@ -49,15 +47,15 @@ public class PropDetectorOpMode extends OpMode {
     @Override public void init_loop() {
         telemetry.addData("Location", detector.getPropLocation());
         telemetry.addData("Detector Color", detector.propColor);
-        telemetry.addLine("Press left bumper to swap prop detection colour");
+        telemetry.addLine("Press left bumper to swap prop detection colour between red and blue");
 
-        if (gamepad1.left_bumper&&(System.currentTimeMillis()-lastButtonPress)>1000) {
+        if (gamepad1.left_bumper && (System.currentTimeMillis() - lastButtonPress) > 1000) {
             detector.swapColor();
-            lastButtonPress=System.currentTimeMillis();
+            lastButtonPress = System.currentTimeMillis();
         }
+
         telemetry.update();
     }
 
     @Override public void loop() {}
-
 }

@@ -78,13 +78,13 @@ public class TeleOpMain extends OpMode {
 
     private void normalPeriodLoop() {
         if (gamepad1.dpad_up) {
-            Auxiliaries.movePixelPlacerToMosiacFixingPositionLeft();
+            Auxiliaries.movePixelPlacerToMosaicFixingPositionLeft();
         } else if (gamepad1.dpad_down) {
             Auxiliaries.retractPixelPlacerLeft();
         }
 
         if (gamepad1.triangle) {
-            Auxiliaries.movePixelPlacerToMosiacFixingPositionRight();
+            Auxiliaries.movePixelPlacerToMosaicFixingPositionRight();
         } else if (gamepad1.cross) {
             Auxiliaries.retractPixelPlacerRight();
         }

@@ -56,7 +56,7 @@ public class TeleOpDroneLaunch extends OpMode {
         //telemetry.addData("Intake trigger value", intakeTriggerValue);
 
         Arm.update(intaking);
-        Arm.debug(telemetry);
+        Arm.debugArm(telemetry);
 
         prevGamepad2.copy(currentGamepad2);
         currentGamepad2.copy(gamepad2);
