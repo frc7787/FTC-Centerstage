@@ -64,6 +64,8 @@ public class TeleOpMain extends OpMode {
        }
 
        if (Arm.getWormTargetPos() == LAUNCH_POS) {
+           Auxiliaries.releaseHanger();
+
            if (gamepad2.left_trigger > 0.9) {
                Auxiliaries.releaseLauncher();
            }
@@ -176,8 +178,6 @@ public class TeleOpMain extends OpMode {
                    gamePeriod = GamePeriod.ENDGAME;
                    gamepad1.rumble(1, 1, 1000);
                    gamepad2.rumble(1, 1, 1000);
-
-                   Auxiliaries.releaseHanger();
                }
 
                break;

@@ -65,6 +65,13 @@ public class DriveBase {
         return value;
     }
 
+    public static void setMotorPowers(double fL, double fR, double bL, double bR) {
+        frontLeft.setPower(fL);
+        frontRight.setPower(fR);
+        backLeft.setPower(bL);
+        backRight.setPower(bR);
+    }
+
     /**
      * Drives the robot relative to the field
      * 

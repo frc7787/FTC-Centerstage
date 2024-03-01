@@ -17,15 +17,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Auto.TestYellowPixelWithArm;
 import org.firstinspires.ftc.teamcode.Properties;
 import org.firstinspires.ftc.teamcode.Subsytems.Utility.HomingState;
 import org.firstinspires.ftc.teamcode.Subsytems.Utility.NormalPeriodArmState;
+import org.firstinspires.ftc.teamcode.Subsytems.Utility.YellowPixelPlacementPosition;
+import org.firstinspires.ftc.teamcode.Subsytems.Utility.YellowPixelPlacementState;
 
 public class Arm {
     public static final int WORM_SAFETY_LIMIT = 1341;
 
     private static final double ELEVATOR_HOMING_POWER = -Math.abs(Properties.ELEVATOR_HOMING_POWER);
     private static final double WORM_HOMING_POWER     = -Math.abs(Properties.WORM_HOMING_POWER);
+
     private static final double SAFETY_VOLTAGE = 0.4;
     private static final double WRIST_DOWN_POS = 0.5;
 
@@ -218,6 +222,7 @@ public class Arm {
                 break;
        }
     }
+
     /**
      * Extends the elevator to the provided position at the provided power
      * @param targetPos The position to move the elevator to
